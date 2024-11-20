@@ -1,0 +1,269 @@
+package ru.sgp.service;
+
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sgp.dto.ContractDTO;
+import ru.sgp.dto.OrganizationDTO;
+import ru.sgp.dto.report.MonthReportDTO;
+import ru.sgp.model.*;
+import ru.sgp.repository.*;
+
+import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+@Service
+public class ContractService {
+    @Autowired
+    ContractRepository contractRepository;
+    @Autowired
+    OrganizationRepository organizationRepository;
+    @Autowired
+    FilialRepository filialRepository;
+    @Autowired
+    HotelRepository hotelRepository;
+    @Autowired
+    private GuestRepository guestRepository;
+    @Autowired
+    private ReasonRepository reasonRepository;
+    @Autowired
+    private ResponsibilitiesRepository responsibilitiesRepository;
+    @Autowired
+    private PostRepository postRepository;
+
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+
+    public byte[] export(JasperPrint jasperPrint) throws JRException {
+        Exporter exporter;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        exporter = new JRXlsxExporter();
+        //exporter = new JRPdfExporter();
+        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+        exporter.exportReport();
+        return outputStream.toByteArray();
+    }
+
+    public List<ContractDTO> getAll() {
+        List<ContractDTO> response = new ArrayList<>();
+        for (Contract contract : contractRepository.findAll()) {
+            ContractDTO contractDTO = new ContractDTO();
+            contractDTO.setId(contract.getId());
+            contractDTO.setFilial(contract.getFilial().getName());
+            contractDTO.setFilialId(contract.getFilial().getId());
+            if (contract.getHotel() != null) {
+                contractDTO.setHotel(contract.getHotel().getName());
+                contractDTO.setHotelId(contract.getHotel().getId());
+            }
+            if (contract.getOrganization() != null) {
+                contractDTO.setOrganization(contract.getOrganization().getName());
+                contractDTO.setOrganizationId(contract.getOrganization().getId());
+            }
+            contractDTO.setDocnum(contract.getDocnum());
+            contractDTO.setCost(contract.getCost());
+            contractDTO.setReasonId(contract.getReason().getId());
+            contractDTO.setNote(contract.getNote());
+            contractDTO.setOsnovanie(contract.getReason().getName());
+            contractDTO.setBilling(contract.getBilling());
+            response.add(contractDTO);
+        }
+        return response;
+    }
+
+    public ContractDTO get(Long id) {
+        Contract contract = contractRepository.getById(id);
+        ContractDTO contractDTO = new ContractDTO();
+        contractDTO.setId(contract.getId());
+        contractDTO.setFilial(contract.getFilial().getName());
+        contractDTO.setFilialId(contract.getFilial().getId());
+        if (contract.getHotel() != null) {
+            contractDTO.setHotel(contract.getHotel().getName());
+            contractDTO.setHotelId(contract.getHotel().getId());
+        }
+        contractDTO.setOrganization(contract.getOrganization().getName());
+        contractDTO.setOrganizationId(contract.getOrganization().getId());
+        contractDTO.setDocnum(contract.getDocnum());
+        contractDTO.setCost(contract.getCost());
+        contractDTO.setReasonId(contract.getReason().getId());
+        contractDTO.setNote(contract.getNote());
+        return contractDTO;
+    }
+
+    @Transactional
+    public ContractDTO update(ContractDTO contractDTO) {
+        Contract contract = contractRepository.getById(contractDTO.getId());
+        Filial filial = filialRepository.getById(contractDTO.getFilialId());
+        Hotel hotel = hotelRepository.getById(contractDTO.getHotelId());
+        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getOsnovanie()));
+        Organization organization = organizationRepository.getById(contractDTO.getOrganizationId());
+        contract.setBilling(contractDTO.getBilling());
+        contract.setReason(reason);
+        contract.setFilial(filial);
+        contract.setHotel(hotel);
+        contract.setOrganization(organization);
+        contract.setDocnum(contractDTO.getDocnum());
+        contract.setCost(contractDTO.getCost());
+        contract.setNote(contractDTO.getNote());
+        contractRepository.save(contract);
+        return contractDTO;
+    }
+
+    @Transactional
+    public ContractDTO create(ContractDTO contractDTO) {
+        Contract contract = new Contract();
+        Filial filial = filialRepository.getById(contractDTO.getFilialId());
+        Hotel hotel = hotelRepository.getById(contractDTO.getHotelId());
+        Organization organization = organizationRepository.getById(contractDTO.getOrganizationId());
+        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getOsnovanie()));
+        contract.setBilling(contractDTO.getBilling());
+        contract.setReason(reason);
+        contract.setFilial(filial);
+        contract.setHotel(hotel);
+        contract.setOrganization(organization);
+        contract.setDocnum(contractDTO.getDocnum());
+        contract.setCost(contractDTO.getCost());
+        contract.setNote(contractDTO.getNote());
+        contractRepository.save(contract);
+        contractDTO.setId(contract.getId());
+        return contractDTO;
+    }
+
+    public List<OrganizationDTO> getAllOrganizations() {
+        List<OrganizationDTO> response = new ArrayList<>();
+        for (Organization organization : organizationRepository.findAll()) {
+            OrganizationDTO organizationDTO = new OrganizationDTO();
+            organizationDTO.setId(organization.getId());
+            organizationDTO.setName(organization.getName());
+            response.add(organizationDTO);
+        }
+        return response;
+    }
+
+    @Transactional
+    public byte[] getMonthReport(Long empFilialId, Long responsibilityId, Long reasonId, String dateStart, String dateFinish) throws JRException, ParseException {
+        List<MonthReportDTO> reportData = new ArrayList<>();
+        Filial empFilial = filialRepository.findById(empFilialId).orElse(null);
+        Reason reason = reasonRepository.getById(reasonId);
+        Responsibilities responsibilities = responsibilitiesRepository.getById(responsibilityId);
+        Filial filial = responsibilities.getHotel().getFilial();
+        String guestFilialStr = "";
+        Long daysCountSummary = 0L;
+        Double costSummary = 0.0;
+        Date minDate = dateFormatter.parse(dateStart);
+        Date maxDate = dateFormatter.parse(dateFinish);
+        int count = 1;
+        //dateStart < maxDate && minDate < dateFinish
+        //[max(dateStart, minDate), min(maxDate, dateFinish)]
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckouted(maxDate, minDate, false)) {
+            Filial guestFilial = null;
+            if (guest.getEmployee() != null) {
+                guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
+                guestFilialStr = guestFilial.getName();
+            }
+            Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+            if (empFilial != null) {
+                if (guestFilial != null) {
+                    if (guestFilial.getId() != empFilial.getId()) continue;
+                }
+                else continue;
+            } else {
+                if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
+            }
+            if (guest.getReason().getId() != reason.getId()) continue;
+            if (responsibilities.getHotel() != guestHotel) continue;
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReason(filial, guest.getRoom().getFlat().getHotel(), guest.getReason());
+            MonthReportDTO monthReportDTO = new MonthReportDTO();
+            monthReportDTO.setId(String.valueOf(count));
+            monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
+            if (guest.getDateStart().compareTo(minDate) > 0)
+                monthReportDTO.setDateStart(dateFormatter.format(guest.getDateStart()));
+            else
+                monthReportDTO.setDateStart(dateFormatter.format(minDate));
+            if (guest.getDateFinish().compareTo(maxDate) < 0)
+                monthReportDTO.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+            else
+                monthReportDTO.setDateFinish(dateFormatter.format(maxDate));
+            Long daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS);
+            daysCountSummary += daysCount;
+            monthReportDTO.setDaysCount(String.valueOf(daysCount));
+            if (contracts.size() > 0) {
+                monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost()));
+                monthReportDTO.setCost(String.valueOf(daysCount * contracts.get(0).getCost()));
+                costSummary += daysCount * contracts.get(0).getCost().intValue();
+            }
+            if (guest.getEmployee() != null) {
+                monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
+            } else {
+                monthReportDTO.setTabnum("   ");
+            }
+            monthReportDTO.setMemo(guest.getMemo());
+            reportData.add(monthReportDTO);
+            count++;
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MonthReport.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("filial", filial.getName());
+        parameters.put("filialFrom", guestFilialStr);
+        parameters.put("hotelLocation", responsibilities.getHotel().getName() + ", " + responsibilities.getHotel().getLocation());
+        parameters.put("daysCountSummary", daysCountSummary.toString());
+        parameters.put("costSummary", costSummary.toString());
+        String respName = responsibilities.getEmployee().getFirstname().charAt(0) + ". " + responsibilities.getEmployee().getSecondName().charAt(0) + ". " + responsibilities.getEmployee().getLastname();
+        String respPost = postRepository.getById(responsibilities.getEmployee().getIdPoststaff().longValue()).getName();
+        parameters.put("respPost", respPost);
+        parameters.put("respName", respName);
+        if (empFilial != null) {
+            String bossF = empFilial.getBoss().split(" ")[0];
+            String bossN = empFilial.getBoss().split(" ")[1];
+            String bossS = empFilial.getBoss().split(" ")[2];
+            String bossPost = empFilial.getBoss().split(" ")[3] + " " + empFilial.getBoss().split(" ")[4];
+            parameters.put("filialBossPost", bossPost);
+            parameters.put("filialBossName", bossF + " " + bossN.charAt(0) + ". " + bossS.charAt(0) + ".");
+        } else {
+            parameters.put("filialBossPost", "");
+            parameters.put("filialBossName", "");
+        }
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint);
+    }
+
+    public List<ContractDTO> getAllByFilialAndHotel(Long filialId, Long hotelId, Long reasonId, String orgStr, String billing) {
+        List<ContractDTO> response = new ArrayList<>();
+        Organization org = organizationRepository.findByName(orgStr);
+        Filial filial = filialRepository.findById(filialId).orElse(null);
+        Hotel hotel = hotelRepository.findById(hotelId).orElse(null);
+        Reason reason = reasonRepository.findById(reasonId).orElse(null);
+        for (Contract contract : contractRepository.findAllByFilialAndHotelAndReasonAndOrganizationAndBilling(filial, hotel, reason, org, billing)) {
+            ContractDTO contractDTO = new ContractDTO();
+            contractDTO.setId(contract.getId());
+            contractDTO.setFilial(contract.getFilial().getName());
+            contractDTO.setFilialId(contract.getFilial().getId());
+            if (contract.getHotel() != null) {
+                contractDTO.setHotel(contract.getHotel().getName());
+                contractDTO.setHotelId(contract.getHotel().getId());
+            }
+            if (contract.getOrganization() != null) {
+                contractDTO.setOrganization(contract.getOrganization().getName());
+                contractDTO.setOrganizationId(contract.getOrganization().getId());
+            }
+            contractDTO.setDocnum(contract.getDocnum());
+            contractDTO.setCost(contract.getCost());
+            contractDTO.setReasonId(contract.getReason().getId());
+            contractDTO.setNote(contract.getNote());
+            contractDTO.setOsnovanie(contract.getReason().getName());
+            contractDTO.setBilling(contract.getBilling());
+            response.add(contractDTO);
+        }
+        return response;
+    }
+}

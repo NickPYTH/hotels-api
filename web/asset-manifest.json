@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/hotels/static/css/main.d9c16202.chunk.css",
+    "main.js": "/hotels/static/js/main.04a13141.chunk.js",
+    "main.js.map": "/hotels/static/js/main.04a13141.chunk.js.map",
+    "runtime-main.js": "/hotels/static/js/runtime-main.eb8df043.js",
+    "runtime-main.js.map": "/hotels/static/js/runtime-main.eb8df043.js.map",
+    "static/js/2.73eb6791.chunk.js": "/hotels/static/js/2.73eb6791.chunk.js",
+    "static/js/2.73eb6791.chunk.js.map": "/hotels/static/js/2.73eb6791.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.d9c16202.chunk.css.map": "/hotels/static/css/main.d9c16202.chunk.css.map",
+    "static/js/2.73eb6791.chunk.js.LICENSE.txt": "/hotels/static/js/2.73eb6791.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.eb8df043.js",
+    "static/js/2.73eb6791.chunk.js",
+    "static/css/main.d9c16202.chunk.css",
+    "static/js/main.04a13141.chunk.js"
+  ]
+}

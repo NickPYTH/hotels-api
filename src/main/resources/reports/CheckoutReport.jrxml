@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CheckoutReport" pageWidth="595" pageHeight="1500" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="a400ba1a-09b9-46dc-88d2-e6290e64da5d">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="filial" class="java.lang.String"/>
+	<parameter name="hotelName" class="java.lang.String"/>
+	<parameter name="hotelLocation" class="java.lang.String"/>
+	<parameter name="reportNumber" class="java.lang.String"/>
+	<parameter name="reportDate" class="java.lang.String"/>
+	<parameter name="fio" class="java.lang.String"/>
+	<parameter name="tabnum" class="java.lang.String"/>
+	<parameter name="guestJob" class="java.lang.String"/>
+	<parameter name="roomNumber" class="java.lang.String"/>
+	<parameter name="korpusNumber" class="java.lang.String"/>
+	<parameter name="checkInDate" class="java.lang.String"/>
+	<parameter name="checkInTime" class="java.lang.String"/>
+	<parameter name="checkOutDate" class="java.lang.String"/>
+	<parameter name="checkOutTime" class="java.lang.String"/>
+	<parameter name="daysCount" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="respName" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<title>
+		<band height="70" splitType="Stretch">
+			<staticText>
+				<reportElement x="430" y="-10" width="125" height="40" uuid="6e101e80-36a4-46b6-bb29-181aeb87c4ed"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Форма 1-Пр
+утверждена Приказом
+ООО "Газпром трансгаз Сургут"
+от 11 марта 2010 г. №253]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-20" y="30" width="594" height="40" uuid="93573579-a86c-4ca9-bac1-fb979904304c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ООО "Газпром трансгаз Сургут" - ИНН 8617002073, КПП 997250001, 628412, РФ, ХМАО-Югра, г.Сургут, ул.Университетская, зд.1]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="150" height="20" uuid="377af6a8-329f-4718-a520-df96f5b1b6c4"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{filial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="150" height="20" uuid="7f7144a6-d9ab-46f9-a473-db7a7b4413cb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Наименование филиала]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="150" y="0" width="250" height="20" uuid="3db4b3fb-097b-4dc9-b094-3352ba63ec03"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hotelName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="150" y="20" width="250" height="20" uuid="945f45eb-e668-4871-b420-b6265bd47ee3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Наименование общежития]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="400" y="0" width="154" height="20" uuid="f5b36b77-1698-4290-a11f-3d17ae6dcda8"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hotelLocation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="20" width="154" height="20" uuid="92b40a0c-f20b-402a-b596-4eb52bf55100"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Местонахождение общежития]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="710">
+			<staticText>
+				<reportElement x="410" y="400" width="150" height="20" uuid="9da58dcc-96d3-4496-a3ae-ed2258bb367a"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Местонахождение общежития]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="0" width="280" height="20" uuid="c216de32-d599-4a2c-8129-6d916a455d9a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчет о проживании №" + $P{reportNumber} +" от " + $P{reportDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="20" width="90" height="30" uuid="f39cdb4a-602a-4505-ad0e-85122471d2f6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ф.И.О.
+проживающего
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="95" y="20" width="190" height="30" uuid="6c60445b-235a-452e-bb52-ae8ce3996384"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="20" width="100" height="30" uuid="06aabec3-dc02-4af2-8b1a-86566bb990d6"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Табелный номер
+проживающего
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="385" y="20" width="174" height="30" uuid="a7162f31-b907-4107-b1af-91087ce56956"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tabnum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="60" width="280" height="30" uuid="336ae6f2-faa3-4131-8b55-bf7f37fabba6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Место работы проживающего (наименование структурного подразделения)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="285" y="60" width="274" height="30" uuid="c51bdc8a-1345-490a-bcbb-cd4307561d68"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{guestJob}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="100" width="130" height="20" uuid="67dbb47f-77e1-449f-b536-11f5ae6ebbf7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[№ комнаты]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="135" y="100" width="150" height="20" uuid="7844885c-3fce-4bce-8bd8-b84d64887da0"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{roomNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="100" width="130" height="20" uuid="9d1d35ad-6c95-4117-bd83-73f796ecf24e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[№ корпуса]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="415" y="100" width="144" height="20" uuid="15e80cd6-266c-48ac-8ae8-766404aeb955"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{korpusNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="130" width="90" height="40" uuid="4be20c2e-eab7-4d0c-804e-d376c56291f0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Заезд]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="130" width="100" height="20" uuid="6a8d2f76-ac11-4fd5-8b00-f9166ca5afcc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="130" width="90" height="20" uuid="10bf04ea-d0df-4579-b396-ac910aa95c74">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Время]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="95" y="150" width="100" height="20" uuid="45175eb3-2e95-486d-aa49-a64130216117"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkInDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="150" width="90" height="20" uuid="ae4b7d36-d8f7-4c75-809b-770f17a0d139"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkInTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="130" width="90" height="40" uuid="80b0e374-35b8-4ab9-8ae7-fe0d2902fb73">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Выезд]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="130" width="100" height="20" uuid="e2e03a2a-194f-431f-8156-f9e62788c212">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="375" y="150" width="100" height="20" uuid="42d9bb30-a4cb-45c5-9eb5-301b86d8795f"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkOutDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="475" y="130" width="84" height="20" uuid="c1662781-1baa-48fa-a1d7-82ef4916566e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Время]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="475" y="150" width="84" height="20" uuid="da9ff542-f48f-4e3f-88c4-c2a7cca5b582"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkOutTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="180" width="280" height="20" uuid="28caac5f-c8a6-41ef-9a9f-87eb89d832a9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Количество прожитых часов/дней (ненужное зачеркнуть)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="285" y="180" width="274" height="20" uuid="8834fa22-7979-4d1e-bee4-6cd09529d1c0"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{daysCount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="210" width="227" height="20" uuid="0fe2923c-1231-43f3-88fa-cda480e72e31"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дежурный по общежитию:                                                                "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="230" width="226" height="20" uuid="75b7af29-307c-4ed1-880a-97e695229407"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Должность лица ответственного за заполнение бланка]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="232" y="210" width="116" height="20" uuid="8c0c88ab-caa3-4323-9264-74a80c7287fe"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" size="10" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["                                                  "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="230" width="116" height="20" uuid="3c2bf9af-5af2-462f-b851-34a248c261cf"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Подпись]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="348" y="230" width="210" height="20" uuid="e1a2eb91-51fe-4b27-8a2d-e10d50046d8d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Расшифровка подписи Ф.И.О.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="250" width="100" height="20" uuid="f6fca4ce-47db-4a84-9f35-6e8938235e00">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Отчет получен]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="115" y="250" width="116" height="20" uuid="6ef6d40f-e530-411b-b2b3-5e00de2ff7e8"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="115" y="270" width="116" height="20" uuid="bb7fec60-db3f-4b6c-a221-bceaaa1fd456"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="232" y="250" width="116" height="20" uuid="ac9240d2-b00f-44a0-b49b-98b0bfcd9463"/>
+				<box padding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["                                                    "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="270" width="116" height="20" uuid="53c6ec3b-5890-46b5-bd3c-0a64369e93bb"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Подпись проживающего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="270" width="130" height="20" uuid="c0d30578-6d97-4e70-a624-1825a4982475"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Расшифровка подписи Ф.И.О.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="300" width="554" height="2" uuid="d4ded08f-3d28-4844-8cff-5521e5c8c305"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="302" width="80" height="18" uuid="85c58028-852a-4c0a-97e3-99b32f020399"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[второй экземпляр]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="420" width="280" height="20" uuid="c1a75489-5185-4043-b803-ece13a004123"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчет о проживании №" + $P{reportNumber} +" от " + $P{reportDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="440" width="90" height="30" uuid="88fea028-d83e-43e0-aee8-a27a02728a0d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ф.И.О.
+проживающего
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="95" y="440" width="190" height="30" uuid="c65f330b-1f2f-4959-a1de-6b770854e827"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="440" width="100" height="30" uuid="dd2c2e29-2d8d-4412-a4f0-df09f2cd34e9"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Табелный номер
+проживающего
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="385" y="440" width="174" height="30" uuid="f3fae9ad-92c4-423c-a8f3-790892e6089d"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tabnum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="480" width="280" height="30" uuid="69be13bb-4406-45f5-bf4a-97210b5d3422">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Место работы проживающего (наименование структурного подразделения)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="285" y="480" width="274" height="30" uuid="9c495848-825a-4ee2-a5aa-f0cb02cff55f"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{guestJob}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="520" width="130" height="20" uuid="d6879f86-15ce-4b65-a840-5e1180a1f8f6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[№ комнаты]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="135" y="520" width="150" height="20" uuid="fc7986d9-5a1d-451e-a2bc-e81aa46960da"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{roomNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="520" width="130" height="20" uuid="ef0984e4-93b1-4a82-9b16-33ecb3db6a38">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[№ корпуса]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="415" y="520" width="144" height="20" uuid="0681768f-e941-46ea-b883-2b13c8c77aaa"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{korpusNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="550" width="90" height="40" uuid="8b930e97-6e83-465e-9c0a-1583f612363f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="4" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Заезд]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="550" width="100" height="20" uuid="f6060e31-215c-4b46-bec9-d340986f4d23">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="550" width="90" height="20" uuid="3c92ebe3-16e1-465b-a1b7-849b40de0ece">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Время]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="95" y="570" width="100" height="20" uuid="40cb8876-0df6-40f0-ba93-78b8751ec360"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkInDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="570" width="90" height="20" uuid="9139a0b4-6922-4311-80a3-e199811faed3"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkInTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="550" width="90" height="40" uuid="a2b89706-0a66-48f8-923c-7f7295b7211d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="4" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Выезд]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="550" width="100" height="20" uuid="d8b2ced3-b78b-43c0-9a93-000da246cfb4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="375" y="570" width="100" height="20" uuid="943fc4f4-6916-49e9-9209-7ed7b9ab8494"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkOutDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="475" y="550" width="84" height="20" uuid="2789f354-1b05-42cb-a9f0-200dc1edd294">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Время]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="475" y="570" width="84" height="20" uuid="7e2c73c2-aa63-4e84-842d-a1b73098c36b"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{checkOutTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="600" width="280" height="20" uuid="edfeb636-32ed-4a8e-b339-00cf68f78612">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Количество прожитых часов/дней (ненужное зачеркнуть)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="285" y="600" width="274" height="20" uuid="f2ccac1c-c335-4c59-af0f-4a68b6506a99"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{daysCount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="630" width="227" height="20" uuid="6235f2de-e5b4-47cf-9464-2277402dac9e"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Дежурный по общежитию:                                                                "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="650" width="226" height="20" uuid="06b6568a-bf91-449a-a18a-123c1797a44a"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Должность лица ответственного за заполнение бланка]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="232" y="630" width="116" height="20" uuid="279fb9a1-9af2-43fa-8c8c-56c2b5710fee"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" size="10" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["                                                  "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="650" width="116" height="20" uuid="29fa75dd-0502-4d43-9eb4-1359b7b189d6"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Подпись]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="348" y="650" width="210" height="20" uuid="3f9c3061-c77e-4ecc-8a64-fcca58373789"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Расшифровка подписи Ф.И.О.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="670" width="100" height="20" uuid="85121ef1-2d00-4b3e-9e50-a62768d336cd">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="5" bottomPadding="1" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Отчет получен]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="115" y="670" width="116" height="20" uuid="9f4621cf-47a6-4295-987b-700713ca8fcc"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="115" y="690" width="116" height="20" uuid="c5531af2-fc95-4a3d-b9a4-1a684772be1e"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="232" y="670" width="116" height="20" uuid="fffcb445-70fa-4a33-ba8c-176844ff6c0a"/>
+				<box padding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Serif" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["                                                    "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="690" width="116" height="20" uuid="7d7b9c34-ef64-4c4b-b5aa-1f842d00d17d"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Подпись проживающего]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="690" width="130" height="20" uuid="943d351c-77c7-486d-a174-e921421d93d9"/>
+				<box>
+					<topPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Расшифровка подписи Ф.И.О.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="434" y="310" width="125" height="30" uuid="e786c8fd-fe0f-442a-9eeb-ca9b250e619c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Форма 1-Пр
+утверждена Приказом
+ООО "Газпром трансгаз Сургут"
+от 11 марта 2010 г. №253]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="5" y="380" width="175" height="20" uuid="848aaa0f-93e2-4c8f-a975-9feb2d2297c6"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{filial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="400" width="175" height="20" uuid="51825ba1-bc27-4a57-b78c-ed44de062d3e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Наименование филиала]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="380" width="230" height="20" uuid="4030872a-ee80-4b89-bf14-6cb3855eb428"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hotelName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="400" width="230" height="20" uuid="5d14dda5-8f81-462f-87e3-2ba4f21db9cf"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="6"/>
+				</textElement>
+				<text><![CDATA[Наименование общежития]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="410" y="380" width="150" height="20" uuid="38bb78d3-f0c4-4033-ba6f-3002e6ce1cc3"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hotelLocation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-20" y="340" width="594" height="40" uuid="aadd4b30-cecb-4570-802f-ab4087293cb4"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ООО "Газпром трансгаз Сургут" - ИНН 8617 002073, КПП 235203002, РФ, 628412, Тюменская область,ХМАО -Югра, г.Сургут, ул.Университетская, д.1]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="348" y="210" width="210" height="20" uuid="55feb4d8-3cd6-4842-b594-7227088461bf"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{respName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="348" y="250" width="210" height="20" uuid="9250b03b-0aba-41ef-8100-414163fa21ef"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="348" y="630" width="210" height="20" uuid="5ab14e02-a126-4a12-83a2-30e1c025ff5a"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{respName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="348" y="670" width="210" height="20" uuid="15cb8c83-d69a-4713-9f31-0c5c5a799dd3"/>
+				<box topPadding="1" leftPadding="5" bottomPadding="0" rightPadding="1">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Serif" size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+</jasperReport>
