@@ -146,6 +146,35 @@ public class GuestController {
         }
     }
 
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<GuestDTO> update(@RequestParam Long id) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            GuestDTO response = guestService.delete(id);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/delete", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/delete");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/delete", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/delete");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "/getFioByTabnum")
     public ResponseEntity<GuestDTO> getFioByTabnum(@RequestParam Integer tabnum) {
         long startTime = System.nanoTime();

@@ -247,7 +247,7 @@ public class HotelService {
             int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
             int count = 0;
             while(count<=daysCount){
-                Date tmp = dateFormatter.parse(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                Date tmp = dateTimeFormatter.parse(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))+" 23:59");
                 Integer countBusyBeds = 0; // расчет занятых мест в отеле за конкретный день
                 for (Guest guest: guestRepository.findAllByDateStartBeforeAndDateFinishAfter(tmp, tmp)){
                     Hotel hotel1 = guest.getRoom().getFlat().getHotel();
@@ -256,14 +256,14 @@ public class HotelService {
                     }
                 }
                 HotelsStatsReportDTO record1 = new HotelsStatsReportDTO();
-                record1.setDate(dateFormatter.format(tmp));
+                record1.setDate(dateTimeFormatter.format(tmp));
                 record1.setHotelId(hotel.getId());
                 record1.setType("emptyBeds");
                 record1.setValue(bedsByDays-countBusyBeds);
                 response.add(record1);
 
                 HotelsStatsReportDTO record2 = new HotelsStatsReportDTO();
-                record2.setDate(dateFormatter.format(tmp));
+                record2.setDate(dateTimeFormatter.format(tmp));
                 record2.setHotelId(hotel.getId());
                 record2.setType("busyBeds");
                 record2.setValue(countBusyBeds);

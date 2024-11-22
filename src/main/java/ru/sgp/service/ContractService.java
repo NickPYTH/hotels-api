@@ -19,6 +19,8 @@ import ru.sgp.repository.*;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +44,7 @@ public class ContractService {
     private PostRepository postRepository;
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -156,26 +159,23 @@ public class ContractService {
         Reason reason = reasonRepository.getById(reasonId);
         Responsibilities responsibilities = responsibilitiesRepository.getById(responsibilityId);
         Filial filial = responsibilities.getHotel().getFilial();
-        String guestFilialStr = "";
         Long daysCountSummary = 0L;
         Double costSummary = 0.0;
-        Date minDate = dateFormatter.parse(dateStart);
-        Date maxDate = dateFormatter.parse(dateFinish);
+        Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
+        Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
         //dateStart < maxDate && minDate < dateFinish
         //[max(dateStart, minDate), min(maxDate, dateFinish)]
-        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckouted(maxDate, minDate, false)) {
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             Filial guestFilial = null;
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
-                guestFilialStr = guestFilial.getName();
             }
             Hotel guestHotel = guest.getRoom().getFlat().getHotel();
             if (empFilial != null) {
                 if (guestFilial != null) {
                     if (guestFilial.getId() != empFilial.getId()) continue;
-                }
-                else continue;
+                } else continue;
             } else {
                 if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
@@ -186,20 +186,36 @@ public class ContractService {
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
             if (guest.getDateStart().compareTo(minDate) > 0)
-                monthReportDTO.setDateStart(dateFormatter.format(guest.getDateStart()));
+                monthReportDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
             else
-                monthReportDTO.setDateStart(dateFormatter.format(minDate));
+                monthReportDTO.setDateStart(dateTimeFormatter.format(minDate));
             if (guest.getDateFinish().compareTo(maxDate) < 0)
-                monthReportDTO.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+                monthReportDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
             else
-                monthReportDTO.setDateFinish(dateFormatter.format(maxDate));
-            Long daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS);
+                monthReportDTO.setDateFinish(dateTimeFormatter.format(maxDate));
+            Long daysCount = 1L;
+            LocalDateTime guestStart = guest.getDateStart().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            LocalDateTime periodFinish = maxDate.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {
+                daysCount = TimeUnit.DAYS.convert(maxDate.getTime() - minDate.getTime(), TimeUnit.MILLISECONDS);  // Все дни заданного периода
+            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {
+                daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS); // Все дни внутри периода
+            } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
+                daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - minDate.getTime(), TimeUnit.MILLISECONDS);
+            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
+                daysCount = TimeUnit.DAYS.convert(maxDate.getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS);
+            }
+            if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;
             monthReportDTO.setDaysCount(String.valueOf(daysCount));
             if (contracts.size() > 0) {
-                monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost()));
-                monthReportDTO.setCost(String.valueOf(daysCount * contracts.get(0).getCost()));
-                costSummary += daysCount * contracts.get(0).getCost().intValue();
+                monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
+                monthReportDTO.setCost(String.valueOf(daysCount * contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
+                costSummary += daysCount * contracts.get(0).getCost().doubleValue();
             }
             if (guest.getEmployee() != null) {
                 monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
@@ -213,16 +229,18 @@ public class ContractService {
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MonthReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
+        parameters.put("periodStart", dateStart);
+        parameters.put("periodFinish", dateFinish);
         parameters.put("filial", filial.getName());
-        parameters.put("filialFrom", guestFilialStr);
         parameters.put("hotelLocation", responsibilities.getHotel().getName() + ", " + responsibilities.getHotel().getLocation());
         parameters.put("daysCountSummary", daysCountSummary.toString());
-        parameters.put("costSummary", costSummary.toString());
+        parameters.put("costSummary", String.format("%.2f", costSummary));
         String respName = responsibilities.getEmployee().getFirstname().charAt(0) + ". " + responsibilities.getEmployee().getSecondName().charAt(0) + ". " + responsibilities.getEmployee().getLastname();
         String respPost = postRepository.getById(responsibilities.getEmployee().getIdPoststaff().longValue()).getName();
         parameters.put("respPost", respPost);
         parameters.put("respName", respName);
         if (empFilial != null) {
+            parameters.put("filialFrom", empFilial.getName());
             String bossF = empFilial.getBoss().split(" ")[0];
             String bossN = empFilial.getBoss().split(" ")[1];
             String bossS = empFilial.getBoss().split(" ")[2];

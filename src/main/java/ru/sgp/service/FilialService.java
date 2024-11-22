@@ -25,7 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class FilialService {
@@ -126,6 +129,23 @@ public class FilialService {
                         record.setDateStart(dateFormatter.format(guest.getDateStart()));
                         record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
                         record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+                        LocalDateTime start = guest.getDateStart().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDateTime();
+                        int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
+                        if (daysCount == 0) daysCount = 1;
+                        record.setNights(String.valueOf(daysCount));
+                        if (guest.getContract() != null) {
+                            record.setContract(guest.getContract().getDocnum());
+                            record.setContractPrice(guest.getContract().getCost().toString().replaceAll("\\.", "\\,"));
+                            record.setPeriodPrice(String.valueOf(daysCount * guest.getContract().getCost()).replaceAll("\\.", "\\,"));
+                        } else {
+                            record.setContract("");
+                            record.setContractPrice("");
+                            record.setPeriodPrice("");
+                        }
+                        record.setReason(guest.getReason() != null ? guest.getReason().getName() : "");
+                        record.setBilling(guest.getBilling());
                         if (guest.getEmployee() != null) {
                             record.setTabnum(guest.getEmployee().getTabnum().toString());
                             record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());

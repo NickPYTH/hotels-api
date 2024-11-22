@@ -225,6 +225,7 @@ public class ContractController {
         byte[] reportData = contractService.getMonthReport(empFilialId, responsibilityId, reasonId, dateStart, dateFinish);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
+
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReport", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

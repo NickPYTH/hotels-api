@@ -79,7 +79,7 @@ public class FlatService {
                     guestDTO.setSecondName(guest.getSecondName());
                     guestDTO.setRoomId(room.getId());
                     guestDTO.setRoomName(room.getName());
-                    guestDTO.setFlatId(roomDTO.getFlatId());
+                    guestDTO.setFlatId(room.getFlat().getId());
                     guestDTO.setFlatName(flat.getName());
                     guestDTO.setFilialId(flat.getHotel().getFilial().getId());
                     guestDTO.setFilialName(flat.getHotel().getFilial().getName());
@@ -172,12 +172,17 @@ public class FlatService {
                 guestDTO.setReason(guest.getReason().getName());
                 guestDTO.setBilling(guest.getBilling());
                 guestDTO.setCheckouted(guest.getCheckouted());
-                guestDTO.setDaysCount(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
+                //String daysCount = String.valueOf(TimeUnit.HOURS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS) / 24);
+                String daysCount = String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS));
+                guestDTO.setDaysCount(daysCount.equals("0") ? "1" : daysCount);
                 if (guest.getContract() != null) {
                     guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setCostByNight(guest.getContract().getCost());
                     guestDTO.setNote(guest.getContract().getDocnum());
-                    guestDTO.setCost(guestDTO.getCostByNight() * Integer.parseInt(guestDTO.getDaysCount()));
+                    if (Integer.parseInt(guestDTO.getDaysCount()) > 0)
+                        guestDTO.setCost(guestDTO.getCostByNight() * Integer.parseInt(guestDTO.getDaysCount()));
+                    else
+                        guestDTO.setCost(guestDTO.getCostByNight());
                 }
                 guestDTO.setMale(guest.getMale());
                 if (guest.getEmployee() != null) {
@@ -275,5 +280,64 @@ public class FlatService {
             }
         }
         return result;
+    }
+
+    @Transactional
+    public List<GuestDTO> getAllNotCheckotedBeforeTodayByHotelId(Long hotelId, String dateStr) throws ParseException {
+        Hotel hotel = hotelRepository.getById(hotelId);
+        Date date = dateTimeFormatter.parse(dateStr);
+        List<GuestDTO> response = new ArrayList<>();
+        for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
+            for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
+                for (Guest guest : guestRepository.findAllByRoomAndDateFinishLessThanEqualAndCheckouted(room, date, false)) {
+                    GuestDTO guestDTO = new GuestDTO();
+                    guestDTO.setId(guest.getId());
+                    guestDTO.setFirstname(guest.getFirstname());
+                    guestDTO.setLastname(guest.getLastname());
+                    guestDTO.setSecondName(guest.getSecondName());
+                    guestDTO.setRoomId(room.getId());
+                    guestDTO.setRoomName(room.getName());
+                    guestDTO.setFlatId(room.getFlat().getId());
+                    guestDTO.setFlatName(flat.getName());
+                    guestDTO.setFilialId(flat.getHotel().getFilial().getId());
+                    guestDTO.setFilialName(flat.getHotel().getFilial().getName());
+                    guestDTO.setHotelId(flat.getHotel().getId());
+                    guestDTO.setHotelName(flat.getHotel().getName());
+                    guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
+                    guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+                    guestDTO.setNote(guest.getNote());
+                    guestDTO.setRegPoMestu(guest.getRegPoMestu());
+                    guestDTO.setMemo(guest.getMemo());
+                    guestDTO.setReason(guest.getReason().getName());
+                    guestDTO.setBilling(guest.getBilling());
+                    guestDTO.setMale(guest.getMale());
+                    guestDTO.setCheckouted(guest.getCheckouted());
+                    Integer daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
+                    guestDTO.setDaysCount(daysCount == 0 ? "1" : daysCount.toString());
+                    if (guest.getContract() != null) {
+                        guestDTO.setContractNumber(guest.getContract().getDocnum());
+                        guestDTO.setCostByNight(guest.getContract().getCost());
+                        if (daysCount == 0)
+                            guestDTO.setCost(guest.getContract().getCost());
+                        else
+                            guestDTO.setCost(guest.getContract().getCost() * daysCount);
+                    }
+                    if (guest.getEmployee() != null) {
+                        Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
+                        String guestPost = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+                        guestDTO.setPost(guestPost);
+                        guestDTO.setFilialEmployee(filial.getName());
+                        guestDTO.setTabnum(guest.getEmployee().getTabnum());
+                    } else {
+                        if (guest.getOrganization() != null) {
+                            guestDTO.setFilialEmployee(guest.getOrganization().getName());
+                            guestDTO.setOrganization(guest.getOrganization().getName());
+                        }
+                    }
+                    response.add(guestDTO);
+                }
+            }
+        }
+        return response;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.FlatDTO;
+import ru.sgp.dto.GuestDTO;
 import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.FlatService;
@@ -53,6 +54,36 @@ public class FlatController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/flat/getAllByHotelId");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getAllNotCheckotedBeforeTodayByHotelId")
+    public ResponseEntity<List<GuestDTO>> getAllNotCheckotedBeforeTodayByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        List<GuestDTO> response = flatService.getAllNotCheckotedBeforeTodayByHotelId(id, date);
+
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllNotCheckotedBeforeTodayByHotelId", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flat/getAllNotCheckotedBeforeTodayByHotelId");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/getAllNotCheckotedBeforeTodayByHotelId", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flat/getAllNotCheckotedBeforeTodayByHotelId");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

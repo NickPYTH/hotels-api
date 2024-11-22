@@ -17,4 +17,10 @@ public class FilialReportDTO {
     private String tabnum;
     private String checkouted;
     private String guestFilial;
+    private String contract;
+    private String contractPrice;
+    private String periodPrice;
+    private String reason;
+    private String billing;
+    private String nights;
 }

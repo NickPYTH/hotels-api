@@ -49,9 +49,8 @@ public class HotelController {
     public ResponseEntity<List<HotelsStatsReportDTO>> getHotelsStats(@RequestParam Long idFilial, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<HotelsStatsReportDTO> response = hotelService.getHotelsStats(idFilial, dateStart, dateFinish);
-
         try {
+            List<HotelsStatsReportDTO> response = hotelService.getHotelsStats(idFilial, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getHotelStats", duration, "");
             record.setStatus("OK");

@@ -275,4 +275,11 @@ public class GuestService {
         }
         return guestDTO;
     }
+
+    public GuestDTO delete(Long id) {
+        GuestDTO guestDTO = new GuestDTO();
+        guestRepository.deleteById(id);
+        guestDTO.setId(id);
+        return guestDTO;
+    }
 }

@@ -182,7 +182,8 @@ public class UserService {
             parameters.put("tabnum", guest.getEmployee().getTabnum().toString());
         } else parameters.put("tabnum", "");
         if (guest.getEmployee() != null) {
-            String guestJob = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+            Filial guestFilial = filialRepository.findByCode(guest. getEmployee().getIdFilial());
+            String guestJob = guestFilial.getName();
             parameters.put("guestJob", guestJob);
         } else parameters.put("guestJob", guest.getOrganization().getName());
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
@@ -195,7 +196,8 @@ public class UserService {
         parameters.put("checkInTime", timeFormat.format(guest.getDateStart()));
         parameters.put("checkOutDate", dateFormat.format(guest.getDateFinish()));
         parameters.put("checkOutTime", timeFormat.format(guest.getDateFinish()));
-        parameters.put("daysCount", String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
+        String daysCount = String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS));
+        parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         parameters.put("date", dateFormat.format(new Date()));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
         return export(jasperPrint);
