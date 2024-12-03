@@ -17,6 +17,7 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +33,6 @@ public class UserService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private RoleRepository roleRepository;
-
     Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private GuestRepository guestRepository;
@@ -42,6 +42,7 @@ public class UserService {
     private CommendantsRepository commendantsRepository;
     @Autowired
     private PostRepository postRepository;
+    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public UserDTO getCurrent() {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
@@ -162,7 +163,9 @@ public class UserService {
     }
 
     @Transactional
-    public byte[] getCheckoutReport(Long guestId, Integer roomNumber) throws JRException {
+    public byte[] getCheckoutReport(Long guestId, Integer roomNumber, String periodStartStr, String periodEndStr) throws JRException, ParseException {
+        Date dateStart = dateTimeFormat.parse(periodStartStr);
+        Date dateFinish = dateTimeFormat.parse(periodEndStr);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         Guest guest = guestRepository.getById(guestId);
@@ -182,7 +185,7 @@ public class UserService {
             parameters.put("tabnum", guest.getEmployee().getTabnum().toString());
         } else parameters.put("tabnum", "");
         if (guest.getEmployee() != null) {
-            Filial guestFilial = filialRepository.findByCode(guest. getEmployee().getIdFilial());
+            Filial guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             String guestJob = guestFilial.getName();
             parameters.put("guestJob", guestJob);
         } else parameters.put("guestJob", guest.getOrganization().getName());
@@ -192,11 +195,11 @@ public class UserService {
         parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname() + " " + respEmp.getSecondName());
         parameters.put("roomNumber", flat.getName());
         parameters.put("korpusNumber", "");
-        parameters.put("checkInDate", dateFormat.format(guest.getDateStart()));
-        parameters.put("checkInTime", timeFormat.format(guest.getDateStart()));
-        parameters.put("checkOutDate", dateFormat.format(guest.getDateFinish()));
-        parameters.put("checkOutTime", timeFormat.format(guest.getDateFinish()));
-        String daysCount = String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS));
+        parameters.put("checkInDate", dateFormat.format(dateStart));
+        parameters.put("checkInTime", timeFormat.format(dateStart));
+        parameters.put("checkOutDate", dateFormat.format(dateFinish));
+        parameters.put("checkOutTime", timeFormat.format(dateFinish));
+        String daysCount = String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS));
         parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         parameters.put("date", dateFormat.format(new Date()));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
