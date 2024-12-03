@@ -173,8 +173,10 @@ public class FlatService {
                 guestDTO.setBilling(guest.getBilling());
                 guestDTO.setCheckouted(guest.getCheckouted());
                 //String daysCount = String.valueOf(TimeUnit.HOURS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS) / 24);
-                String daysCount = String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS));
-                guestDTO.setDaysCount(daysCount.equals("0") ? "1" : daysCount);
+                Date cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+                Date cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+                String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedFinishDate.getTime() - cuttedStartDate.getTime(), TimeUnit.MILLISECONDS));
+                guestDTO.setDaysCount(daysCount);
                 if (guest.getContract() != null) {
                     guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setCostByNight(guest.getContract().getCost());

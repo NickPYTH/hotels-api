@@ -19,8 +19,6 @@ import ru.sgp.repository.*;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -186,28 +184,26 @@ public class ContractService {
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
             if (guest.getDateStart().compareTo(minDate) > 0)
-                monthReportDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
+                monthReportDTO.setDateStart(dateFormatter.format(guest.getDateStart()));
             else
-                monthReportDTO.setDateStart(dateTimeFormatter.format(minDate));
+                monthReportDTO.setDateStart(dateFormatter.format(minDate));
             if (guest.getDateFinish().compareTo(maxDate) < 0)
-                monthReportDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+                monthReportDTO.setDateFinish(dateFormatter.format(guest.getDateFinish()));
             else
-                monthReportDTO.setDateFinish(dateTimeFormatter.format(maxDate));
+                monthReportDTO.setDateFinish(dateFormatter.format(maxDate));
             Long daysCount = 1L;
-            LocalDateTime guestStart = guest.getDateStart().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-            LocalDateTime periodFinish = maxDate.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-            if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {
-                daysCount = TimeUnit.DAYS.convert(maxDate.getTime() - minDate.getTime(), TimeUnit.MILLISECONDS);  // Все дни заданного периода
-            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {
-                daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS); // Все дни внутри периода
+            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+            Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
+            Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
+            if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
+                daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
+                daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
             } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
-                daysCount = TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - minDate.getTime(), TimeUnit.MILLISECONDS);
+                daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
             } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
-                daysCount = TimeUnit.DAYS.convert(maxDate.getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS);
+                daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
             }
             if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;

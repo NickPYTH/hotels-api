@@ -1,18 +1,24 @@
 package ru.sgp.service;
 
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.report.GuestReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static ru.sgp.spnego.SpnegoHelper.findUsernameByTabnum;
 
@@ -30,6 +36,17 @@ public class GuestService {
     OrganizationRepository organizationRepository;
     @Autowired
     ReasonRepository reasonRepository;
+
+    public byte[] export(JasperPrint jasperPrint) throws JRException {
+        Exporter exporter;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        exporter = new JRXlsxExporter();
+        //exporter = new JRPdfExporter();
+        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+        exporter.exportReport();
+        return outputStream.toByteArray();
+    }
 
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
@@ -282,4 +299,39 @@ public class GuestService {
         guestDTO.setId(id);
         return guestDTO;
     }
+
+    public byte[] getGuestReport() throws JRException {
+        List<GuestReportDTO> guestReportDTOS = new ArrayList<>();
+        for (Guest guest : guestRepository.findAll()) {
+            GuestReportDTO guestReportDTO = new GuestReportDTO();
+            guestReportDTO.setId(guest.getId().toString());
+            guestReportDTO.setSurname(guest.getLastname());
+            guestReportDTO.setSecondName(guest.getSecondName());
+            guestReportDTO.setName(guest.getFirstname());
+            guestReportDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
+            guestReportDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+            guestReportDTO.setRoom(guest.getRoom().getFlat().getName());
+            guestReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
+            guestReportDTO.setFilial(guest.getRoom().getFlat().getHotel().getFilial().getName());
+            guestReportDTO.setOrg(guest.getOrganization().getName());
+            guestReportDTO.setRepPoMestu(guest.getRegPoMestu() ? "+" : "-");
+            guestReportDTO.setCz(guest.getMemo());
+            guestReportDTO.setBilling(guest.getBilling());
+            guestReportDTO.setReason(guest.getReason().getName());
+            guestReportDTO.setMale(guest.getMale() ? "man" : "woman");
+            guestReportDTO.setCheckouted(guest.getCheckouted() ? "+" : "-");
+            if (guest.getContract() != null)
+                guestReportDTO.setContract(guest.getContract().getDocnum());
+            else
+                guestReportDTO.setContract("");
+            guestReportDTO.setBed(guest.getRoom().getName());
+            guestReportDTOS.add(guestReportDTO);
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/GuestReport.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(guestReportDTOS);
+        Map<String, Object> parameters = new HashMap<>();
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint);
+    }
+
 }

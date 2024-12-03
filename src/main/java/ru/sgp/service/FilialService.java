@@ -25,8 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -129,10 +127,16 @@ public class FilialService {
                         record.setDateStart(dateFormatter.format(guest.getDateStart()));
                         record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
                         record.setCheckouted(guest.getCheckouted() ? "+" : "-");
-                        LocalDateTime start = guest.getDateStart().toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDateTime();
-                        int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
+                        Date cuttedStartDate = null;
+                        Date cuttedFinishDate = null;
+                        int daysCount = 0;
+                        try {
+                            cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+                            cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+                            daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(cuttedFinishDate.getTime() - cuttedStartDate.getTime(), TimeUnit.MILLISECONDS)));
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
                         if (daysCount == 0) daysCount = 1;
                         record.setNights(String.valueOf(daysCount));
                         if (guest.getContract() != null) {
