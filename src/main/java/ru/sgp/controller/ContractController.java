@@ -218,30 +218,60 @@ public class ContractController {
         }
     }
 
-    @GetMapping(path = "/getMonthReport")
-    public ResponseEntity<byte[]> getMonthReport(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
+    @GetMapping(path = "/getMonthReportByFilial")
+    public ResponseEntity<byte[]> getMonthReportByFilial(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMonthReport(empFilialId, responsibilityId, reasonId, dateStart, dateFinish);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReport", duration, "");
+            byte[] reportData = contractService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByFilial", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/contract/getMonthReport");
+            record.setPath("/contract/getMonthReportByFilial");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Reestr.xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=ReestrByFilial.xlsx");
             return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMonthReport", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMonthReportByFilial", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/contract/getMonthReport");
+            record.setPath("/contract/getMonthReportByFilial");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getMonthReportByOrganization")
+    public ResponseEntity<byte[]> getMonthReport(@RequestParam Long organizationId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            byte[] reportData = contractService.getMonthReportByOrganization(organizationId, responsibilityId, reasonId, dateStart, dateFinish, billing);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByOrganization", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMonthReportByOrganization");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=ReestrByOrganization.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMonthReportByOrganization", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMonthReportByOrganization");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
