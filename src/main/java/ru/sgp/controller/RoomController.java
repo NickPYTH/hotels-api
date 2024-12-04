@@ -62,11 +62,11 @@ public class RoomController {
     }
 
     @GetMapping(path = "/updateStatus")
-    public ResponseEntity<RoomDTO> updateStatus(@RequestParam Long id) {
+    public ResponseEntity<RoomDTO> updateStatus(@RequestParam Long roomId, @RequestParam Long statusId) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            RoomDTO response = roomService.updateStatus(id);
+            RoomDTO response = roomService.updateStatus(roomId, statusId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/updateStatus", duration, "");
             record.setStatus("OK");

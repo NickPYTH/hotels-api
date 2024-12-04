@@ -210,13 +210,10 @@ public class FlatService {
     }
 
     @Transactional
-    public FlatDTO updateStatus(Long flatId) {
+    public FlatDTO updateStatus(Long flatId, Long statusId) {
+        Status status = statusRepository.getById(statusId);
         Flat flat = flatRepository.getById(flatId);
-        if (flat.getStatus().getId() == 1L) {
-            flat.setStatus(statusRepository.getById(2L));
-        } else if (flat.getStatus().getId() == 2L) {
-            flat.setStatus(statusRepository.getById(1L));
-        }
+        flat.setStatus(status);
         flatRepository.save(flat);
         FlatDTO flatDTO = new FlatDTO();
         return flatDTO;

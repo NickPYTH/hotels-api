@@ -151,11 +151,11 @@ public class FlatController {
     }
 
     @GetMapping(path = "/updateStatus")
-    public ResponseEntity<FlatDTO> updateStatus(@RequestParam Long id) {
+    public ResponseEntity<FlatDTO> updateStatus(@RequestParam Long flatId, @RequestParam Long statusId) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            FlatDTO response = flatService.updateStatus(id);
+            FlatDTO response = flatService.updateStatus(flatId, statusId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/updateStatus", duration, "");
             record.setStatus("OK");

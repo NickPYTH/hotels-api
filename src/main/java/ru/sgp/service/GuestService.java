@@ -133,20 +133,20 @@ public class GuestService {
         guest.setDateFinish(dateFinish);
 
         // Проверка существования жильца в заданном диапазоне и оргнанизации
-//        List<Guest> guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndOrganizationAndLastnameAndFirstnameAndSecondNameAndCheckouted(dateFinish, dateStart, guest.getOrganization(), guest.getLastname(), guest.getFirstname(), guest.getSecondName(), false);
-//        if (guests.size() > 0) {
-//            Guest guestTmp = guests.get(0);
-//            GuestDTO tmp = new GuestDTO();
-//            tmp.setError("Dates range error");
-//            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-//            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-//            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-//            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-//            return tmp;
-//        } else {
-//            guest.setDateStart(dateStart);
-//            guest.setDateFinish(dateFinish);
-//        }
+        List<Guest> guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndOrganizationAndLastnameAndFirstnameAndSecondNameAndCheckouted(dateFinish, dateStart, guest.getOrganization(), guest.getLastname(), guest.getFirstname(), guest.getSecondName(), false);
+        if (guests.size() > 0) {
+            Guest guestTmp = guests.get(0);
+            GuestDTO tmp = new GuestDTO();
+            tmp.setError("Dates range error");
+            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
+            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
+            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
+            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
+            return tmp;
+        } else {
+            guest.setDateStart(dateStart);
+            guest.setDateFinish(dateFinish);
+        }
         // -----
 
         // Проверка комнаты на всем выбранном периоде

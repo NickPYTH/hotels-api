@@ -9,6 +9,7 @@ import ru.sgp.dto.RoomDTO;
 import ru.sgp.model.Flat;
 import ru.sgp.model.Guest;
 import ru.sgp.model.Room;
+import ru.sgp.model.Status;
 import ru.sgp.repository.*;
 
 import java.text.SimpleDateFormat;
@@ -72,14 +73,10 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomDTO updateStatus(Long roomId) {
+    public RoomDTO updateStatus(Long roomId, Long statusId) {
         Room room = roomRepository.getById(roomId);
-        if (room.getStatus().getId() == 1L) {
-            room.setStatus(statusRepository.getById(2L));
-        }
-        else if (room.getStatus().getId() == 2L) {
-            room.setStatus(statusRepository.getById(1L));
-        }
+        Status status = statusRepository.getById(statusId);
+        room.setStatus(status);
         roomRepository.save(room);
         boolean isAllRoomBusy = true;
         for (Room roomTmp: roomRepository.findAllByFlatOrderById(room.getFlat())){
