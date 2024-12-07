@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +24,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelService {
@@ -50,9 +50,12 @@ public class HotelService {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private BedRepository bedRepository;
 
     @Transactional
-    public List<HotelDTO> getAll(Long filialId, String dateStr) throws ParseException {
+    public List<HotelDTO> getAllByFilialIdWithStats(Long filialId, String dateStr) throws ParseException {
         Date date = dateTimeFormatter.parse(dateStr);
         Filial filial = filialRepository.getById(filialId);
         List<HotelDTO> response = new ArrayList<>();
@@ -94,6 +97,11 @@ public class HotelService {
             response.add(hotelDTO);
         }
         return response;
+    }
+
+    @Transactional
+    public List<HotelDTO> getAllByFilialId(Long filialId) throws ParseException {
+        return hotelRepository.findAllByFilial(filialRepository.getById(filialId)).stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
     }
 
     public List<HotelDTO> getAllByCommendant(String dateStr) throws ParseException {
@@ -234,32 +242,34 @@ public class HotelService {
                 roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
                     bedsCount.updateAndGet(v -> v + room.getBedsCount());
                 });
-             });
-            //Integer days = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
+            });
             Integer bedsByDays = bedsCount.get();
-
             LocalDate start = dateStart.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-            LocalDate end = dateFinish.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
             int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
             int count = 0;
-            while(count<=daysCount){
-                Date tmp = dateTimeFormatter.parse(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))+" 23:59");
+            while (count <= daysCount) {
+                Date tmp = dateTimeFormatter.parse(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " 23:59");
                 Integer countBusyBeds = 0; // расчет занятых мест в отеле за конкретный день
-                for (Guest guest: guestRepository.findAllByDateStartBeforeAndDateFinishAfter(tmp, tmp)){
-                    Hotel hotel1 = guest.getRoom().getFlat().getHotel();
-                    if (hotel1.getId() == hotel.getId()){
-                        countBusyBeds+=1;
+                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(tmp, tmp, hotel)) {
+                    Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                    if (guestHotel.getId() == hotel.getId()) {
+                        Room guestRoom = guest.getRoom();
+                        Flat guestFlat = guestRoom.getFlat();
+//                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
+//                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+//                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
+//                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+//                        } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
+                        countBusyBeds += 1;
                     }
                 }
                 HotelsStatsReportDTO record1 = new HotelsStatsReportDTO();
                 record1.setDate(dateTimeFormatter.format(tmp));
                 record1.setHotelId(hotel.getId());
                 record1.setType("emptyBeds");
-                record1.setValue(bedsByDays-countBusyBeds);
+                record1.setValue(bedsByDays - countBusyBeds);
                 response.add(record1);
 
                 HotelsStatsReportDTO record2 = new HotelsStatsReportDTO();

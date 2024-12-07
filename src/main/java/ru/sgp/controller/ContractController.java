@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.ContractDTO;
 import ru.sgp.dto.OrganizationDTO;
 import ru.sgp.model.Log;
-import ru.sgp.repository.FilialRepository;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.ContractService;
 import ru.sgp.utils.SecurityManager;
@@ -31,8 +30,6 @@ public class ContractController {
     private ContractService contractService;
     @Autowired
     LogRepository logsRepository;
-    @Autowired
-    FilialRepository filialRepository;
 
     public MediaType getMediaType() {
         MediaType mediaType;
@@ -280,4 +277,34 @@ public class ContractController {
         }
     }
 
+    @GetMapping(path = "/getMVZReport")
+    public ResponseEntity<byte[]> getMVZReport(@RequestParam Long filialId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            byte[] reportData = contractService.getMVZReport(filialId, dateStart, dateFinish);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReport", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReport");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=MVZreport.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMVZReport", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

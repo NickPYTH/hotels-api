@@ -2,11 +2,10 @@ package ru.sgp.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.sgp.model.Bed;
-import ru.sgp.model.Guest;
-import ru.sgp.model.Organization;
-import ru.sgp.model.Room;
+import ru.sgp.dto.GuestDTO;
+import ru.sgp.model.*;
 
 import java.util.Date;
 import java.util.List;
@@ -32,4 +31,11 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBed(Date date, Date date1, Bed bed);
 
     List<Guest> findAllByRoomAndDateFinishLessThanEqualAndCheckouted(Room room, Date date, Boolean checkouted);
+
+    List<Guest> findAllByOrganization(Organization byId);
+
+    @Query("SELECT DISTINCT guest.lastname FROM Guest guest")
+    List<String> findDistinctLastname();
+
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(Date tmp, Date tmp1, Hotel hotel);
 }

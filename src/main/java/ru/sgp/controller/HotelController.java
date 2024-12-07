@@ -74,13 +74,42 @@ public class HotelController {
         }
     }
 
-    @GetMapping(path = "/getAllByFilialId")
+    @GetMapping(path = "/getAllByFilialIdWithStats")
     public ResponseEntity<List<HotelDTO>> getAllByFilialId(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<HotelDTO> response = hotelService.getAll(id, date);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
+            List<HotelDTO> response = hotelService.getAllByFilialIdWithStats(id, date);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getAllByFilialIdWithStats", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/hotel/getAllByFilialIdWithStats");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/hotel/getAllByFilialIdWithStats", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/hotel/getAllByFilialIdWithStats");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getAllByFilialId")
+    public ResponseEntity<List<HotelDTO>> getAllByFilialId(@RequestParam Long id) throws ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            List<HotelDTO> response = hotelService.getAllByFilialId(id);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getAllByFilialId", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

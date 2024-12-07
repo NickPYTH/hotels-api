@@ -42,7 +42,8 @@ public class UserService {
     private CommendantsRepository commendantsRepository;
     @Autowired
     private PostRepository postRepository;
-    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public UserDTO getCurrent() {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
@@ -164,8 +165,8 @@ public class UserService {
 
     @Transactional
     public byte[] getCheckoutReport(Long guestId, Integer roomNumber, String periodStartStr, String periodEndStr) throws JRException, ParseException {
-        Date dateStart = dateTimeFormat.parse(periodStartStr);
-        Date dateFinish = dateTimeFormat.parse(periodEndStr);
+        Date dateStart = dateTimeFormatter.parse(periodStartStr);
+        Date dateFinish = dateTimeFormatter.parse(periodEndStr);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         Guest guest = guestRepository.getById(guestId);
@@ -199,8 +200,17 @@ public class UserService {
         parameters.put("checkInTime", timeFormat.format(dateStart));
         parameters.put("checkOutDate", dateFormat.format(dateFinish));
         parameters.put("checkOutTime", timeFormat.format(dateFinish));
-        String daysCount = String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS));
-        parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
+        if (dateFormat.format(guest.getDateFinish()).equals(dateFormat.format(dateFinish))) {
+            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
+            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
+            String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS));
+            parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
+        } else {
+            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
+            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
+            String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1);
+            parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
+        }
         parameters.put("date", dateFormat.format(new Date()));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
         return export(jasperPrint);

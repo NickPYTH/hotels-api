@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.sgp.spnego.SpnegoHelper.findUsernameByTabnum;
 
@@ -36,6 +38,8 @@ public class GuestService {
     OrganizationRepository organizationRepository;
     @Autowired
     ReasonRepository reasonRepository;
+
+    ModelMapper modelMapper = new ModelMapper();
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -59,9 +63,8 @@ public class GuestService {
         List<GuestDTO> response = new ArrayList<>();
         for (Guest guest : guestRepository.findAll()) {
             GuestDTO guestDTO = new GuestDTO();
-            if (guest.getEmployee() != null) {
-                guestDTO.setTabnum(guest.getEmployee().getTabnum());
-            }
+            if (guest.getEmployee() != null) guestDTO.setTabnum(guest.getEmployee().getTabnum());
+            if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
             guestDTO.setId(guest.getId());
             guestDTO.setFirstname(guest.getFirstname());
             guestDTO.setLastname(guest.getLastname());
@@ -82,8 +85,7 @@ public class GuestService {
             guestDTO.setReason(guest.getReason().getName());
             guestDTO.setMale(guest.getMale());
             guestDTO.setCheckouted(guest.getCheckouted());
-            if (guest.getOrganization() != null)
-                guestDTO.setOrganization(guest.getOrganization().getName());
+            if (guest.getOrganization() != null) guestDTO.setOrganization(guest.getOrganization().getName());
             guestDTO.setRegPoMestu(guest.getRegPoMestu());
             response.add(guestDTO);
         }
@@ -334,4 +336,11 @@ public class GuestService {
         return export(jasperPrint);
     }
 
+    public List<GuestDTO> getAllByOrganizationId(Long id) {
+        return guestRepository.findAllByOrganization(organizationRepository.getById(id)).stream().map(guest -> modelMapper.map(guest, GuestDTO.class)).collect(Collectors.toList());
+    }
+
+    public List<String> getGuestsLastnames() {
+        return guestRepository.findDistinctLastname();
+    }
 }

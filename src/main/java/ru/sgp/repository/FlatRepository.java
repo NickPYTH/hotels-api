@@ -15,4 +15,5 @@ public interface FlatRepository extends JpaRepository<Flat, Long> {
     List<Flat> findAllByHotelAndFloorOrderById(Hotel hotel, Integer floor);
 
     Flat findByNameAndFloorAndHotel(String name, Integer floor, Hotel hotel);
+
 }

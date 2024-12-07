@@ -63,6 +63,35 @@ public class GuestController {
         }
     }
 
+    @GetMapping(path = "/getAllByOrganizationId")
+    public ResponseEntity<List<GuestDTO>> getAllByOrganizationId(@RequestParam Long id) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<GuestDTO> response = guestService.getAllByOrganizationId(id);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getAllByOrganizationId", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getAllByOrganizationId");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/getAllByOrganizationId", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getAllByOrganizationId");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping(path = "/checkout")
     public ResponseEntity<GuestDTO> checkout(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -151,7 +180,7 @@ public class GuestController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<GuestDTO> update(@RequestParam Long id) {
+    public ResponseEntity<GuestDTO> delete(@RequestParam Long id) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
@@ -200,6 +229,35 @@ public class GuestController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/guest/getFioByTabnum");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getGuestsLastnames")
+    public ResponseEntity<List<String>> getGuestsLastnames() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<String> response = guestService.getGuestsLastnames();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getGuestsLastnames", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getGuestsLastnames");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/getGuestsLastnames", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getGuestsLastnames");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

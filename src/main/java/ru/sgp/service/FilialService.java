@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class FilialService {
@@ -45,6 +47,7 @@ public class FilialService {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -56,7 +59,7 @@ public class FilialService {
     private BedRepository bedRepository;
 
     @Transactional
-    public List<FilialDTO> getAll(String dateStr) throws ParseException {
+    public List<FilialDTO> getAllWithStats(String dateStr) throws ParseException {
         Date date = dateTimeFormatter.parse(dateStr);
         List<FilialDTO> response = new ArrayList<>();
         for (Filial filial : filialRepository.findAll()) {
@@ -91,6 +94,11 @@ public class FilialService {
             response.add(filialDTO);
         }
         return response;
+    }
+
+    @Transactional
+    public List<FilialDTO> getAll() throws ParseException {
+        return filialRepository.findAll().stream().map(filial -> modelMapper.map(filial, FilialDTO.class)).collect(Collectors.toList());
     }
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
