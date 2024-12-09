@@ -291,6 +291,7 @@ public class GuestService {
             guestDTO.setLastname(employee.getLastname());
             guestDTO.setSecondName(employee.getSecondName());
             guestDTO.setEmail(findUsernameByTabnum(tabnum));
+            guestDTO.setMale(employee.getMale() == 1);
         }
         return guestDTO;
     }

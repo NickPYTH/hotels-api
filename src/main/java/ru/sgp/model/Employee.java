@@ -39,4 +39,7 @@ public class Employee {
     @Column(name = "lastname")
     private String lastname;
 
+    @Column(name = "gesch")
+    private Integer male;
+
 }

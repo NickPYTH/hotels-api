@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.FilialDTO;
 import ru.sgp.dto.HotelDTO;
 import ru.sgp.dto.report.FilialReportDTO;
+import ru.sgp.dto.report.ShortReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
@@ -28,6 +29,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -174,6 +176,59 @@ public class FilialService {
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/FilialReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint);
+    }
+
+    public byte[] getShortReport() throws JRException {
+        List<ShortReportDTO> reportData = new ArrayList<>();
+        for (Filial filial : filialRepository.findAll()) {
+            for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
+                ShortReportDTO record = new ShortReportDTO();
+                record.setFilial(filial.getName());
+                record.setHotel(hotel.getName());
+                AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
+                flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
+                    roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                        bedsCount.updateAndGet(v -> v + room.getBedsCount());
+                    });
+                });
+                record.setAll(bedsCount.get());
+                Integer countBusyBeds = 0;
+                List<Long> flatsExcludeList = new ArrayList<>();
+                List<Long> roomExcludeList = new ArrayList<>();
+                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(new Date(), new Date(), hotel)) {
+                    if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
+                    if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
+                    Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                    if (guestHotel.getId() == hotel.getId()) {
+                        Room guestRoom = guest.getRoom();
+                        Flat guestFlat = guestRoom.getFlat();
+                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
+                    }
+                }
+                if (record.getAll() > 0) {
+                    record.setBusy(countBusyBeds);
+                    record.setVacant(record.getAll() - record.getBusy());
+                    record.setPercent((int)(((float)record.getBusy() / (float)record.getAll()) * 100));
+                } else {
+                    record.setBusy(0);
+                    record.setVacant(0);
+                    record.setPercent(0);
+                }
+                reportData.add(record);
+            }
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/ShortReport.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("date", dateTimeFormatter.format(new Date()));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint);
     }

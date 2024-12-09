@@ -45,7 +45,7 @@ public class FilialController {
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     @GetMapping(path = "/getAllWithStats")
-    public ResponseEntity<List<FilialDTO>> getAllWithStats(@RequestParam String date) throws ParseException {
+    public ResponseEntity<List<FilialDTO>> getAllWithStats(@RequestParam String date) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
@@ -106,7 +106,7 @@ public class FilialController {
     public ResponseEntity<byte[]> getFilialReport(@RequestParam(name = "id") Long filialId,
                                                   @RequestParam(name = "checkouted") boolean checkouted,
                                                   @RequestParam(name = "dateStart") String dateStart,
-                                                  @RequestParam(name = "dateFinish") String dateFinish) throws ParseException {
+                                                  @RequestParam(name = "dateFinish") String dateFinish) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
@@ -129,6 +129,37 @@ public class FilialController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/filial/getFilialReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getShortReport")
+    public ResponseEntity<byte[]> getShortReport() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            byte[] reportData = filialService.getShortReport();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getShortReport", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getShortReport");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=ShortReport.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/filial/getShortReport", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getShortReport");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

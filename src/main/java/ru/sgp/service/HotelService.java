@@ -252,17 +252,26 @@ public class HotelService {
             while (count <= daysCount) {
                 Date tmp = dateTimeFormatter.parse(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " 23:59");
                 Integer countBusyBeds = 0; // расчет занятых мест в отеле за конкретный день
+                List<Long> flatsExcludeList = new ArrayList<>();
+                List<Long> roomExcludeList = new ArrayList<>();
                 for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(tmp, tmp, hotel)) {
+                    if (roomExcludeList.contains(guest.getBed().getRoom().getId())) {
+                        continue;
+                    }
+                    if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) {
+                        continue;
+                    }
                     Hotel guestHotel = guest.getRoom().getFlat().getHotel();
                     if (guestHotel.getId() == hotel.getId()) {
                         Room guestRoom = guest.getRoom();
                         Flat guestFlat = guestRoom.getFlat();
-//                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
-//                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-//                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
-//                            countBusyBeds += bedRepository.countByRoom(guestRoom);
-//                        } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
-                        countBusyBeds += 1;
+                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                     }
                 }
                 HotelsStatsReportDTO record1 = new HotelsStatsReportDTO();
