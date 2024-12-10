@@ -133,11 +133,11 @@ public class HotelController {
     }
 
     @GetMapping(path = "/getAllByCommendant")
-    public ResponseEntity<List<HotelDTO>> getAllByCommendant(@RequestParam String date) {
+    public ResponseEntity<List<HotelDTO>> getAllByCommendant() {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            List<HotelDTO> response = hotelService.getAllByCommendant(date);
+            List<HotelDTO> response = hotelService.getAllByCommendant();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getAllByCommendant", duration, "");
             record.setStatus("OK");
@@ -153,6 +153,35 @@ public class HotelController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/hotel/getAllByFilialId");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getAllByCommendantWithStats")
+    public ResponseEntity<List<HotelDTO>> getAllByCommendantWithStats() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<HotelDTO> response = hotelService.getAllByCommendantWithStats();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getAllByCommendantWithStats", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/hotel/getAllByCommendantWithStats");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/hotel/getAllByCommendantWithStats", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/hotel/getAllByCommendantWithStats");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

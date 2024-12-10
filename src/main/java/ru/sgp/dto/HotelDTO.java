@@ -12,6 +12,6 @@ public class HotelDTO {
     private String filialName;
     private Integer bedsCount;
     private Integer emptyBedsCount;
-    private Integer emptyBedsCountWithBusy;
-    private List<FlatDTO> flats;
+    private Integer busyBedsCount;
+    private Integer flatsCount;
 }

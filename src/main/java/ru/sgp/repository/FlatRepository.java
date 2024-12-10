@@ -16,4 +16,5 @@ public interface FlatRepository extends JpaRepository<Flat, Long> {
 
     Flat findByNameAndFloorAndHotel(String name, Integer floor, Hotel hotel);
 
+    Integer countAllByHotel(Hotel hotel);
 }

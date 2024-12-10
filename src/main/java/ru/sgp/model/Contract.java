@@ -43,4 +43,7 @@ public class Contract {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "year")
+    private Integer year;
+
 }

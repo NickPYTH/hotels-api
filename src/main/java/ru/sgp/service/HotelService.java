@@ -11,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.sgp.dto.FlatDTO;
 import ru.sgp.dto.HotelDTO;
 import ru.sgp.dto.report.FilialReportDTO;
 import ru.sgp.dto.report.HotelsStatsReportDTO;
@@ -61,39 +60,42 @@ public class HotelService {
         List<HotelDTO> response = new ArrayList<>();
         for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
             HotelDTO hotelDTO = new HotelDTO();
+            AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
+            flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
+                roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                    bedsCount.updateAndGet(v -> v + room.getBedsCount());
+                });
+            });
             hotelDTO.setId(hotel.getId());
             hotelDTO.setName(hotel.getName());
-            hotelDTO.setFilialId(filialId);
-            hotelDTO.setFilialName(filial.getName());
-            List<FlatDTO> flatDTOList = new ArrayList<>();
-            int bedsCount = 0;
-            int emptyBedsCount = 0;
-            int emptyBedsCountWithBusy = 0;
-            for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-                FlatDTO flatDTO = new FlatDTO();
-                flatDTO.setId(flat.getId());
-                flatDTO.setName(flat.getName());
-                flatDTO.setFloor(flat.getFloor());
-                flatDTO.setStatusId(flat.getStatus().getId());
-                flatDTO.setHotelId(flat.getHotel().getId());
-                if (flat.getCategory() != null) {
-                    flatDTO.setCategoryId(flat.getCategory().getId());
-                    flatDTO.setCategory(flat.getCategory().getName());
-                }
-                flatDTOList.add(flatDTO);
-                Status freeStatus = statusRepository.getById(1L); // 1 is free
-                for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                    bedsCount += room.getBedsCount();
-                    emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
-                    if (flat.getStatus().getId() == freeStatus.getId() && room.getStatus().getId() == freeStatus.getId()) {
-                        emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
-                    }
+            hotelDTO.setBedsCount(bedsCount.get());
+            hotelDTO.setFlatsCount(flatRepository.countAllByHotel(hotel));
+            Integer countBusyBeds = 0;
+            List<Long> flatsExcludeList = new ArrayList<>();
+            List<Long> roomExcludeList = new ArrayList<>();
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
+                if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
+                if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
+                Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                if (guestHotel.getId() == hotel.getId()) {
+                    Room guestRoom = guest.getRoom();
+                    Flat guestFlat = guestRoom.getFlat();
+                    if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                        flatsExcludeList.add(guestFlat.getId());
+                    } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        countBusyBeds += bedRepository.countByRoom(guestRoom);
+                        roomExcludeList.add(guestRoom.getId());
+                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
-            hotelDTO.setBedsCount(bedsCount);
-            hotelDTO.setEmptyBedsCount(emptyBedsCount);
-            hotelDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
-            hotelDTO.setFlats(flatDTOList);
+            if (hotelDTO.getBedsCount() > 0) {
+                hotelDTO.setBusyBedsCount(countBusyBeds);
+                hotelDTO.setEmptyBedsCount(hotelDTO.getBedsCount() - hotelDTO.getBusyBedsCount());
+            } else {
+                hotelDTO.setBusyBedsCount(0);
+                hotelDTO.setEmptyBedsCount(0);
+            }
             response.add(hotelDTO);
         }
         return response;
@@ -104,47 +106,60 @@ public class HotelService {
         return hotelRepository.findAllByFilial(filialRepository.getById(filialId)).stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
     }
 
-    public List<HotelDTO> getAllByCommendant(String dateStr) throws ParseException {
-        Date date = dateTimeFormatter.parse(dateStr);
+    @Transactional
+    public List<HotelDTO> getAllByCommendant() throws ParseException {
+        List<HotelDTO> response = new ArrayList<>();
+        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
+        User user = userRepository.findByUsername(username);
+        for (Commendant commendant : commendantsRepository.findAllByUser(user))
+            response.add(modelMapper.map(commendant.getHotel(), HotelDTO.class));
+        return response;
+    }
+
+    public List<HotelDTO> getAllByCommendantWithStats() throws ParseException {
+        Date date = new Date();
         List<HotelDTO> response = new ArrayList<>();
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
         for (Commendant commendant : commendantsRepository.findAllByUser(user)) {
-            HotelDTO hotelDTO = new HotelDTO();
             Hotel hotel = commendant.getHotel();
+            HotelDTO hotelDTO = new HotelDTO();
+            AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
+            flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
+                roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                    bedsCount.updateAndGet(v -> v + room.getBedsCount());
+                });
+            });
             hotelDTO.setId(hotel.getId());
             hotelDTO.setName(hotel.getName());
-            hotelDTO.setFilialId(hotel.getFilial().getId());
-            hotelDTO.setFilialName(hotel.getFilial().getName());
-            List<FlatDTO> flatDTOList = new ArrayList<>();
-            int bedsCount = 0;
-            int emptyBedsCount = 0;
-            int emptyBedsCountWithBusy = 0;
-            for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-                FlatDTO flatDTO = new FlatDTO();
-                flatDTO.setId(flat.getId());
-                flatDTO.setName(flat.getName());
-                flatDTO.setFloor(flat.getFloor());
-                flatDTO.setStatusId(flat.getStatus().getId());
-                flatDTO.setHotelId(flat.getHotel().getId());
-                if (flat.getCategory() != null) {
-                    flatDTO.setCategoryId(flat.getCategory().getId());
-                    flatDTO.setCategory(flat.getCategory().getName());
-                }
-                flatDTOList.add(flatDTO);
-                Status freeStatus = statusRepository.getById(1L); // 1 is free
-                for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                    bedsCount += room.getBedsCount();
-                    emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
-                    if (flat.getStatus().getId() == freeStatus.getId() && room.getStatus().getId() == freeStatus.getId()) {
-                        emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
-                    }
+            hotelDTO.setBedsCount(bedsCount.get());
+            hotelDTO.setFlatsCount(flatRepository.countAllByHotel(hotel));
+            Integer countBusyBeds = 0;
+            List<Long> flatsExcludeList = new ArrayList<>();
+            List<Long> roomExcludeList = new ArrayList<>();
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
+                if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
+                if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
+                Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                if (guestHotel.getId() == hotel.getId()) {
+                    Room guestRoom = guest.getRoom();
+                    Flat guestFlat = guestRoom.getFlat();
+                    if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                        flatsExcludeList.add(guestFlat.getId());
+                    } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        countBusyBeds += bedRepository.countByRoom(guestRoom);
+                        roomExcludeList.add(guestRoom.getId());
+                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
-            hotelDTO.setBedsCount(bedsCount);
-            hotelDTO.setEmptyBedsCount(emptyBedsCount);
-            hotelDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
-            hotelDTO.setFlats(flatDTOList);
+            if (hotelDTO.getBedsCount() > 0) {
+                hotelDTO.setBusyBedsCount(countBusyBeds);
+                hotelDTO.setEmptyBedsCount(hotelDTO.getBedsCount() - hotelDTO.getBusyBedsCount());
+            } else {
+                hotelDTO.setBusyBedsCount(0);
+                hotelDTO.setEmptyBedsCount(0);
+            }
             response.add(hotelDTO);
         }
         return response;

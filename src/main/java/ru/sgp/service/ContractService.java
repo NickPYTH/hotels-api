@@ -79,6 +79,7 @@ public class ContractService {
             contractDTO.setNote(contract.getNote());
             contractDTO.setOsnovanie(contract.getReason().getName());
             contractDTO.setBilling(contract.getBilling());
+            contractDTO.setYear(contract.getYear());
             response.add(contractDTO);
         }
         return response;
@@ -118,6 +119,7 @@ public class ContractService {
         contract.setDocnum(contractDTO.getDocnum());
         contract.setCost(contractDTO.getCost());
         contract.setNote(contractDTO.getNote());
+        contract.setYear(contractDTO.getYear());
         contractRepository.save(contract);
         return contractDTO;
     }
