@@ -193,14 +193,13 @@ public class HotelService {
                     record.setFilial(filial.getName());
                     record.setHotel(hotel.getName());
                     record.setFlat(flat.getName());
-                    record.setFloor(flat.getFloor().toString());
-                    record.setFloor(flat.getFloor().toString());
+                    record.setFloor(flat.getFloor());
                     record.setRoom(room.getId().toString());
                     record.setCheckouted(guest.getCheckouted() ? "+" : "-");
                     record.setDateStart(dateFormatter.format(guest.getDateStart()));
                     record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
                     if (guest.getEmployee() != null)
-                        record.setTabnum(guest.getEmployee().getTabnum().toString());
+                        record.setTabnum(guest.getEmployee().getTabnum());
                     record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
                     reportData.add(record);
                 });
@@ -226,13 +225,12 @@ public class HotelService {
                     record.setFilial(filial.getName());
                     record.setHotel(hotel.getName());
                     record.setFlat(flat.getName());
-                    record.setFloor(flat.getFloor().toString());
-                    record.setFloor(flat.getFloor().toString());
+                    record.setFloor(flat.getFloor());
                     record.setRoom(room.getId().toString());
                     record.setDateStart(dateFormatter.format(guest.getDateStart()));
                     record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
                     if (guest.getEmployee() != null)
-                        record.setTabnum(guest.getEmployee().getTabnum().toString());
+                        record.setTabnum(guest.getEmployee().getTabnum());
                     record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
                     reportData.add(record);
                 });

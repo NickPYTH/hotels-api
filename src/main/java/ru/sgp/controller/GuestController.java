@@ -122,7 +122,7 @@ public class GuestController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<GuestDTO> create(@RequestBody GuestDTO guestDTO) {
+    public ResponseEntity<GuestDTO> create(@RequestBody GuestDTO guestDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {

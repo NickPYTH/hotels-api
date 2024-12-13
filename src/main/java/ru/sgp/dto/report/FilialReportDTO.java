@@ -10,17 +10,17 @@ public class FilialReportDTO {
     private String hotel;
     private String flat;
     private String room;
-    private String floor;
+    private Integer floor;
     private String fio;
     private String dateStart;
     private String dateFinish;
-    private String tabnum;
+    private Integer tabnum;
     private String checkouted;
     private String guestFilial;
     private String contract;
-    private String contractPrice;
-    private String periodPrice;
+    private Float contractPrice;
+    private Float periodPrice;
     private String reason;
     private String billing;
-    private String nights;
+    private Integer nights;
 }

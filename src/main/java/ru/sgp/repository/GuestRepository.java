@@ -24,6 +24,8 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoom(Date dateFinish, Date dateStart, Room room);
 
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(Date tmp, Date tmp1);
+
     List<Guest> findAllByDateStartBeforeAndDateFinishAfter(Date tmp, Date tmp1);
 
     List<Guest> findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, Date date, Date date1);
@@ -38,4 +40,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<String> findDistinctLastname();
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(Date tmp, Date tmp1, Hotel hotel);
+
+    Guest[] findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNullAndBedRoomFlatHotelFilial(Date maxDate, Date minDate, Filial empFilial);
 }

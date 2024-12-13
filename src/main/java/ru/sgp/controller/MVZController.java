@@ -1,8 +1,10 @@
 package ru.sgp.controller;
 
+import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import ru.sgp.service.MVZService;
 import ru.sgp.utils.SecurityManager;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +31,12 @@ public class MVZController {
     private MVZService mvzService;
     @Autowired
     LogRepository logsRepository;
+
+    public MediaType getMediaType() {
+        MediaType mediaType;
+        mediaType = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return mediaType;
+    }
 
     Logger logger = LoggerFactory.getLogger(MVZController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
@@ -152,6 +161,37 @@ public class MVZController {
     @PostMapping(path = "/loadMVZ", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public List<String> loadContracts(@RequestParam("file") MultipartFile file) throws IOException {
         return mvzService.loadMVZ(file);
+    }
+
+    @GetMapping(path = "/getMVZReportShort")
+    public ResponseEntity<byte[]> getMVZReportShort(@RequestParam Long empFilialId, @RequestParam Long filialId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            byte[] reportData = mvzService.getMVZReportShort(empFilialId, filialId, dateStart, dateFinish);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReportShort", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReportShort");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=MVZreport.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMVZReportShort", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReportShort");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

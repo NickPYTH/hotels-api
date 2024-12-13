@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HotelsFilialReport" pageWidth="2420" pageHeight="50595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2420" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b6ee77c1-9198-4dcb-b559-6f268c0fb86b">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -19,18 +20,18 @@
 	<field name="flat" class="java.lang.String"/>
 	<field name="room" class="java.lang.String"/>
 	<field name="fio" class="java.lang.String"/>
-	<field name="floor" class="java.lang.String"/>
+	<field name="floor" class="java.lang.Integer"/>
 	<field name="dateStart" class="java.lang.String"/>
 	<field name="dateFinish" class="java.lang.String"/>
-	<field name="tabnum" class="java.lang.String"/>
+	<field name="tabnum" class="java.lang.Integer"/>
 	<field name="checkouted" class="java.lang.String"/>
 	<field name="guestFilial" class="java.lang.String"/>
 	<field name="contract" class="java.lang.String"/>
-	<field name="contractPrice" class="java.lang.String"/>
-	<field name="periodPrice" class="java.lang.String"/>
+	<field name="contractPrice" class="java.lang.Float"/>
+	<field name="periodPrice" class="java.lang.Float"/>
 	<field name="reason" class="java.lang.String"/>
 	<field name="billing" class="java.lang.String"/>
-	<field name="nights" class="java.lang.String"/>
+	<field name="nights" class="java.lang.Integer"/>
 	<columnHeader>
 		<band height="40" splitType="Stretch">
 			<staticText>

@@ -7,7 +7,7 @@ public class MVZReportDTO {
     private String id;
     private String fio;
     private String hotel;
-    private String daysCount;
+    private Integer daysCount;
     private String tabnum;
     private String filial;
     private String mvz;

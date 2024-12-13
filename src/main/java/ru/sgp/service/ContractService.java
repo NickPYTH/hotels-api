@@ -211,10 +211,10 @@ public class ContractService {
             }
             if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;
-            monthReportDTO.setDaysCount(String.valueOf(daysCount));
+            monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
             if (contracts.size() > 0) {
-                monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
-                monthReportDTO.setCost(String.valueOf(daysCount * contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
+                monthReportDTO.setCostFromContract(contracts.get(0).getCost());
+                monthReportDTO.setCost(daysCount * contracts.get(0).getCost());
                 costSummary += daysCount * contracts.get(0).getCost().doubleValue();
             }
             if (guest.getEmployee() != null) {
@@ -301,10 +301,10 @@ public class ContractService {
             }
             if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;
-            monthReportDTO.setDaysCount(String.valueOf(daysCount));
+            monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
             if (contracts.size() > 0) {
-                monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
-                monthReportDTO.setCost(String.valueOf(daysCount * contracts.get(0).getCost()).replaceAll("\\.", "\\,"));
+                monthReportDTO.setCostFromContract(contracts.get(0).getCost());
+                monthReportDTO.setCost(daysCount * contracts.get(0).getCost());
                 costSummary += daysCount * contracts.get(0).getCost().doubleValue();
             }
             if (guest.getEmployee() != null) {
@@ -365,7 +365,7 @@ public class ContractService {
                 daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
             }
             if (daysCount == 0) daysCount = 1L;
-            mvzReportDTO.setDaysCount(String.valueOf(daysCount));
+            mvzReportDTO.setDaysCount(Math.toIntExact(daysCount));
             mvzReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
             mvzReportDTO.setMvz(mvz.getMvz());
             mvzReportDTO.setMvzName(mvz.getMvzName());

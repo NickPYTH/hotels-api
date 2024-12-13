@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="monthReport" pageWidth="910" pageHeight="25595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="900" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" isFloatColumnFooter="true" uuid="8c688139-9920-43cb-91ef-3605addbd193">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -30,9 +31,9 @@
 	<field name="fio" class="java.lang.String"/>
 	<field name="dateStart" class="java.lang.String"/>
 	<field name="dateFinish" class="java.lang.String"/>
-	<field name="daysCount" class="java.lang.String"/>
-	<field name="costFromContract" class="java.lang.String"/>
-	<field name="cost" class="java.lang.String"/>
+	<field name="daysCount" class="java.lang.Integer"/>
+	<field name="costFromContract" class="java.lang.Float"/>
+	<field name="cost" class="java.lang.Float"/>
 	<field name="tabnum" class="java.lang.String"/>
 	<field name="memo" class="java.lang.String"/>
 	<pageHeader>

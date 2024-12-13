@@ -178,4 +178,14 @@ public class FilialController {
         return filialService.dataLoadContracts(file);
     }
 
+    @PostMapping(path = "/loadResponsibilities", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public List<String> loadResponsibilities(@RequestParam("file") MultipartFile file) throws IOException {
+        return filialService.loadResponsibilities(file);
+    }
+
+    @PostMapping(path = "/loadUsers", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public List<String> loadUsers(@RequestParam("file") MultipartFile file) throws IOException {
+        return filialService.loadUsers(file);
+    }
+
 }

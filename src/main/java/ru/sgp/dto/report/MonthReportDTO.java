@@ -8,9 +8,9 @@ public class MonthReportDTO {
     private String fio;
     private String dateStart;
     private String dateFinish;
-    private String daysCount;
-    private String costFromContract;
-    private String cost;
+    private Integer daysCount;
+    private Float costFromContract;
+    private Float cost;
     private String tabnum;
     private String memo;
 }

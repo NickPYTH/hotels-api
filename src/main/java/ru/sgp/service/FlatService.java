@@ -189,7 +189,9 @@ public class FlatService {
                 guestDTO.setMale(guest.getMale());
                 if (guest.getEmployee() != null) {
                     Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
-                    String guestPost = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+                    String guestPost = "";
+                    if (guest.getEmployee().getIdPoststaff() != null)
+                        guestPost = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
                     guestDTO.setFilialEmployee(filial.getName());
                     guestDTO.setPost(guestPost);
                     guestDTO.setTabnum(guest.getEmployee().getTabnum());
