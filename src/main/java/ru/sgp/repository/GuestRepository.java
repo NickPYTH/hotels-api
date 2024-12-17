@@ -4,7 +4,6 @@ package ru.sgp.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.sgp.dto.GuestDTO;
 import ru.sgp.model.*;
 
 import java.util.Date;
@@ -18,7 +17,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(Date maxDate, Date minDate, boolean checkouted, Room room);
 
-    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndCheckouted(Date maxDate, Date minDate, boolean checkouted);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndOrganizationAndLastnameAndFirstnameAndSecondNameAndCheckouted(Date maxDate, Date minDate, Organization organization, String lastName, String firstName, String secondName, boolean checkouted);
 
@@ -41,5 +39,4 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(Date tmp, Date tmp1, Hotel hotel);
 
-    Guest[] findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNullAndBedRoomFlatHotelFilial(Date maxDate, Date minDate, Filial empFilial);
 }

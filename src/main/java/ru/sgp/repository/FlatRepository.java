@@ -4,8 +4,10 @@ package ru.sgp.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.sgp.model.Flat;
+import ru.sgp.model.FlatLocks;
 import ru.sgp.model.Hotel;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -18,5 +20,4 @@ public interface FlatRepository extends JpaRepository<Flat, Long> {
 
     Integer countAllByHotel(Hotel hotel);
 
-    void deleteAllByHotel(Hotel hotel);
 }

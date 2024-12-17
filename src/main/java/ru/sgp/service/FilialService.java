@@ -71,6 +71,10 @@ public class FilialService {
     private UserRepository userRepository;
     @Autowired
     private CommendantsRepository commendantsRepository;
+    @Autowired
+    private RoomLocksRepository roomLocksRepository;
+    @Autowired
+    private FlatLocksRepository flatLocksRepository;
 
     @Transactional
     public List<FilialDTO> getAllWithStats(String dateStr) throws ParseException {
@@ -91,11 +95,12 @@ public class FilialService {
                 hotelDTO.setFilialId(filial.getId());
                 hotelDTOList.add(hotelDTO);
                 for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-                    Status freeStatus = statusRepository.getById(1L); // 1 is free
+                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
                     for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                         bedsCount += room.getBedsCount();
                         emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
-                        if (flat.getStatus().getId() == freeStatus.getId() && room.getStatus().getId() == freeStatus.getId()) {
+                        List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
+                        if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {
                             emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
                         }
                     }
@@ -105,6 +110,7 @@ public class FilialService {
             filialDTO.setEmptyBedsCount(emptyBedsCount);
             filialDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
             filialDTO.setHotels(hotelDTOList);
+            filialDTO.setExcluded(filial.getExcluded());
             response.add(filialDTO);
         }
         return response;
@@ -208,19 +214,26 @@ public class FilialService {
                 Integer countBusyBeds = 0;
                 List<Long> flatsExcludeList = new ArrayList<>();
                 List<Long> roomExcludeList = new ArrayList<>();
-                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(new Date(), new Date(), hotel)) {
+                Date date = new Date();
+                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
                     if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                     if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
                     Hotel guestHotel = guest.getRoom().getFlat().getHotel();
                     if (guestHotel.getId() == hotel.getId()) {
                         Room guestRoom = guest.getRoom();
                         Flat guestFlat = guestRoom.getFlat();
-                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                            flatsExcludeList.add(guestFlat.getId());
-                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
-                            roomExcludeList.add(guestRoom.getId());
+                        List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                        List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                        if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                            if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                                countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                                flatsExcludeList.add(guestFlat.getId());
+                            }
+                        } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                            if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                                countBusyBeds += bedRepository.countByRoom(guestRoom);
+                                roomExcludeList.add(guestRoom.getId());
+                            }
                         } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                     }
                 }
@@ -291,10 +304,9 @@ public class FilialService {
             Filial filialModel = filialRepository.findByCode(filial);
             if (filialModel == null) {
                 filialModel = new Filial();
-                //filialModel.setName(filial);
-                //filialRepository.save(filialModel);
             }
             Hotel hotelModel = hotelRepository.findByNameAndFilial(hotel.trim(), filialModel);
+
 //            for (Hotel h : hotelRepository.findAll()) {
 //                if (h.getFilial().getId() != 910L) {
 //                    bedRepository.deleteAllByRoomFlatHotel(h);
@@ -303,6 +315,7 @@ public class FilialService {
 //                    hotelRepository.delete(h);
 //                }
 //            }
+
 
             if (hotelModel == null) {
                 hotelModel = new Hotel();
@@ -316,7 +329,6 @@ public class FilialService {
                 flatModel = new Flat();
                 flatModel.setName(flatName.trim().split("\\.")[0]);
                 flatModel.setFloor(floor.intValue());
-                flatModel.setStatus(statusRepository.getById(1L));
                 flatModel.setHotel(hotelModel);
                 if (tech.length() > 0) flatModel.setTech(true);
                 else flatModel.setTech(false);
@@ -331,7 +343,6 @@ public class FilialService {
                 bedModel.setName(u.toString());
                 bedRepository.save(bedModel);
             }
-            roomModel.setStatus(statusRepository.getById(1L));
             roomModel.setFlat(flatModel);
             roomModel.setNote(description);
             roomRepository.save(roomModel);

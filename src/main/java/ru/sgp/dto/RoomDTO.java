@@ -14,5 +14,6 @@ public class RoomDTO {
     private Long hotelId;
     private Long statusId;
     private String statusName;
+    private Long roomLockId;
     private List<GuestDTO> guests;
 }

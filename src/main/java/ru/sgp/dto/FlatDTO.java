@@ -21,5 +21,6 @@ public class FlatDTO {
     private String category;
     private String note;
     private Boolean tech;
+    private Long flatLockId;
     private List<RoomDTO> rooms;
 }

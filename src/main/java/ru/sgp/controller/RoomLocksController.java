@@ -6,113 +6,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sgp.dto.FlatDTO;
-import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.RoomLocksDTO;
 import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
-import ru.sgp.service.FlatService;
+import ru.sgp.service.RoomLocksService;
 import ru.sgp.utils.SecurityManager;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/flat")
-public class FlatController {
+@RequestMapping("/roomLocks")
+public class RoomLocksController {
     @Autowired
-    private FlatService flatService;
-
+    RoomLocksService roomLocksService;
     @Autowired
     LogRepository logsRepository;
 
-    Logger logger = LoggerFactory.getLogger(FlatController.class);
+    Logger logger = LoggerFactory.getLogger(RoomLocksController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-    @GetMapping(path = "/getAllByHotelId")
-    public ResponseEntity<List<FlatDTO>> getAllByHotelId(@RequestParam Long id, @RequestParam String date) {
+    @GetMapping(path = "/getAllByRoom")
+    public ResponseEntity<List<RoomLocksDTO>> getAllByRoomAndPeriod(@RequestParam Long roomId) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            List<FlatDTO> response = flatService.getAllByHotelId(id, date);
+            List<RoomLocksDTO> response = roomLocksService.getAllByRoom(roomId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/roomLocks/getAllByRoomAndPeriod", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllByHotelId");
+            record.setPath("/roomLocks/getAllByRoomAndPeriod");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/roomLocks/getAllByRoomAndPeriod", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllByHotelId");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/getAllNotCheckotedBeforeTodayByHotelId")
-    public ResponseEntity<List<GuestDTO>> getAllNotCheckotedBeforeTodayByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        List<GuestDTO> response = flatService.getAllNotCheckotedBeforeTodayByHotelId(id, date);
-
-        try {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllNotCheckotedBeforeTodayByHotelId", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllNotCheckotedBeforeTodayByHotelId");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/getAllNotCheckotedBeforeTodayByHotelId", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllNotCheckotedBeforeTodayByHotelId");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/getAllByHotelIdChess")
-    public ResponseEntity<List<HashMap<String, String>>> getAllByHotelIdChess(@RequestParam Long id, @RequestParam String dateStart, @RequestParam String dateFinish) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            List<HashMap<String, String>> response = flatService.getAllByHotelIdChess(id, dateStart, dateFinish);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllByHotelId");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/getAllByHotelId");
+            record.setPath("/roomLocks/getAllByRoomAndPeriod");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -122,26 +59,26 @@ public class FlatController {
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<FlatDTO> get(@RequestParam Long id, @RequestParam String date) throws ParseException {
+    public ResponseEntity<RoomLocksDTO> get(@RequestParam Long id) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            FlatDTO response = flatService.get(id, date);
+            RoomLocksDTO response = roomLocksService.get(id);
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/get", duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/roomLocks/get", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/get");
+            record.setPath("/roomLocks/get");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/get", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/roomLocks/get", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/get");
+            record.setPath("/roomLocks/get");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -150,27 +87,28 @@ public class FlatController {
         }
     }
 
-    @GetMapping(path = "/updateTech")
-    public ResponseEntity<FlatDTO> updateTech(@RequestParam Long id) {
+
+    @PostMapping(path = "/create")
+    public ResponseEntity<RoomLocksDTO> create(@RequestBody RoomLocksDTO roomLocksDTO) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            FlatDTO response = flatService.updateTech(id);
+            RoomLocksDTO response = roomLocksService.create(roomLocksDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/updateTech", duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/roomLocks/create", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/updateTech");
+            record.setPath("/roomLocks/create");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/updateTech", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/roomLocks/create", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/updateTech");
+            record.setPath("/roomLocks/create");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -179,27 +117,27 @@ public class FlatController {
         }
     }
 
-    @PostMapping(path = "/updateNote")
-    public ResponseEntity<FlatDTO> updateStatus(@RequestBody FlatDTO flatDTO) {
+    @PostMapping(path = "/update")
+    public ResponseEntity<RoomLocksDTO> update(@RequestBody RoomLocksDTO roomLocksDTO) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            FlatDTO response = flatService.updateNote(flatDTO);
+            RoomLocksDTO response = roomLocksService.update(roomLocksDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/updateNote", duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/roomLocks/update", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/updateNote");
+            record.setPath("/roomLocks/update");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flat/updateNote", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/roomLocks/update", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flat/updateNote");
+            record.setPath("/roomLocks/update");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -207,4 +145,34 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<Long> update(@RequestParam Long id) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            Long response = roomLocksService.delete(id);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/roomLocks/update", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/roomLocks/update");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/roomLocks/update", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/roomLocks/update");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

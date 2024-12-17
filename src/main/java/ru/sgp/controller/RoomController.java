@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sgp.dto.FlatDTO;
 import ru.sgp.dto.RoomDTO;
 import ru.sgp.model.Log;
-import ru.sgp.model.Room;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.RoomService;
 import ru.sgp.utils.SecurityManager;
@@ -53,35 +51,6 @@ public class RoomController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/room/getAllByFlatId");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/updateStatus")
-    public ResponseEntity<RoomDTO> updateStatus(@RequestParam Long roomId, @RequestParam Long statusId) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            RoomDTO response = roomService.updateStatus(roomId, statusId);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/updateStatus", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/room/updateStatus");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/room/updateStatus", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/room/updateStatus");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

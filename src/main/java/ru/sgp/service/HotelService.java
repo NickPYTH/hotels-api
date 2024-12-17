@@ -39,13 +39,15 @@ public class HotelService {
     @Autowired
     GuestRepository guestRepository;
     @Autowired
-    StatusRepository statusRepository;
-    @Autowired
     RoomRepository roomRepository;
     @Autowired
     CommendantsRepository commendantsRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoomLocksRepository roomLocksRepository;
+    @Autowired
+    FlatLocksRepository flatLocksRepository;
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -80,12 +82,18 @@ public class HotelService {
                 if (guestHotel.getId() == hotel.getId()) {
                     Room guestRoom = guest.getRoom();
                     Flat guestFlat = guestRoom.getFlat();
-                    if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                        flatsExcludeList.add(guestFlat.getId());
-                    } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
-                        countBusyBeds += bedRepository.countByRoom(guestRoom);
-                        roomExcludeList.add(guestRoom.getId());
+                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        }
+                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        }
                     } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
@@ -144,12 +152,18 @@ public class HotelService {
                 if (guestHotel.getId() == hotel.getId()) {
                     Room guestRoom = guest.getRoom();
                     Flat guestFlat = guestRoom.getFlat();
-                    if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                        flatsExcludeList.add(guestFlat.getId());
-                    } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
-                        countBusyBeds += bedRepository.countByRoom(guestRoom);
-                        roomExcludeList.add(guestRoom.getId());
+                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        }
+                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        }
                     } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
@@ -278,12 +292,18 @@ public class HotelService {
                     if (guestHotel.getId() == hotel.getId()) {
                         Room guestRoom = guest.getRoom();
                         Flat guestFlat = guestRoom.getFlat();
-                        if (guestFlat.getStatus().getId() == 4L) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                            flatsExcludeList.add(guestFlat.getId());
-                        } else if (guestRoom.getStatus().getId() == 3L) { // Посчитать кол-во мест в комнате и указать что они заняты
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
-                            roomExcludeList.add(guestRoom.getId());
+                        List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(tmp, tmp, guestRoom);
+                        List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(tmp, tmp, guestFlat);
+                        if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                            if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                                countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                                flatsExcludeList.add(guestFlat.getId());
+                            }
+                        } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                            if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                                countBusyBeds += bedRepository.countByRoom(guestRoom);
+                                roomExcludeList.add(guestRoom.getId());
+                            }
                         } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                     }
                 }

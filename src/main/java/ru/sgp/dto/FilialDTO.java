@@ -13,4 +13,5 @@ public class FilialDTO {
     private Integer bedsCount;
     private Integer emptyBedsCount;
     private Integer emptyBedsCountWithBusy;
+    private Boolean excluded;
 }

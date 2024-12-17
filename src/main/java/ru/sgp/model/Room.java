@@ -21,9 +21,9 @@ public class Room {
     @Column(name = "beds_count")
     private Integer bedsCount;
 
-    @OneToOne
-    @JoinColumn(name = "status")
-    private Status status;
+//    @OneToOne  // todo delete statuses
+//    @JoinColumn(name = "status")
+//    private Status status;
 
     @OneToOne
     @JoinColumn(name = "flat")

@@ -281,9 +281,10 @@ public class ContractController {
     public ResponseEntity<byte[]> getMVZReport(@RequestParam Long filialId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = contractService.getMVZReport(filialId, dateStart, dateFinish);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            byte[] reportData = contractService.getMVZReport(filialId, dateStart, dateFinish);
+
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReport", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

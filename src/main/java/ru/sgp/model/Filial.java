@@ -24,4 +24,7 @@ public class Filial {
     @Column(name = "boss")
     private String boss;
 
+    @Column(name = "excluded")
+    private Boolean excluded;
+
 }

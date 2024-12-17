@@ -196,15 +196,9 @@ public class GuestService {
     @Transactional
     public GuestDTO checkout(Long id) {
         Guest guest = guestRepository.findById(id).get();
-        Room room = guest.getRoom();
         guest.setCheckouted(true);
         guestRepository.save(guest);
-        GuestDTO guestDTO = new GuestDTO();
-        if (guestRepository.findAllByRoomAndCheckouted(room, false).size() != room.getBedsCount()) {
-            room.setStatus(statusRepository.getById(1L)); // 2 mean no beds
-            roomRepository.save(room);
-        }
-        return guestDTO;
+        return new GuestDTO();
     }
 
     @Transactional
