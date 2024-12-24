@@ -191,6 +191,76 @@ public class FilialService {
             }
         }
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/FilialReport.jrxml"));
+        reportData.sort(new Comparator<FilialReportDTO>() {
+            @Override
+            public int compare(FilialReportDTO o1, FilialReportDTO o2) {
+                char c1 = o1.getFio().charAt(0);
+                char c2 = o2.getFio().charAt(0);
+                return c1 - c2;
+            }
+        });
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint);
+    }
+
+    public byte[] getFilialReportByFIO(String lastName, String dateStartStr, String dateFinishStr) throws JRException, ParseException {
+        List<FilialReportDTO> reportData = new ArrayList<>();
+        Date dateStart = dateFormatter.parse(dateStartStr);
+        Date dateFinish = dateFormatter.parse(dateFinishStr);
+        guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndLastname(dateFinish, dateStart, lastName).forEach(guest -> {
+            FilialReportDTO record = new FilialReportDTO();
+            record.setFilial(guest.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            record.setHotel(guest.getBed().getRoom().getFlat().getHotel().getName());
+            record.setFlat(guest.getBed().getRoom().getFlat().getName());
+            record.setFloor(guest.getBed().getRoom().getFlat().getFloor());
+            record.setRoom(guest.getBed().getRoom().getName());
+            record.setDateStart(dateFormatter.format(guest.getDateStart()));
+            record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+            record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+            Date cuttedStartDate = null;
+            Date cuttedFinishDate = null;
+            int daysCount = 0;
+            try {
+                cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+                cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+                daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(cuttedFinishDate.getTime() - cuttedStartDate.getTime(), TimeUnit.MILLISECONDS)));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            if (daysCount == 0) daysCount = 1;
+            record.setNights(daysCount);
+            if (guest.getContract() != null) {
+                record.setContract(guest.getContract().getDocnum());
+                record.setContractPrice(guest.getContract().getCost());
+                record.setPeriodPrice(daysCount * guest.getContract().getCost());
+            } else {
+                record.setContract("");
+                record.setContractPrice(0f);
+                record.setPeriodPrice(0f);
+            }
+            record.setReason(guest.getReason() != null ? guest.getReason().getName() : "");
+            record.setBilling(guest.getBilling());
+            if (guest.getEmployee() != null) {
+                record.setTabnum(guest.getEmployee().getTabnum());
+                record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
+            } else {
+                record.setTabnum(0);
+                record.setGuestFilial(guest.getOrganization().getName());
+            }
+            record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
+            reportData.add(record);
+        });
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/FilialReport.jrxml"));
+        reportData.sort(new Comparator<FilialReportDTO>() {
+            @Override
+            public int compare(FilialReportDTO o1, FilialReportDTO o2) {
+                char c1 = o1.getFio().charAt(0);
+                char c2 = o2.getFio().charAt(0);
+                return c1 - c2;
+            }
+        });
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
@@ -276,39 +346,42 @@ public class FilialService {
             String description = "";
             String tech = "";
             for (int j = 0; j < 10; j++) {
-
-                if (row.getCell(j).getCellType() == CellType.STRING) {
-                    if (j == 0) {
-                        //filial = row.getCell(j).getStringCellValue();
-                    } else if (j == 2) {
-                        hotel = row.getCell(j).getStringCellValue();
-                    } else if (j == 3) {
-                        location = row.getCell(j).getStringCellValue();
-                    } else if (j == 8)
-                        tech = row.getCell(j).getStringCellValue();
-                    else if (j == 9)
-                        description = row.getCell(j).getStringCellValue();
-                } else {
-                    if (j == 4)
-                        floor = row.getCell(j).getNumericCellValue();
-                    else if (j == 0) {
-                        filial = (int) row.getCell(j).getNumericCellValue();
-                    } else if (j == 5)
-                        flatName = String.valueOf(row.getCell(j).getNumericCellValue());
-                    else if (j == 6)
-                        roomName = String.valueOf(row.getCell(j).getNumericCellValue());
-                    else if (j == 7)
-                        emptyBeds = row.getCell(j).getNumericCellValue();
-                }
+                if (row.getCell(j) != null)
+                    if (row.getCell(j).getCellType() == CellType.STRING) {
+                        if (j == 0) {
+                            //filial = row.getCell(j).getStringCellValue();
+                        } else if (j == 2) {
+                            hotel = row.getCell(j).getStringCellValue();
+                        } else if (j == 3) {
+                            location = row.getCell(j).getStringCellValue();
+                        } else if (j == 8)
+                            tech = row.getCell(j).getStringCellValue();
+                        else if (j == 9)
+                            description = row.getCell(j).getStringCellValue();
+                    } else {
+                        if (j == 4)
+                            floor = row.getCell(j).getNumericCellValue();
+                        else if (j == 0) {
+                            filial = (int) row.getCell(j).getNumericCellValue();
+                        } else if (j == 5)
+                            flatName = String.valueOf(row.getCell(j).getNumericCellValue());
+                        else if (j == 6)
+                            roomName = String.valueOf(row.getCell(j).getNumericCellValue());
+                        else if (j == 7)
+                            emptyBeds = row.getCell(j).getNumericCellValue();
+                    }
             }
             Filial filialModel = filialRepository.findByCode(filial);
             if (filialModel == null) {
                 filialModel = new Filial();
+                continue;
             }
             Hotel hotelModel = hotelRepository.findByNameAndFilial(hotel.trim(), filialModel);
 
 //            for (Hotel h : hotelRepository.findAll()) {
-//                if (h.getFilial().getId() != 910L) {
+//                if (h.getFilial().getId() == filialModel.getId()) {
+//                    commendantsRepository.deleteAllByHotel(h);
+//                    responsibilitiesRepository.deleteAllByHotel(h);
 //                    bedRepository.deleteAllByRoomFlatHotel(h);
 //                    roomRepository.deleteAllByFlatHotel(h);
 //                    flatRepository.deleteAllByHotel(h);
@@ -417,7 +490,7 @@ public class FilialService {
     public List<String> loadResponsibilities(MultipartFile file) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 600; i++) {
             XSSFRow row = worksheet.getRow(i);
             if (row == null)
                 break;
@@ -521,6 +594,45 @@ public class FilialService {
         }
         List<String> response = new ArrayList<>();
         return response;
+    }
+
+    @Transactional
+    public FilialDTO getWithStats(String dateStr, Long filialId) throws ParseException {
+        SimpleDateFormat dateTimeFormatter1 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date date = dateTimeFormatter1.parse(dateStr);
+        Filial filial = filialRepository.getById(filialId);
+        FilialDTO filialDTO = new FilialDTO();
+        filialDTO.setId(filial.getId());
+        filialDTO.setName(filial.getName());
+        List<HotelDTO> hotelDTOList = new ArrayList<>();
+        int bedsCount = 0;
+        int emptyBedsCount = 0;
+        int emptyBedsCountWithBusy = 0;
+        for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
+            HotelDTO hotelDTO = new HotelDTO();
+            hotelDTO.setId(hotel.getId());
+            hotelDTO.setName(hotel.getName());
+            hotelDTO.setFilialId(filial.getId());
+            hotelDTOList.add(hotelDTO);
+            for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
+                List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
+                for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
+                    bedsCount += room.getBedsCount();
+                    emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
+                    if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {
+                        emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                    }
+                }
+            }
+        }
+        filialDTO.setBedsCount(bedsCount);
+        filialDTO.setEmptyBedsCount(emptyBedsCount);
+        filialDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
+        filialDTO.setHotels(hotelDTOList);
+        filialDTO.setExcluded(filial.getExcluded());
+        return filialDTO;
     }
 
 }

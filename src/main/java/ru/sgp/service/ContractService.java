@@ -18,6 +18,7 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,6 +75,7 @@ public class ContractService {
                 contractDTO.setOrganizationId(contract.getOrganization().getId());
             }
             contractDTO.setDocnum(contract.getDocnum());
+
             contractDTO.setCost(contract.getCost());
             contractDTO.setReasonId(contract.getReason().getId());
             contractDTO.setNote(contract.getNote());
@@ -162,6 +164,7 @@ public class ContractService {
         Reason reason = reasonRepository.getById(reasonId);
         Responsibilities responsibilities = responsibilitiesRepository.getById(responsibilityId);
         Filial filial = responsibilities.getHotel().getFilial();
+        DecimalFormat df = new DecimalFormat("#.##");
         Long daysCountSummary = 0L;
         Double costSummary = 0.0;
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
@@ -212,10 +215,11 @@ public class ContractService {
             if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;
             monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
-            if (contracts.size() > 0) {
-                monthReportDTO.setCostFromContract(contracts.get(0).getCost());
-                monthReportDTO.setCost(daysCount * contracts.get(0).getCost());
-                costSummary += daysCount * contracts.get(0).getCost().doubleValue();
+            if (!contracts.isEmpty()) {
+                Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
+                monthReportDTO.setCostFromContract(cost);
+                monthReportDTO.setCost(daysCount * cost);
+                costSummary += daysCount * cost;
             }
             if (guest.getEmployee() != null) {
                 monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
@@ -226,6 +230,14 @@ public class ContractService {
             reportData.add(monthReportDTO);
             count++;
         }
+        reportData.sort(new Comparator<MonthReportDTO>() {
+            @Override
+            public int compare(MonthReportDTO o1, MonthReportDTO o2) {
+                char c1 = o1.getFio().charAt(0);
+                char c2 = o2.getFio().charAt(0);
+                return c1 - c2;
+            }
+        });
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MonthReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
@@ -262,6 +274,7 @@ public class ContractService {
         Organization organization = organizationRepository.getById(orgId);
         Responsibilities responsibilities = responsibilitiesRepository.getById(responsibilityId);
         Filial filial = responsibilities.getHotel().getFilial();
+        DecimalFormat df = new DecimalFormat("#.##");
         Long daysCountSummary = 0L;
         Double costSummary = 0.0;
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
@@ -302,10 +315,11 @@ public class ContractService {
             if (daysCount == 0) daysCount = 1L;
             daysCountSummary += daysCount;
             monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
-            if (contracts.size() > 0) {
-                monthReportDTO.setCostFromContract(contracts.get(0).getCost());
-                monthReportDTO.setCost(daysCount * contracts.get(0).getCost());
-                costSummary += daysCount * contracts.get(0).getCost().doubleValue();
+            if (!contracts.isEmpty()) {
+                Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
+                monthReportDTO.setCostFromContract(Float.valueOf(String.format("%.2f", cost).replace(',', '.')));
+                monthReportDTO.setCost(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.')));
+                costSummary += daysCount * cost;
             }
             if (guest.getEmployee() != null) {
                 monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
@@ -316,6 +330,14 @@ public class ContractService {
             reportData.add(monthReportDTO);
             count++;
         }
+        reportData.sort(new Comparator<MonthReportDTO>() {
+            @Override
+            public int compare(MonthReportDTO o1, MonthReportDTO o2) {
+                char c1 = o1.getFio().charAt(0);
+                char c2 = o2.getFio().charAt(0);
+                return c1 - c2;
+            }
+        });
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MonthReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
@@ -346,36 +368,38 @@ public class ContractService {
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             if (guest.getEmployee() == null) continue; // только работников
             MVZ mvz = mvzRepository.findByEmployeeTab(guest.getEmployee().getTabnum().toString());
-            MVZReportDTO mvzReportDTO = new MVZReportDTO();
-            mvzReportDTO.setId(String.valueOf(count));
-            mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-            mvzReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
-            Long daysCount = 1L;
-            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
-            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
-            Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
-            Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
-            if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
-                daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
-            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
-                daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
-            } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
-                daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
-            } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
-                daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+            if (mvz != null) {
+                MVZReportDTO mvzReportDTO = new MVZReportDTO();
+                mvzReportDTO.setId(String.valueOf(count));
+                mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
+                mvzReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
+                Long daysCount = 1L;
+                Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+                Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+                Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
+                Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
+                if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
+                    daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
+                    daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
+                } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
+                    daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
+                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
+                    daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+                }
+                if (daysCount == 0) daysCount = 1L;
+                mvzReportDTO.setDaysCount(Math.toIntExact(daysCount));
+                mvzReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
+                mvzReportDTO.setMvz(mvz.getMvz());
+                mvzReportDTO.setMvzName(mvz.getMvzName());
+                mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
+                mvzReportDTO.setFilial(filial.getName());
+                mvzReportDTO.setOrgUnit(mvz.getOrganization());
+                mvzReportDTO.setReason(guest.getReason().getName());
+                mvzReportDTO.setBilling(guest.getBilling());
+                reportData.add(mvzReportDTO);
+                count++;
             }
-            if (daysCount == 0) daysCount = 1L;
-            mvzReportDTO.setDaysCount(Math.toIntExact(daysCount));
-            mvzReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
-            mvzReportDTO.setMvz(mvz.getMvz());
-            mvzReportDTO.setMvzName(mvz.getMvzName());
-            mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
-            mvzReportDTO.setFilial(filial.getName());
-            mvzReportDTO.setOrgUnit(mvz.getOrganization());
-            mvzReportDTO.setReason(guest.getReason().getName());
-            mvzReportDTO.setBilling(guest.getBilling());
-            reportData.add(mvzReportDTO);
-            count++;
         }
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MVZReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);

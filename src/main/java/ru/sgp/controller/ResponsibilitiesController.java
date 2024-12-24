@@ -34,8 +34,9 @@ public class ResponsibilitiesController {
     public ResponseEntity<List<ResponsibilitiesDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<ResponsibilitiesDTO> response = responsibilitiesService.getAll();
         try {
-            List<ResponsibilitiesDTO> response = responsibilitiesService.getAll();
+
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/responsibility/getAll", duration, "");
             record.setStatus("OK");

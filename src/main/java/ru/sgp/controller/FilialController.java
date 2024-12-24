@@ -73,6 +73,35 @@ public class FilialController {
         }
     }
 
+    @GetMapping(path = "/getWithStats")
+    public ResponseEntity<FilialDTO> getWithStats(@RequestParam String date, @RequestParam Long filialId) throws ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        FilialDTO response = filialService.getWithStats(date, filialId);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getWithStats", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getWithStats");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/filial/getWithStats", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getWithStats");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<FilialDTO>> getAll() throws ParseException {
         long startTime = System.nanoTime();
@@ -129,6 +158,39 @@ public class FilialController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/filial/getFilialReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getFilialReportByFIO")
+    public ResponseEntity<byte[]> getFilialReportByFIO(@RequestParam(name = "lastName") String lastName,
+                                                       @RequestParam(name = "dateStart") String dateStart,
+                                                       @RequestParam(name = "dateFinish") String dateFinish) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            byte[] reportData = filialService.getFilialReportByFIO(lastName, dateStart, dateFinish);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getFilialReportByFIO", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getFilialReportByFIO");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=GuestReport.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/filial/getFilialReportByFIO", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getFilialReportByFIO");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

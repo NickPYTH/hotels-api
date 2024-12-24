@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface ResponsibilitiesRepository extends JpaRepository<Responsibilities, Long> {
     List<Responsibilities> findAllByHotel(Hotel hotel);
+
+    void deleteAllByHotel(Hotel h);
 }

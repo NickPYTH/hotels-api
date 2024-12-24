@@ -108,6 +108,10 @@ public class FlatService {
                     guestDTO.setMale(guest.getMale());
                     guestDTO.setCheckouted(guest.getCheckouted());
                     if (guest.getEmployee() != null) {
+                        if (guest.getEmployee().getIdPoststaff() != null)
+                            guestDTO.setPost(postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
+                    }
+                    if (guest.getEmployee() != null) {
                         Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
                         guestDTO.setFilialEmployee(filial.getName());
                         guestDTO.setTabnum(guest.getEmployee().getTabnum());
@@ -136,6 +140,7 @@ public class FlatService {
                 flatDTO.setStatus(vacant.getName());
             }
             flatDTO.setHotelId(hotelId);
+            flatDTO.setNote(flat.getNote());
             response.add(flatDTO);
         }
         return response;

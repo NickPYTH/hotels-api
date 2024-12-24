@@ -34,11 +34,13 @@ public class FlatController {
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     @GetMapping(path = "/getAllByHotelId")
-    public ResponseEntity<List<FlatDTO>> getAllByHotelId(@RequestParam Long id, @RequestParam String date) {
+    public ResponseEntity<List<FlatDTO>> getAllByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+
+        List<FlatDTO> response = flatService.getAllByHotelId(id, date);
         try {
-            List<FlatDTO> response = flatService.getAllByHotelId(id, date);
+
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, "");
             record.setStatus("OK");

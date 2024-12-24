@@ -219,9 +219,9 @@ public class ContractController {
     public ResponseEntity<byte[]> getMonthReportByFilial(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = contractService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            byte[] reportData = contractService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByFilial", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -250,9 +250,10 @@ public class ContractController {
     public ResponseEntity<byte[]> getMonthReport(@RequestParam Long organizationId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = contractService.getMonthReportByOrganization(organizationId, responsibilityId, reasonId, dateStart, dateFinish, billing);
+
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            byte[] reportData = contractService.getMonthReportByOrganization(organizationId, responsibilityId, reasonId, dateStart, dateFinish, billing);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByOrganization", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
