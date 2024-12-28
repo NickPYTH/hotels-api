@@ -8,11 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.model.Log;
+import ru.sgp.repository.HistoryRepository;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.GuestService;
+import ru.sgp.service.HistoryService;
 import ru.sgp.utils.SecurityManager;
 
 import java.text.ParseException;
@@ -27,11 +30,15 @@ public class GuestController {
     @Autowired
     private GuestService guestService;
     @Autowired
+    private HistoryService historyService;
+    @Autowired
     LogRepository logsRepository;
 
     Logger logger = LoggerFactory.getLogger(GuestController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    @Autowired
+    private HistoryRepository historyRepository;
 
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<GuestDTO>> getAll() {
@@ -150,12 +157,13 @@ public class GuestController {
         }
     }
 
+    @Transactional
     @PostMapping(path = "/update")
     public ResponseEntity<GuestDTO> update(@RequestBody GuestDTO guestDTO) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            GuestDTO response = guestService.update(guestDTO);
+            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/update", duration, "");
             record.setStatus("OK");
@@ -164,7 +172,8 @@ public class GuestController {
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            historyService.updateGuest(record, response.get(0), response.get(1));
+            return new ResponseEntity<>(response.get(1), HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/update", duration, e.getMessage());

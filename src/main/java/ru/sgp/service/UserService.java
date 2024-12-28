@@ -40,8 +40,6 @@ public class UserService {
     private HotelRepository hotelRepository;
     @Autowired
     private CommendantsRepository commendantsRepository;
-    @Autowired
-    private PostRepository postRepository;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 

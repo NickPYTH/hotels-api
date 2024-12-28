@@ -300,9 +300,9 @@ public class FlatService {
                             if (start.isAfter(guestStart) && start.isBefore(guestFinish)) {
                                 record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
                                 record.put("dates", dateTimeFormatter.format(guest.getDateStart()) + " - " + dateTimeFormatter.format(guest.getDateFinish()));
-                                if (guest.getEmployee() != null) {
-                                    record.put("post", postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
-                                }
+                                if (guest.getEmployee() != null)
+                                    if (guest.getEmployee().getIdPoststaff() != null)
+                                        record.put("post", postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
                             }
                             start = start.plusDays(1);
                             count++;

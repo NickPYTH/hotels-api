@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.HotelDTO;
 import ru.sgp.dto.report.HotelsStatsReportDTO;
-import ru.sgp.model.Hotel;
 import ru.sgp.model.Log;
 import ru.sgp.repository.HotelRepository;
 import ru.sgp.repository.LogRepository;
@@ -207,8 +206,7 @@ public class HotelController {
             record.setDate(new Date());
             logsRepository.save(record);
             HttpHeaders headers = new HttpHeaders();
-            Hotel hotel = hotelRepository.findById(hotelId).orElse(null);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + hotel.getName() + ".xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report.xlsx");
             return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
@@ -239,8 +237,7 @@ public class HotelController {
             record.setDate(new Date());
             logsRepository.save(record);
             HttpHeaders headers = new HttpHeaders();
-            Hotel hotel = hotelRepository.findById(hotelId).orElse(null);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + hotel.getName() + ".xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report.xlsx");
             return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;

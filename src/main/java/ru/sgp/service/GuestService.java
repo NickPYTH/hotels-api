@@ -202,9 +202,13 @@ public class GuestService {
     }
 
     @Transactional
-    public GuestDTO update(GuestDTO guestDTO) throws ParseException {
+    public List<GuestDTO> update(GuestDTO guestDTO) throws ParseException {
+        ModelMapper modelMapper = new ModelMapper();
         Room room = roomRepository.getById(guestDTO.getRoomId());
         Guest guest = guestRepository.getById(guestDTO.getId());
+        GuestDTO guestBefore = modelMapper.map(guest, GuestDTO.class);
+        List<GuestDTO> response = new ArrayList<>();
+        response.add(guestBefore);
         if (guestDTO.getTabnum() != null) {
             Employee employee = employeeRepository.findByTabnum(guestDTO.getTabnum());
             guest.setEmployee(employee);
@@ -246,7 +250,8 @@ public class GuestService {
                 tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
                 tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
                 tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-                return tmp;
+                response.add(tmp);
+                return response;
             }
         } else if (guests.size() > 1) {
             Guest guestTmp = guests.get(0);
@@ -256,7 +261,8 @@ public class GuestService {
             tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-            return tmp;
+            response.add(tmp);
+            return response;
         } else {
             guest.setDateStart(dateStart);
             guest.setDateFinish(dateFinish);
@@ -274,7 +280,9 @@ public class GuestService {
         } else guest.setReason(reason);
         guest.setRoom(room);
         guestRepository.save(guest);
-        return guestDTO;
+
+        response.add(guestDTO);
+        return response;
     }
 
     public GuestDTO getFioByTabnum(Integer tabnum) {

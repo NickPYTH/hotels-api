@@ -2,6 +2,8 @@ package ru.sgp.dto.report;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class MVZReportDTO {
     private String id;
@@ -16,4 +18,6 @@ public class MVZReportDTO {
     private String orgUnit;
     private String billing;
     private String reason;
+    private Date dateStart;
+    private Date dateFinish;
 }
