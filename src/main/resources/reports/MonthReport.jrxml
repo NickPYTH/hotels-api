@@ -139,7 +139,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Производственная собестоимость за единицу, руб.]]></text>
+				<text><![CDATA[Производственная себестоимость за единицу, руб.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="600" y="0" width="100" height="30" uuid="a9edad5f-98fc-454a-bbc0-fb55a5d2240f">
@@ -154,7 +154,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Плановая собестоимость]]></text>
+				<text><![CDATA[Плановая себестоимость]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="700" y="0" width="78" height="30" uuid="8bff8108-25be-4b6e-9a8f-950da870da6a">

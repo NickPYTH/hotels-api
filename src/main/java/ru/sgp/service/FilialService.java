@@ -118,7 +118,7 @@ public class FilialService {
 
     @Transactional
     public List<FilialDTO> getAll() throws ParseException {
-        return filialRepository.findAll().stream().map(filial -> modelMapper.map(filial, FilialDTO.class)).collect(Collectors.toList());
+        return filialRepository.findAllByOrderByNameAsc().stream().map(filial -> modelMapper.map(filial, FilialDTO.class)).collect(Collectors.toList());
     }
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
