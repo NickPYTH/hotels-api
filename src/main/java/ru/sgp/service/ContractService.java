@@ -187,7 +187,10 @@ public class ContractService {
             if (!guest.getBilling().equals(billing)) continue;
             if (guest.getReason().getId() != reason.getId()) continue;
             if (responsibilities.getHotel() != guestHotel) continue;
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReason(filial, guest.getRoom().getFlat().getHotel(), guest.getReason());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(minDate);
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getRoom().getFlat().getHotel(), guest.getReason(), calendar.get(Calendar.YEAR));
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -302,7 +305,9 @@ public class ContractService {
             if (guest.getEmployee() == null) continue;
             if (mvzRepository.findByEmployeeTabAndMvzNameIsContainingIgnoreCase(guest.getEmployee().getTabnum().toString(), ceh).isEmpty())  // Проверка цеха
                 continue;
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReason(filial, guest.getRoom().getFlat().getHotel(), guest.getReason());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(minDate);
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getRoom().getFlat().getHotel(), guest.getReason(), calendar.get(Calendar.YEAR));
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());

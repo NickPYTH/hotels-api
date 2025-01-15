@@ -124,7 +124,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Колличество суток]]></text>
+				<text><![CDATA[Количество суток]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="420" y="0" width="180" height="30" uuid="62dc515d-7599-4fda-a712-8943fc72b5e5">

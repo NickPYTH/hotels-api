@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
 
-    List<Contract> findAllByFilialAndHotelAndReason(Filial filial, Hotel hotel, Reason reason);
+    List<Contract> findAllByFilialAndHotelAndReasonAndYear(Filial filial, Hotel hotel, Reason reason, Integer year);
 
     List<Contract> findAllByFilialAndOrganizationAndHotelAndReason(Filial filial, Organization organization, Hotel hotel, Reason reason);
 
