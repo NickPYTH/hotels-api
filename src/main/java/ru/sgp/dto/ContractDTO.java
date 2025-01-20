@@ -18,4 +18,5 @@ public class ContractDTO {
     private String osnovanie;
     private Long reasonId;
     private Integer year;
+    private Integer roomNumber;
 }

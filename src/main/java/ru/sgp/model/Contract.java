@@ -46,4 +46,7 @@ public class Contract {
     @Column(name = "year")
     private Integer year;
 
+    @Column(name = "roomNumber")
+    private Integer roomNumber;
+
 }

@@ -440,7 +440,9 @@ public class FilialService {
             String billing = "";
             String docnum = "";
             Double cost = 0.0;
-            for (int j = 0; j < 8; j++) {
+            String note = "";
+            Double roomNumber = 0.0;
+            for (int j = 0; j < 10; j++) {
                 if (row.getCell(j) != null) {
                     if (row.getCell(j).getCellType() == CellType.STRING) {
                         if (j == 1)
@@ -455,9 +457,13 @@ public class FilialService {
                             billing = row.getCell(j).getStringCellValue().trim();
                         if (j == 6)
                             docnum = row.getCell(j).getStringCellValue().trim();
+                        if (j == 8)
+                            note = row.getCell(j).getStringCellValue().trim();
                     } else {
                         if (j == 7)
                             cost = row.getCell(j).getNumericCellValue();
+                        if (j == 9)
+                            roomNumber = row.getCell(j).getNumericCellValue();
                     }
                 }
             }
@@ -480,6 +486,8 @@ public class FilialService {
             contractModel.setDocnum(docnum);
             contractModel.setCost(cost.floatValue());
             contractModel.setYear(2025);
+            contractModel.setNote(note);
+            contractModel.setRoomNumber(roomNumber.intValue());
             contractRepository.save(contractModel);
         }
         List<String> response = new ArrayList<>();

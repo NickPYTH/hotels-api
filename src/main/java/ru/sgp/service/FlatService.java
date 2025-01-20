@@ -281,6 +281,7 @@ public class FlatService {
                 for (Bed bed : bedRepository.findAllByRoom(room)) {
                     HashMap<String, String> record = new HashMap<>();
                     record.put("section", flat.getName());
+                    record.put("sectionId", flat.getId().toString());
                     record.put("room", room.getId().toString());
                     record.put("roomName", room.getName());
                     record.put("bed", bed.getName());

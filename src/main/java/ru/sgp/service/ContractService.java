@@ -83,6 +83,7 @@ public class ContractService {
             contractDTO.setOsnovanie(contract.getReason().getName());
             contractDTO.setBilling(contract.getBilling());
             contractDTO.setYear(contract.getYear());
+            contractDTO.setRoomNumber(contract.getRoomNumber());
             response.add(contractDTO);
         }
         return response;
@@ -490,8 +491,9 @@ public class ContractService {
         int count = 1;
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             if (guest.getEmployee() == null) continue; // только работников
-            MVZ mvz = mvzRepository.findByEmployeeTab(guest.getEmployee().getTabnum().toString());
-            if (mvz != null) {
+            List<MVZ> mvzList = mvzRepository.findAllByEmployeeTab(guest.getEmployee().getTabnum().toString());
+            if (mvzList.size() > 0) {
+                MVZ mvz = mvzList.get(0);
                 MVZReportDTO mvzReportDTO = new MVZReportDTO();
                 mvzReportDTO.setId(String.valueOf(count));
                 mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -570,6 +572,7 @@ public class ContractService {
             contractDTO.setOsnovanie(contract.getReason().getName());
             contractDTO.setBilling(contract.getBilling());
             contractDTO.setYear(contract.getYear());
+            contractDTO.setRoomNumber(contract.getRoomNumber());
             response.add(contractDTO);
         }
         return response;
