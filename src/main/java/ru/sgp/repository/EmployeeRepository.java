@@ -9,4 +9,6 @@ import ru.sgp.model.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Employee findByTabnum(Integer tabnum);
+
+    Employee findByMvzId(String id);
 }

@@ -304,7 +304,7 @@ public class ContractService {
             if (guest.getReason().getId() != reason.getId()) continue;
             if (responsibilities.getHotel() != guestHotel) continue;
             if (guest.getEmployee() == null) continue;
-            if (mvzRepository.findByEmployeeTabAndMvzNameIsContainingIgnoreCase(guest.getEmployee().getTabnum().toString(), ceh).isEmpty())  // Проверка цеха
+            if (mvzRepository.findByIdAndNameIsContainingIgnoreCase(guest.getEmployee().getMvzId(), ceh).isEmpty())  // Проверка цеха
                 continue;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(minDate);
@@ -491,9 +491,8 @@ public class ContractService {
         int count = 1;
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             if (guest.getEmployee() == null) continue; // только работников
-            List<MVZ> mvzList = mvzRepository.findAllByEmployeeTab(guest.getEmployee().getTabnum().toString());
-            if (mvzList.size() > 0) {
-                MVZ mvz = mvzList.get(0);
+            MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
+            if (mvz != null) {
                 MVZReportDTO mvzReportDTO = new MVZReportDTO();
                 mvzReportDTO.setId(String.valueOf(count));
                 mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -523,8 +522,8 @@ public class ContractService {
                 if (daysCount == 0) daysCount = 1L;
                 mvzReportDTO.setDaysCount(Math.toIntExact(daysCount));
                 mvzReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
-                mvzReportDTO.setMvz(mvz.getMvz());
-                mvzReportDTO.setMvzName(mvz.getMvzName());
+                mvzReportDTO.setMvz(mvz.getId());
+                mvzReportDTO.setMvzName(mvz.getName());
                 mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
                 mvzReportDTO.setFilial(filial.getName());
                 mvzReportDTO.setOrgUnit(mvz.getOrganization());

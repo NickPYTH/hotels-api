@@ -42,4 +42,7 @@ public class Employee {
     @Column(name = "gesch")
     private Integer male;
 
+    @Column(name = "kostl")
+    private String mvzId;
+
 }

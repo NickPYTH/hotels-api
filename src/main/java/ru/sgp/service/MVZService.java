@@ -7,34 +7,22 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.MVZDTO;
 import ru.sgp.dto.report.MVZReportDTO;
 import ru.sgp.dto.report.MVZReportShortDTO;
-import ru.sgp.model.Filial;
-import ru.sgp.model.Guest;
-import ru.sgp.model.Hotel;
-import ru.sgp.model.MVZ;
-import ru.sgp.repository.FilialRepository;
-import ru.sgp.repository.GuestRepository;
-import ru.sgp.repository.HotelRepository;
-import ru.sgp.repository.MVZRepository;
+import ru.sgp.model.*;
+import ru.sgp.repository.*;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 public class MVZService {
@@ -50,6 +38,8 @@ public class MVZService {
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
     private HotelRepository hotelRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -61,48 +51,35 @@ public class MVZService {
         return outputStream.toByteArray();
     }
 
-    public List<String> loadMVZ(MultipartFile file) throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-        XSSFSheet worksheet = workbook.getSheetAt(0);
-        for (int i = 1; i <= 10000; i++) {
-            MVZ mvz = new MVZ();
-            XSSFRow row = worksheet.getRow(i);
-            if (row == null)
-                break;
-            for (int j = 0; j < 6; j++) {
-                if (row.getCell(j) != null) {
-                    if (j == 0) {
-                        mvz.setEmployeeTab(String.valueOf((int) row.getCell(j).getNumericCellValue()));
-                    }
-                    if (j == 1) {
-                        mvz.setEmployeeFio(row.getCell(j).getStringCellValue());
-                    }
-                    if (j == 2) {
-                        mvz.setMvz(row.getCell(j).getStringCellValue());
-                    }
-                    if (j == 3) {
-                        mvz.setMvzName(row.getCell(j).getStringCellValue());
-                    }
-                    if (j == 4) {
-                        mvz.setFilial(filialRepository.findByName(row.getCell(j).getStringCellValue()));
-                    }
-                    if (j == 5) {
-                        mvz.setOrganization(row.getCell(j).getStringCellValue());
-                    }
-                }
-            }
-            mvzRepository.save(mvz);
-        }
-        List<String> response = new ArrayList<>();
-        return response;
-    }
-
     public List<MVZDTO> getAll() {
-        return mvzRepository.findAll().stream().map(mvz -> modelMapper.map(mvz, MVZDTO.class)).collect(Collectors.toList());
+        List<MVZDTO> result = new ArrayList<>();
+        for (Employee employee : employeeRepository.findAll()) {
+            MVZDTO mvzDTO = new MVZDTO();
+            if (employee.getMvzId() != null && !employee.getMvzId().isEmpty()) {
+                MVZ mvz = mvzRepository.findById(employee.getMvzId());
+                mvzDTO.setMvz(mvz.getId());
+                mvzDTO.setMvzName(mvz.getName());
+                mvzDTO.setOrganization(mvz.getOrganization());
+                mvzDTO.setFilial(filialRepository.findByCode(Math.toIntExact(mvz.getFilialId())).getName());
+                mvzDTO.setEmployeeTab(employee.getTabnum().toString());
+                mvzDTO.setEmployeeFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+                result.add(mvzDTO);
+            }
+        }
+        return result;
     }
 
-    public MVZDTO get(Long id) {
-        return modelMapper.map(mvzRepository.getById(id), MVZDTO.class);
+    public MVZDTO get(String id) {
+        MVZ mvz = mvzRepository.findById(id);
+        MVZDTO mvzDTO = new MVZDTO();
+        Employee employee = employeeRepository.findByMvzId(mvz.getId());
+        mvzDTO.setMvz(mvz.getId());
+        mvzDTO.setMvzName(mvz.getName());
+        mvzDTO.setOrganization(mvz.getOrganization());
+        mvzDTO.setFilial(filialRepository.findByCode(Math.toIntExact(mvz.getFilialId())).getName());
+        mvzDTO.setEmployeeTab(employee.getTabnum().toString());
+        mvzDTO.setEmployeeFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+        return mvzDTO;
     }
 
     @Transactional
@@ -129,7 +106,7 @@ public class MVZService {
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(maxDate, minDate)) {
             if (guest.getReason().getId() == 3 || guest.getReason().getId() == 4) {
                 if (!Objects.equals(guest.getEmployee().getIdFilial(), empFilial.getCode())) continue;
-                MVZ mvz = mvzRepository.findByEmployeeTab(guest.getEmployee().getTabnum().toString());
+                MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
                 if (mvz != null) {
                     MVZReportDTO mvzReportDTO = new MVZReportDTO();
                     mvzReportDTO.setId(String.valueOf(count));
@@ -152,8 +129,8 @@ public class MVZService {
                     if (daysCount == 0) daysCount = 1L;
                     mvzReportDTO.setDaysCount(Math.toIntExact(daysCount));
                     mvzReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
-                    mvzReportDTO.setMvz(mvz.getMvz());
-                    mvzReportDTO.setMvzName(mvz.getMvzName());
+                    mvzReportDTO.setMvz(mvz.getId());
+                    mvzReportDTO.setMvzName(mvz.getName());
                     mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
                     mvzReportDTO.setFilial(filial.getName());
                     mvzReportDTO.setOrgUnit(mvz.getOrganization());

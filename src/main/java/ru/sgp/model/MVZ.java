@@ -8,30 +8,20 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "mvz", schema = "hotel")
+@Table(name = "dict_kostl", schema = "hotel")
 public class MVZ {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private String id;
 
-    @Column(name = "employeeTab")
-    private String employeeTab;
+    @Column(name = "name", insertable = false, updatable = false)
+    private String name;
 
-    @Column(name = "employeeFio")
-    private String employeeFio;
+    @Column(name = "id_filial")
+    private Long filialId;
 
-    @Column(name = "mvz")
-    private String mvz;
-
-    @Column(name = "mvz_name")
-    private String mvzName;
-
-    @OneToOne
-    @JoinColumn(name = "filial")
-    private Filial filial;
-
-    @Column(name = "organization")
+    @Column(name = "note")
     private String organization;
 
 }

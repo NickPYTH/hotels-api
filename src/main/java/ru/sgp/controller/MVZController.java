@@ -46,8 +46,9 @@ public class MVZController {
     public ResponseEntity<List<MVZDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<MVZDTO> response = mvzService.getAll();
         try {
-            List<MVZDTO> response = mvzService.getAll();
+
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/MVZ/getAll", duration, "");
             record.setStatus("OK");
@@ -72,7 +73,7 @@ public class MVZController {
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<MVZDTO> get(@RequestParam Long id) {
+    public ResponseEntity<MVZDTO> get(@RequestParam String id) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
@@ -156,11 +157,6 @@ public class MVZController {
             logsRepository.save(record);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @PostMapping(path = "/loadMVZ", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public List<String> loadContracts(@RequestParam("file") MultipartFile file) throws IOException {
-        return mvzService.loadMVZ(file);
     }
 
     @GetMapping(path = "/getMVZReportShort")
