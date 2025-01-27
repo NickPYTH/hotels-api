@@ -9,7 +9,7 @@ public class MonthReportDTO {
     private String dateStart;
     private String dateFinish;
     private Integer daysCount;
-    private Float costFromContract;
+    private String costFromContract;
     private Float cost;
     private String tabnum;
     private String memo;

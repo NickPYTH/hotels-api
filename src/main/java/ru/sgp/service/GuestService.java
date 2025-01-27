@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.dto.report.GuestReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
@@ -31,8 +32,6 @@ public class GuestService {
     @Autowired
     RoomRepository roomRepository;
     @Autowired
-    StatusRepository statusRepository;
-    @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
     OrganizationRepository organizationRepository;
@@ -40,6 +39,8 @@ public class GuestService {
     ReasonRepository reasonRepository;
 
     ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private HotelRepository hotelRepository;
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -345,5 +346,61 @@ public class GuestService {
 
     public List<String> getGuestsLastnames() {
         return guestRepository.findDistinctLastname();
+    }
+
+    @Transactional
+    public List<GuestDTO> addGuestsForEvent(AddGuestsForEventDTO data) throws Exception {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        Optional<Hotel> hotelOpt = hotelRepository.findById(data.getHotelId());
+        if (hotelOpt.isEmpty()) throw new Exception("Hotel with id " + data.getHotelId() + " not found");
+        Hotel hotel = hotelOpt.get();
+        Date dateStart = dateFormatter.parse(data.getDates().split(" ")[0]);
+        Date dateFinish = dateFormatter.parse(data.getDates().split(" ")[1]);
+        List<GuestDTO> response = new ArrayList<>();
+        List<Employee> empListOrderBySex = new ArrayList<>();
+        for (Integer tabNumber : data.getTabNumbers()) {
+            Employee employee = employeeRepository.findByTabnum(tabNumber);
+            if (employee == null)
+                throw new Exception("Employee with " + tabNumber + " not found");
+            empListOrderBySex.add(employee);
+        }
+        empListOrderBySex.sort(((e1, e2) -> e1.getMale() < e2.getMale() ? 1 : -1));
+        List<Guest> guests = new ArrayList<>();
+        for (Employee employee : empListOrderBySex) {
+            for (Bed bed : bedRepository.findAllByRoomFlatHotel(hotel)) {
+                Flat flat = bed.getRoom().getFlat();
+                if (employee.getMale() == 1 && guests.stream().anyMatch((guest) -> guest.getBed().getRoom().getFlat().getId() == flat.getId() && !guest.getMale())) // Если работник мужчина, то проверяем чтобы в комнате не было женщин
+                    continue;
+                if ((long) guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateStart, dateFinish, bed).size() == 0) { // Проверяем что бы тут никто не жил
+                    Guest guest = new Guest();
+                    guest.setEmployee(employee);
+                    guest.setOrganization(organizationRepository.getById(11L));
+                    guest.setRegPoMestu(false);
+                    guest.setFirstname(employee.getFirstname());
+                    guest.setLastname(employee.getLastname());
+                    guest.setSecondName(employee.getSecondName());
+                    guest.setDateStart(dateStart);
+                    guest.setDateFinish(dateFinish);
+                    guest.setBed(bed);
+                    guest.setRoom(bed.getRoom());
+                    guest.setCheckouted(false);
+                    guest.setMale(employee.getMale() == 1 ? true : false);
+                    // Пока будут константами уточнить
+                    guest.setContract(contractRepository.getById(865L));
+                    guest.setMemo(data.getNote());
+                    guest.setBilling("безналичный расчет");
+                    guest.setReason(reasonRepository.getById(4L));
+                    // -----
+                    guests.add(guest);
+                    break;
+                }
+            }
+        }
+        if (guests.size() != data.getTabNumbers().size()) throw new Exception("Space error");
+        for (Guest guest : guests) {
+            guestRepository.save(guest);
+            response.add(modelMapper.map(guest, GuestDTO.class));
+        }
+        return response;
     }
 }

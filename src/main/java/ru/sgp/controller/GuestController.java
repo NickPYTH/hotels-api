@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.model.Log;
-import ru.sgp.repository.HistoryRepository;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.GuestService;
 import ru.sgp.service.HistoryService;
@@ -37,8 +37,6 @@ public class GuestController {
     Logger logger = LoggerFactory.getLogger(GuestController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-    @Autowired
-    private HistoryRepository historyRepository;
 
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<GuestDTO>> getAll() {
@@ -282,7 +280,7 @@ public class GuestController {
     }
 
     @GetMapping(path = "/getGuestReport")
-    public ResponseEntity<byte[]> getGuestReport() throws ParseException, JRException {
+    public ResponseEntity<byte[]> getGuestReport() throws JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
         byte[] reportData = guestService.getGuestReport();
@@ -305,6 +303,36 @@ public class GuestController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/guests/getGuestReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/integration/addGuestsForEvent")
+    public ResponseEntity<List<GuestDTO>> addGuestsForEvent(@RequestBody AddGuestsForEventDTO body) throws Exception {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        List<GuestDTO> response = guestService.addGuestsForEvent(body);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/addGuestsForEvent", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/addGuestsForEvent");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/integration/addGuestsForEvent", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/addGuestsForEvent");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

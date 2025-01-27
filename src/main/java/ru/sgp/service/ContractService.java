@@ -224,9 +224,10 @@ public class ContractService {
             monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
             if (!contracts.isEmpty()) {
                 Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
-                monthReportDTO.setCostFromContract(cost);
-                monthReportDTO.setCost(daysCount * cost);
-                costSummary += daysCount * cost;
+                monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
+
+                monthReportDTO.setCost(daysCount * contracts.get(0).getCost());
+                costSummary += daysCount * contracts.get(0).getCost();
             }
             if (guest.getEmployee() != null) {
                 monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
@@ -341,7 +342,9 @@ public class ContractService {
             monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
             if (!contracts.isEmpty()) {
                 Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
-                monthReportDTO.setCostFromContract(cost);
+                //monthReportDTO.setCostFromContract(cost);
+                monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
+
                 monthReportDTO.setCost(daysCount * cost);
                 costSummary += daysCount * cost;
             }
@@ -441,7 +444,9 @@ public class ContractService {
             monthReportDTO.setDaysCount(Math.toIntExact(daysCount));
             if (!contracts.isEmpty()) {
                 Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
-                monthReportDTO.setCostFromContract(Float.valueOf(String.format("%.2f", cost).replace(',', '.')));
+                //monthReportDTO.setCostFromContract(Float.valueOf(String.format("%.2f", cost).replace(',', '.')));
+                monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
+
                 monthReportDTO.setCost(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.')));
                 costSummary += daysCount * cost;
             }

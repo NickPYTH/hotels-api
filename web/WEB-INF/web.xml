@@ -10,7 +10,7 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- !!! фильтр для включение ограничения доступа hotels/hotels/hotels/static/media/thirdFloorMap
+    <!-- !!! фильтр для включение ограничения доступа
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>договор
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

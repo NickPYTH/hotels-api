@@ -18,4 +18,6 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     Integer countByRoomFlat(Flat flat);
     Integer countByRoom(Room room);
     void deleteAllByRoomFlatHotel(Hotel hotel);
+
+    List<Bed> findAllByRoomFlatHotel(Hotel hotel);
 }
