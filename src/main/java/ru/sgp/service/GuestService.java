@@ -350,12 +350,12 @@ public class GuestService {
 
     @Transactional
     public List<GuestDTO> addGuestsForEvent(AddGuestsForEventDTO data) throws Exception {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         Optional<Hotel> hotelOpt = hotelRepository.findById(data.getHotelId());
         if (hotelOpt.isEmpty()) throw new Exception("Hotel with id " + data.getHotelId() + " not found");
         Hotel hotel = hotelOpt.get();
-        Date dateStart = dateFormatter.parse(data.getDates().split(" ")[0]);
-        Date dateFinish = dateFormatter.parse(data.getDates().split(" ")[1]);
+        Date dateStart = dateFormatter.parse(data.getDateStart());
+        Date dateFinish = dateFormatter.parse(data.getDateEnd());
         List<GuestDTO> response = new ArrayList<>();
         List<Employee> empListOrderBySex = new ArrayList<>();
         for (Integer tabNumber : data.getTabNumbers()) {
@@ -369,9 +369,15 @@ public class GuestService {
         for (Employee employee : empListOrderBySex) {
             for (Bed bed : bedRepository.findAllByRoomFlatHotel(hotel)) {
                 Flat flat = bed.getRoom().getFlat();
+                if (guests.stream().anyMatch((guest) -> guest.getBed().equals(bed))) continue;
                 if (employee.getMale() == 1 && guests.stream().anyMatch((guest) -> guest.getBed().getRoom().getFlat().getId() == flat.getId() && !guest.getMale())) // Если работник мужчина, то проверяем чтобы в комнате не было женщин
                     continue;
-                if ((long) guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateStart, dateFinish, bed).size() == 0) { // Проверяем что бы тут никто не жил
+                List<Guest> livingGuestsFlat = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlat(dateFinish, dateStart, bed.getRoom().getFlat());
+                if (employee.getMale() == 2 && livingGuestsFlat.stream().anyMatch((guest) -> guest.getMale()))
+                    continue;
+                List<Guest> livingGuestsBed = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed);
+                if (livingGuestsBed.isEmpty()) { // Проверяем что бы тут никто не жил
+                    // Проверяем наличие мужчин в комнате если селим женщину
                     Guest guest = new Guest();
                     guest.setEmployee(employee);
                     guest.setOrganization(organizationRepository.getById(11L));
@@ -387,8 +393,8 @@ public class GuestService {
                     guest.setMale(employee.getMale() == 1 ? true : false);
                     // Пока будут константами уточнить
                     guest.setContract(contractRepository.getById(865L));
-                    guest.setMemo(data.getNote());
-                    guest.setBilling("безналичный расчет");
+                    guest.setMemo(data.getEventName());
+                    guest.setBilling(contractRepository.getById(865L).getBilling());
                     guest.setReason(reasonRepository.getById(4L));
                     // -----
                     guests.add(guest);

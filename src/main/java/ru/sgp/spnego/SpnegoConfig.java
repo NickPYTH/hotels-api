@@ -53,7 +53,7 @@ public class SpnegoConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(spnegoEntryPoint())
                 .and()
                 .authorizeRequests()
-                //.antMatchers("/**", "/resources/**", "/login**").permitAll()
+                .antMatchers("/api/guest/integration/**", "/resources/**", "/login**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

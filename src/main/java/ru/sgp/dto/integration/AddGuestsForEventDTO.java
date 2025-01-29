@@ -7,7 +7,8 @@ import java.util.List;
 @Data
 public class AddGuestsForEventDTO {
     private Long hotelId;
-    private String dates;
+    private String dateStart;
+    private String dateEnd;
     private List<Integer> tabNumbers;
-    private String note;
+    private String eventName;
 }

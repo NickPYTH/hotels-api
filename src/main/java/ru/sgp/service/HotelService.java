@@ -115,7 +115,7 @@ public class HotelService {
     }
 
     @Transactional
-    public List<HotelDTO> getAllByCommendant() throws ParseException {
+    public List<HotelDTO> getAllByCommendant() {
         List<HotelDTO> response = new ArrayList<>();
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
@@ -124,7 +124,7 @@ public class HotelService {
         return response;
     }
 
-    public List<HotelDTO> getAllByCommendantWithStats() throws ParseException {
+    public List<HotelDTO> getAllByCommendantWithStats() {
         Date date = new Date();
         List<HotelDTO> response = new ArrayList<>();
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
@@ -149,7 +149,7 @@ public class HotelService {
                 if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                 if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
                 Hotel guestHotel = guest.getRoom().getFlat().getHotel();
-                if (guestHotel.getId() == hotel.getId()) {
+                if (Objects.equals(guestHotel.getId(), hotel.getId())) {
                     Room guestRoom = guest.getRoom();
                     Flat guestFlat = guestRoom.getFlat();
                     List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
@@ -289,7 +289,7 @@ public class HotelService {
                         continue;
                     }
                     Hotel guestHotel = guest.getRoom().getFlat().getHotel();
-                    if (guestHotel.getId() == hotel.getId()) {
+                    if (Objects.equals(guestHotel.getId(), hotel.getId())) {
                         Room guestRoom = guest.getRoom();
                         Flat guestFlat = guestRoom.getFlat();
                         List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(tmp, tmp, guestRoom);

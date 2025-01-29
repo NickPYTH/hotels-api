@@ -340,4 +340,37 @@ public class ContractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "/getMVZReportOnlyLPU")
+    public ResponseEntity<byte[]> getMVZReportOnlyLPU(@RequestParam String lpu, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        byte[] reportData = contractService.getMVZReportOnlyLPU(lpu, dateStart, dateFinish);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReportOnlyLPU", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReportOnlyLPU");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=MVZReportOnlyLPU.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/contract/getMVZReportOnlyLPU", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/contract/getMVZReportOnlyLPU");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

@@ -42,4 +42,8 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndLastnameAndFirstnameAndSecondNameAndCheckouted(Date dateFinish, Date dateStart, String lastName, String firstName, String secondName, boolean checkouted);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndLastname(Date dateFinish, Date dateStart, String lastName);
+
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlat(Date dateFinish, Date dateStart, Flat flat);
+
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotelFilial(Date tmp, Date tmp1, Filial filial);
 }

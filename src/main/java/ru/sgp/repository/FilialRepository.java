@@ -15,4 +15,6 @@ public interface FilialRepository extends JpaRepository<Filial, Long> {
     Filial findByName(String filial);
 
     List<Filial> findAllByOrderByNameAsc();
+
+    List<Filial> findByNameIsContainingIgnoreCase(String name);
 }
