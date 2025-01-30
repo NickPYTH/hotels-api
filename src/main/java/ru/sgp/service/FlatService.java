@@ -45,6 +45,7 @@ public class FlatService {
 
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH");
 
     @Transactional
     public List<FlatDTO> getAllByHotelId(Long hotelId, String dateStr) throws ParseException {
@@ -292,23 +293,44 @@ public class FlatService {
                         int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
                         int count = 0;
                         while (count <= daysCount) {
-                            LocalDateTime guestStart = guest.getDateStart().toInstant()
+                            LocalDateTime guestStart = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart())).toInstant()
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalDateTime();
-                            LocalDateTime guestFinish = guest.getDateFinish().toInstant()
+                            LocalDateTime guestFinish = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish())).toInstant()
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalDateTime();
-                            if (start.isAfter(guestStart) && start.isBefore(guestFinish)) {
-                                record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
-                                record.put("dates", dateTimeFormatter.format(guest.getDateStart()) + " - " + dateTimeFormatter.format(guest.getDateFinish()));
-                                if (guest.getEmployee() != null)
-                                    if (guest.getEmployee().getIdPoststaff() != null)
-                                        record.put("post", postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
+                            if ((start.isAfter(guestStart) || start.isEqual(guestStart)) && (start.isBefore(guestFinish) || start.isEqual(guestFinish))) {
+                                Integer busyPercentStart = 100;
+                                Integer busyPercentFinish = 100;
+                                String guestDatesRange = "&" + dateTimeFormatter.format(guest.getDateStart()) + "-" + dateTimeFormatter.format(guest.getDateFinish());
+                                if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
+                                    busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateStart()))) / 24 * 100);
+                                    if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
+                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) + "||" + guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#" + busyPercentStart);
+                                    } else
+                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#" + busyPercentStart);
+                                } else if (start.isEqual(guestFinish)) { // Начало совпало вычисляем процент занятого дня
+                                    busyPercentFinish = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateFinish()))) / 24 * 100);
+                                    if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
+                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) + "||" + guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#-" + busyPercentFinish);
+                                    } else
+                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#-" + busyPercentFinish);
+                                } else {
+                                    record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#100");
+                                }
+                                if (record.get("dates") == null)
+                                    record.put("dates", dateTimeFormatter.format(guest.getDateStart()) + " - " + dateTimeFormatter.format(guest.getDateFinish()));
+                                if (record.get("post") == null) {
+                                    if (guest.getEmployee() != null)
+                                        if (guest.getEmployee().getIdPoststaff() != null)
+                                            record.put("post", postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
+                                }
                             }
                             start = start.plusDays(1);
                             count++;
                         }
                     }
+
                     result.add(record);
                 }
             }

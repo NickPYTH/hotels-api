@@ -143,6 +143,7 @@ public class ContractService {
         contract.setDocnum(contractDTO.getDocnum());
         contract.setCost(contractDTO.getCost());
         contract.setNote(contractDTO.getNote());
+        contract.setYear(contractDTO.getYear());
         contractRepository.save(contract);
         contractDTO.setId(contract.getId());
         return contractDTO;
