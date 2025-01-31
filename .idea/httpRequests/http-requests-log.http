@@ -1,0 +1,924 @@
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 203
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 197,
+  "dateStart": "2025-01-27",
+  "dateEnd": "2025-02-08",
+  "eventName": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T165248.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 203
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 197,
+  "dateStart": "2025-01-27",
+  "dateEnd": "2025-02-08",
+  "eventName": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T165206.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 203
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 197,
+  "dateStart": "2025-01-27",
+  "dateEnd": "2025-02-08",
+  "eventName": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T165043.500.html
+
+###
+
+POST https://test-vapp-03.sgp.ru/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 203
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=39B37C190DFF355860A24D6699C5DFC2
+
+{
+  "hotelId": 197,
+  "dateStart": "2025-01-27",
+  "dateEnd": "2025-02-08",
+  "eventName": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T164938.500.html
+
+###
+
+POST https://test-vapp-03.sgp.ru/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 203
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=39B37C190DFF355860A24D6699C5DFC2
+
+{
+  "hotelId": 197,
+  "dateStart": "2025-01-27",
+  "dateEnd": "2025-02-08",
+  "eventName": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T164923.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 178
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 197,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T162749.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 178
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 197,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T162738.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 178
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T161111.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 178
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151,1926161, 1912806, 1913268]
+}
+
+<> 2025-01-27T161038.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T160918.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T160755.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T160657.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T155708.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T155550.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T143820.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T143550.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T143238.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T142524.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=D4245F8A06D715BA0EBBE649C31D83FB
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T142450.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T142420.401.html
+
+###
+
+POST http://test-vapp-03.sgp.ru/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T142129.401.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T134313.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133445.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133416.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133308.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133212.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133140.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133139.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T133032.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132955.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132947.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132639.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132603.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132544.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132459.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132306.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132259.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132059.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T132046.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T131853.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T131848.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T131823.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 196,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T131811.500.html
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113223.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113220.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113212.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113158.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113155.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T113131.200.json
+
+###
+
+POST http://localhost:8081/hotels/api/guest/integration/addGuestsForEvent
+Content-Type: application/json
+Content-Length: 170
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "hotelId": 204,
+  "dates": "27-01-2025 06-08-2025",
+  "note": "Мероприятие лалалал",
+  "tabNumbers": [1928234, 1930136, 1913151, 1912806, 1913268]
+}
+
+<> 2025-01-27T105105.200.json
+
+###
+

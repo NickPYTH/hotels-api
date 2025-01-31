@@ -3,6 +3,7 @@ package ru.sgp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.FlatDTO;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.RoomDTO;
@@ -215,6 +216,8 @@ public class FlatService {
                 guestDTO.setReason(guest.getReason().getName());
                 guestDTO.setBilling(guest.getBilling());
                 guestDTO.setCheckouted(guest.getCheckouted());
+                guestDTO.setBedName(guest.getBed().getName());
+                guestDTO.setBedId(guest.getBed().getId());
                 //String daysCount = String.valueOf(TimeUnit.HOURS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS) / 24);
                 Date cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
                 Date cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
@@ -247,10 +250,45 @@ public class FlatService {
                 guestDTOList.add(guestDTO);
             }
             roomDTO.setGuests(guestDTOList);
+            List<BedDTO> bedDTOList = new ArrayList<>();
+            for (Bed bed : bedRepository.findAllByRoom(room)) {
+                BedDTO bedDTO = new BedDTO();
+                bedDTO.setId(bed.getId());
+                bedDTO.setName(bed.getName());
+                bedDTOList.add(bedDTO);
+            }
+            roomDTO.setBeds(bedDTOList);
             roomDTOList.add(roomDTO);
         }
         flatDTO.setRooms(roomDTOList);
         flatDTO.setRoomsCount(roomDTOList.size());
+
+        // Experiments
+//        for (Bed bed: bedRepository.findAll()) {
+//            //Bed bed = bedRepository.getById(639L);
+//            List<Guest> guestOneBedList = guestRepository.findAllByBed(bed);
+//            for (Guest guest : guestOneBedList) {  // Будем проходить по жильцам привзяанным к одной кровати и с пересекающимися диапазонами
+//                List<Guest> guestOverlapList = guestRepository.findAllByDateStartGreaterThanEqualAndDateFinishLessThanEqualAndBedAndIdIsNot(guest.getDateStart(), guest.getDateFinish(), bed, guest.getId());
+//                if (!guestOverlapList.isEmpty()) {
+//                    guestOverlapList.add(guest);
+//                    List<Bed> bedExp = bedRepository.findAllByRoom(bed.getRoom());
+//                    for (int i = 0; i < 6; i++) {
+//                        if (i < bedExp.size()) {
+//                            if (bedExp.get(i) != null) {
+//                                if (i < guestOverlapList.size()) {
+//                                    if (guestOverlapList.get(i) != null) {
+//                                        guestOverlapList.get(i).setBed(bedExp.get(i));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+        // -----
+
         return flatDTO;
     }
 
@@ -272,7 +310,8 @@ public class FlatService {
     }
 
     @Transactional
-    public List<HashMap<String, String>> getAllByHotelIdChess(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
+    public List<HashMap<String, String>> getAllByHotelIdChess(Long hotelId, String dateStartStr, String
+            dateFinishStr) throws ParseException {
         List<HashMap<String, String>> result = new ArrayList<>();
         Hotel hotel = hotelRepository.getById(hotelId);
         Date dateStart = dateFormatter.parse(dateStartStr);
@@ -287,18 +326,12 @@ public class FlatService {
                     record.put("roomName", room.getName());
                     record.put("bed", bed.getName());
                     for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed)) {
-                        LocalDateTime start = dateStart.toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDateTime();
+                        LocalDateTime start = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                         int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
                         int count = 0;
                         while (count <= daysCount) {
-                            LocalDateTime guestStart = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart())).toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDateTime();
-                            LocalDateTime guestFinish = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish())).toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDateTime();
+                            LocalDateTime guestStart = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                            LocalDateTime guestFinish = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                             if ((start.isAfter(guestStart) || start.isEqual(guestStart)) && (start.isBefore(guestFinish) || start.isEqual(guestFinish))) {
                                 Integer busyPercentStart = 100;
                                 Integer busyPercentFinish = 100;
@@ -339,7 +372,8 @@ public class FlatService {
     }
 
     @Transactional
-    public List<GuestDTO> getAllNotCheckotedBeforeTodayByHotelId(Long hotelId, String dateStr) throws ParseException {
+    public List<GuestDTO> getAllNotCheckotedBeforeTodayByHotelId(Long hotelId, String dateStr) throws
+            ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
         Date date = dateTimeFormatter.parse(dateStr);
         List<GuestDTO> response = new ArrayList<>();

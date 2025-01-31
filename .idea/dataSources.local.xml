@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-242.23339.11">
+    <data-source name="hotel@sco1-vPG-01" uuid="3c63c068-6867-4142-b921-c4dcd3bccdb3">
+      <database-info product="PostgreSQL" version="15.10" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.20" dbms="POSTGRES" exact-version="15.10" exact-driver-version="42.2">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>hotel</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="database">
+            <name qname="@" />
+            <name qname="hotel" />
+            <node kind="schema" qname="@" />
+          </node>
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+    <data-source name="hotel@TEST-vPG-01" uuid="9d4c1689-8cd6-450e-afdc-57dfde8fa3c3">
+      <database-info product="PostgreSQL" version="15.10" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.20" dbms="POSTGRES" exact-version="15.10" exact-driver-version="42.2">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>hotel</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="database" qname="@">
+            <node kind="schema" qname="@" />
+          </node>
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+  </component>
+</project>

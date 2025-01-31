@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="hotels" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Баг создания договора. Переделана шахматка.">
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-29.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-30.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/BedDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-22.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/RoomDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/RoomDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/main.47967829e19316d24d40.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/main.47967829e19316d24d40.js.LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js.LICENSE.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package.json" />
+        <option value="HTTP Public Environment File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="snv" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+  </component>
+  <component name="HttpClientSelectedEnvironments">
+    <file url="file://$APPLICATION_CONFIG_DIR$/scratches/AddGuestsForEvent.http" environment="dev" />
+    <file url="jar://$APPLICATION_HOME_DIR$/plugins/restClient/lib/restClient.jar!/com/intellij/ws/rest/client/requests/collection/post-requests.http" environment="test" />
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2jH6dWSlw9xpjNwbeLJap3q4cA5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Docker.HotelsApp.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.HotelsAppLocal.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.nginx/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С \&quot;Учебный процесс\&quot;.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С учебный процесс.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | #1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.generated-requests | Заселение жильцов из 1С учебный процесс.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.requests | #2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.rest-api | #1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.ИС -Полет- | Получение списка планов.executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Tomcat Server.Tomcat 9.0.91.executor&quot;: &quot;Debug&quot;,
+    &quot;Tomcat Server.Tomcat.executor&quot;: &quot;Debug&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;Excel (xlsx)&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/SGP.RU/sirenkoniv/Рабочий стол/hotels2001.sql&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.26271895&quot;,
+    &quot;rest.client.default.execution.environment&quot;: &quot;dev&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;,
+    &quot;settings.editor.splitter.proportion&quot;: &quot;0.26133144&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;07e201c3c12cc9205b140e6cb0475393&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;oracle&quot;,
+      &quot;postgresql&quot;
+    ]
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="ru.sgp.repository" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/nginx" />
+      <recent name="$PROJECT_DIR$/logs" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/web" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/web" />
+      <recent name="$PROJECT_DIR$/apache-tomcat-9.0.96/webapps" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="ru.sgp.dto" />
+      <recent name="ru.sgp.repository" />
+      <recent name="ru.sgp.model" />
+      <recent name="ru.sgp.controller" />
+      <recent name="ru.sgp.service" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.91">
+    <configuration name="AddGuestsForEvent | Заселение жильцов из 1С &quot;Учебный процесс&quot;" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/AddGuestsForEvent.http" requestIdentifier="Заселение жильцов из 1С &quot;Учебный процесс&quot;" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="AddGuestsForEvent | Заселение жильцов из 1С учебный процесс" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/AddGuestsForEvent.http" requestIdentifier="Заселение жильцов из 1С учебный процесс" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="generated-requests | Заселение жильцов из 1С учебный процесс" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" requestIdentifier="Заселение жильцов из 1С учебный процесс" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="Tomcat 9.0.91" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.91" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="OPEN_IN_BROWSER" value="false" />
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="hotels">
+          <settings>
+            <option name="CONTEXT_PATH" value="/hotels" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="6d1c6481-764e-4a4f-8a4d-64834affa855" />
+        <option name="HTTP_PORT" value="8081" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="35347" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Profile">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="hotels" />
+        </option>
+      </method>
+    </configuration>
+    <configuration name="HotelsAppLocal" type="docker-deploy" factoryName="dockerfile" server-name="local">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="imageTag" value="tomcat-hotels-app" />
+          <option name="containerName" value="tomcat-hotels-app" />
+          <option name="portBindings">
+            <list>
+              <DockerPortBindingImpl>
+                <option name="containerPort" value="8080" />
+                <option name="hostIp" value="0.0.0.0" />
+                <option name="hostPort" value="8888" />
+              </DockerPortBindingImpl>
+            </list>
+          </option>
+          <option name="sourceFilePath" value="Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2">
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="hotels" />
+        </option>
+        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_MoveArtToWebapps" />
+      </method>
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="nginx/Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="local">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="sourceFilePath" value="nginx/Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Docker.HotelsAppLocal" />
+      <item itemvalue="Docker.nginx/Dockerfile" />
+      <item itemvalue="HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С &quot;Учебный процесс&quot;" />
+      <item itemvalue="HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С учебный процесс" />
+      <item itemvalue="HTTP Request.generated-requests | Заселение жильцов из 1С учебный процесс" />
+      <item itemvalue="Tomcat Server.Tomcat 9.0.91" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С &quot;Учебный процесс&quot;" />
+        <item itemvalue="HTTP Request.AddGuestsForEvent | Заселение жильцов из 1С учебный процесс" />
+        <item itemvalue="HTTP Request.generated-requests | Заселение жильцов из 1С учебный процесс" />
+        <item itemvalue="Docker.nginx/Dockerfile" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="" />
+      <created>1721031743537</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721031743537</updated>
+      <workItem from="1721031745033" duration="22000" />
+      <workItem from="1721031870790" duration="210000" />
+      <workItem from="1721032169330" duration="3000" />
+      <workItem from="1721032306092" duration="3000" />
+      <workItem from="1721032337356" duration="4000" />
+      <workItem from="1721033870528" duration="4000" />
+      <workItem from="1721107454818" duration="7000" />
+      <workItem from="1721119359616" duration="936000" />
+      <workItem from="1721294649210" duration="23908000" />
+      <workItem from="1721389826056" duration="8893000" />
+      <workItem from="1721556794962" duration="23189000" />
+      <workItem from="1721707022322" duration="19501000" />
+      <workItem from="1722415293032" duration="2816000" />
+      <workItem from="1722421585750" duration="998000" />
+      <workItem from="1722482827717" duration="4358000" />
+      <workItem from="1722489126460" duration="2776000" />
+      <workItem from="1722494609248" duration="167000" />
+      <workItem from="1722502586698" duration="4815000" />
+      <workItem from="1722529915381" duration="16479000" />
+      <workItem from="1722588915002" duration="47053000" />
+      <workItem from="1722913397525" duration="15143000" />
+      <workItem from="1723001449823" duration="218000" />
+      <workItem from="1723001827384" duration="9143000" />
+      <workItem from="1723185518089" duration="2671000" />
+      <workItem from="1723194853536" duration="19140000" />
+      <workItem from="1723538606876" duration="771000" />
+      <workItem from="1723541921799" duration="44509000" />
+      <workItem from="1724212283086" duration="30000" />
+      <workItem from="1724212314943" duration="5000" />
+      <workItem from="1724212465136" duration="13000" />
+      <workItem from="1724222710296" duration="4307000" />
+      <workItem from="1724482761250" duration="43000" />
+      <workItem from="1724844566077" duration="2400000" />
+      <workItem from="1724987549476" duration="3913000" />
+      <workItem from="1725266259207" duration="43021000" />
+      <workItem from="1725852675718" duration="42615000" />
+      <workItem from="1726220525482" duration="6701000" />
+      <workItem from="1727604615002" duration="6000" />
+      <workItem from="1727688349656" duration="3800000" />
+      <workItem from="1727756488586" duration="11668000" />
+      <workItem from="1727850604609" duration="321000" />
+      <workItem from="1727938158845" duration="80000" />
+      <workItem from="1727938534736" duration="11145000" />
+      <workItem from="1728037092294" duration="2636000" />
+      <workItem from="1728271328729" duration="13763000" />
+      <workItem from="1728620465220" duration="1046000" />
+      <workItem from="1728622200759" duration="2583000" />
+      <workItem from="1728627038906" duration="19510000" />
+      <workItem from="1728884187001" duration="44954000" />
+      <workItem from="1729145524222" duration="34291000" />
+      <workItem from="1729248881342" duration="13861000" />
+      <workItem from="1729660888906" duration="2253000" />
+      <workItem from="1729665549629" duration="9923000" />
+      <workItem from="1729746034318" duration="3246000" />
+      <workItem from="1729758151224" duration="15465000" />
+      <workItem from="1729857254500" duration="38708000" />
+      <workItem from="1730088139392" duration="5000" />
+      <workItem from="1730088879520" duration="37902000" />
+      <workItem from="1730257839154" duration="138000" />
+      <workItem from="1730258400035" duration="111000" />
+      <workItem from="1730258656666" duration="1324000" />
+      <workItem from="1730268806431" duration="16048000" />
+      <workItem from="1730364495721" duration="784000" />
+      <workItem from="1730367526717" duration="5295000" />
+      <workItem from="1730376851631" duration="488000" />
+      <workItem from="1730377715993" duration="3548000" />
+      <workItem from="1730381542610" duration="16000" />
+      <workItem from="1730381708045" duration="18376000" />
+      <workItem from="1730480974551" duration="6029000" />
+      <workItem from="1730517852289" duration="7822000" />
+      <workItem from="1730541600785" duration="2840000" />
+      <workItem from="1730567764165" duration="8270000" />
+      <workItem from="1730719726384" duration="10106000" />
+      <workItem from="1730775554466" duration="14787000" />
+      <workItem from="1730871981468" duration="8000" />
+      <workItem from="1731406902796" duration="3947000" />
+      <workItem from="1731466815450" duration="6082000" />
+      <workItem from="1731474336491" duration="12460000" />
+      <workItem from="1731552786874" duration="17909000" />
+      <workItem from="1731577476949" duration="667000" />
+      <workItem from="1731578271420" duration="52787000" />
+      <workItem from="1731987212092" duration="13086000" />
+      <workItem from="1732071343258" duration="17442000" />
+      <workItem from="1732104378974" duration="2820000" />
+      <workItem from="1732162839466" duration="1616000" />
+      <workItem from="1732164797788" duration="30616000" />
+      <workItem from="1732599542574" duration="9000" />
+      <workItem from="1732781669972" duration="135000" />
+      <workItem from="1732783665804" duration="27781000" />
+      <workItem from="1733206181368" duration="510000" />
+      <workItem from="1733206854430" duration="19000" />
+      <workItem from="1733213312641" duration="2710000" />
+      <workItem from="1733216907739" duration="9279000" />
+      <workItem from="1733281485693" duration="105000" />
+      <workItem from="1733281637706" duration="557000" />
+      <workItem from="1733282406300" duration="5695000" />
+      <workItem from="1733293737294" duration="7662000" />
+      <workItem from="1733379128819" duration="50075000" />
+      <workItem from="1733804004140" duration="12914000" />
+      <workItem from="1733887001996" duration="49577000" />
+      <workItem from="1734326115200" duration="27828000" />
+      <workItem from="1734427112594" duration="1882000" />
+      <workItem from="1734436952748" duration="62475000" />
+      <workItem from="1735030663891" duration="24175000" />
+      <workItem from="1735210652096" duration="74000" />
+      <workItem from="1735215687404" duration="4057000" />
+      <workItem from="1735289743798" duration="7000" />
+      <workItem from="1735373284745" duration="10680000" />
+      <workItem from="1735984893314" duration="16000" />
+      <workItem from="1736063486433" duration="10000" />
+      <workItem from="1736405325248" duration="364000" />
+      <workItem from="1736413006204" duration="12060000" />
+      <workItem from="1736743655755" duration="3107000" />
+      <workItem from="1736929175748" duration="10802000" />
+      <workItem from="1737024728607" duration="4650000" />
+      <workItem from="1737088097898" duration="1183000" />
+      <workItem from="1737090704546" duration="2785000" />
+      <workItem from="1737100327096" duration="15472000" />
+      <workItem from="1737359826774" duration="11400000" />
+      <workItem from="1737442335791" duration="1455000" />
+      <workItem from="1737448602063" duration="5354000" />
+      <workItem from="1737536207654" duration="1133000" />
+      <workItem from="1737689136886" duration="8000" />
+      <workItem from="1737715342133" duration="2963000" />
+      <workItem from="1737952161919" duration="26232000" />
+      <workItem from="1738061866656" duration="12827000" />
+      <workItem from="1738147703043" duration="37394000" />
+      <workItem from="1738298146842" duration="4851000" />
+      <workItem from="1738314855183" duration="1026000" />
+    </task>
+    <task id="LOCAL-00001" summary="Апдейта заявки вертолетов">
+      <option name="closed" value="true" />
+      <created>1721381109095</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1721381109095</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Рефакторинг + Разработка счета-фактур">
+      <option name="closed" value="true" />
+      <created>1721479177047</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1721479177047</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Доделано создание\редактирование счетов-фактур, туду стоимости полетов + getCosts летит с ошибкой 400">
+      <option name="closed" value="true" />
+      <created>1721649441374</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1721649441375</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Мелкие доделки">
+      <option name="closed" value="true" />
+      <created>1721735621414</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1721735621414</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Деплой на тестовый сервер">
+      <option name="closed" value="true" />
+      <created>1722406647761</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1722406647761</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Разработан отчет-счета фактуры">
+      <option name="closed" value="true" />
+      <created>1722827748418</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1722827748418</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Исправлен формат даты (убраны везде HH mm SS)">
+      <option name="closed" value="true" />
+      <created>1722916193453</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1722916193453</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Порция багфиксов">
+      <option name="closed" value="true" />
+      <created>1722943634622</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1722943634622</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Порция багфиксов">
+      <option name="closed" value="true" />
+      <created>1723013284825</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1723013284825</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Порция багфиксов">
+      <option name="closed" value="true" />
+      <created>1723023704678</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1723023704678</updated>
+    </task>
+    <task id="LOCAL-00011" summary="createTextField">
+      <option name="closed" value="true" />
+      <created>1723195830618</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1723195830618</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Исравления расчетов затрат и автозаполнения счетов-фактур и другого">
+      <option name="closed" value="true" />
+      <created>1723714380740</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1723714380740</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Фильтр заявок на невхождение в счет фактуру">
+      <option name="closed" value="true" />
+      <created>1723721671900</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1723721671900</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Режим сохранить через кнопку &quot;Сохранить&quot; в заявках на выполнение полетов вертолетами + мелкие улучшения">
+      <option name="closed" value="true" />
+      <created>1725277946459</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1725277946459</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Режим сохранить через кнопку &quot;Сохранить&quot; в заявках на полеты, туду сохранение зменений Затрат">
+      <option name="closed" value="true" />
+      <created>1725364624495</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1725364624495</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Исправлена загрузкак файлов с косячной кодировкой + мелкие багфиксы">
+      <option name="closed" value="true" />
+      <created>1725882778524</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1725882778524</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Мелкие багфиксы">
+      <option name="closed" value="true" />
+      <created>1726053335108</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1726053335108</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Исправлен баг с двойным выводом затрат">
+      <option name="closed" value="true" />
+      <created>1726228237536</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1726228237536</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Добавлен расчет завтрат для вертолетов">
+      <option name="closed" value="true" />
+      <created>1728031772380</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1728031772380</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Исправлены ошибки в api справочников">
+      <option name="closed" value="true" />
+      <created>1728276659804</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1728276659804</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Исправлена ошибка при сохранении счета-фактуры с заявкой у которой отсутствует VAT в контракте">
+      <option name="closed" value="true" />
+      <created>1728281221057</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1728281221057</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Добавлены методы выдачи всей пользователей + создание пользователя">
+      <option name="closed" value="true" />
+      <created>1728736039709</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1728736039709</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Добавлен метод изменения пользователя">
+      <option name="closed" value="true" />
+      <created>1728878076976</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1728878076976</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Добавлен метод получения текущего пользователя">
+      <option name="closed" value="true" />
+      <created>1728889020042</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1728889020042</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Добавлен фильтр по филиалу пользователя">
+      <option name="closed" value="true" />
+      <created>1728897772650</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1728897772650</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Исправлен формат дат в модальном окне создания\редактирования полетов, и в гриде всех записей в заявках филиала">
+      <option name="closed" value="true" />
+      <created>1728993457160</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1728993457160</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Исправлен формат дат в разделе заявок на полеты">
+      <option name="closed" value="true" />
+      <created>1729053266852</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1729053266852</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Исправлен формат дат для разделов &quot;Плаинирование&quot; и &quot;Документы&quot;, исправлен метод для автозаполнения заявок в счете фактуры и прочие мелочи">
+      <option name="closed" value="true" />
+      <created>1729078512228</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1729078512228</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Исправен дизайн раачета к счет фактурее, исправавлен баг с удалением заявки при автозаполнении">
+      <option name="closed" value="true" />
+      <created>1729143962249</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1729143962249</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Добавлено журналирование ошибок">
+      <option name="closed" value="true" />
+      <created>1729751716666</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1729751716666</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Туева хуча доработок, на этом этапе все работает и всех все устраивает">
+      <option name="closed" value="true" />
+      <created>1732274576458</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1732274576459</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Исправлен расчет дат в отчете о проживании (реестр)&#10;Добавлен отчет о жильцах">
+      <option name="closed" value="true" />
+      <created>1733197170825</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1733197170825</updated>
+    </task>
+    <task id="LOCAL-00033" summary="В отчете о проживании добавлен период в качестве входных параметров.">
+      <option name="closed" value="true" />
+      <created>1733201723739</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1733201723739</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Изменено обновление статусов у секций и комнат">
+      <option name="closed" value="true" />
+      <created>1733299102636</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1733299102636</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Добавлен отчет реестр по организациям жильцов">
+      <option name="closed" value="true" />
+      <created>1733305082813</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1733305082813</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Доработан реестр для сторонников исправлены ошибки;&#10;Отчет по МВЗ;&#10;Ускорен отчет по загруженности;&#10;Возможно что то еще что я забыл ы)">
+      <option name="closed" value="true" />
+      <created>1733563597593</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1733563597593</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Добавлен краткий отчет о загруженности">
+      <option name="closed" value="true" />
+      <created>1733727152329</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1733727152329</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Добавлено поле года в договора, исправлен запрос для дежурного">
+      <option name="closed" value="true" />
+      <created>1733821453886</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1733821453886</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Доработан отчет по МВЗ и другие баг фиксы">
+      <option name="closed" value="true" />
+      <created>1734090524713</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1734090524713</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Добавлена возможность создания периодов для статусов">
+      <option name="closed" value="true" />
+      <created>1734422208666</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1734422208666</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Добавлена справка">
+      <option name="closed" value="true" />
+      <created>1735020249534</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1735020249534</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Исправлены баги, добавлены мероприятия, улучшен отчет ежемесячный">
+      <option name="closed" value="true" />
+      <created>1735392182730</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1735392182730</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Мелкие исправления в отчетах + сортировка филиалов">
+      <option name="closed" value="true" />
+      <created>1736740935482</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1736740935482</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Мелкие исправления">
+      <option name="closed" value="true" />
+      <created>1736937202792</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1736937202792</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Добавлены доп. услуги о колонка комнаты для договоров у Ермака">
+      <option name="closed" value="true" />
+      <created>1737347649865</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1737347649865</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Исправил МВЗ под новую структуру БД.">
+      <option name="closed" value="true" />
+      <created>1737374048274</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1737374048275</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Метод для заселения, для интеграции с 1С &quot;Учебный процесс&quot;">
+      <option name="closed" value="true" />
+      <created>1737968451322</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1737968451322</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Удаление записи о проживании.&#10;Окно с исконками для 3+ людей в комнате.&#10;Исправлена ошибка в отчете по загруженности.&#10;Заселение 0% у дежурных.&#10;В отчет по МВЗ добавлено возможность выгрузки по всем ЛПУ">
+      <option name="closed" value="true" />
+      <created>1738130898941</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1738130898941</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Баг создания договора. Переделана шахматка.">
+      <option name="closed" value="true" />
+      <created>1738214922261</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1738214922261</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/cvd" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Добавлен фильтр по филиалу пользователя" />
+    <MESSAGE value="Исправлен формат дат в модальном окне создания\редактирования полетов, и в гриде всех записей в заявках филиала" />
+    <MESSAGE value="Исправлен формат дат в разделе заявок на полеты" />
+    <MESSAGE value="Исправлен формат дат для разделов &quot;Плаинирование&quot; и &quot;Документы&quot;, исправлен метод для автозаполнения заявок в счете фактуры и прочие мелочи" />
+    <MESSAGE value="Исправен дизайн раачета к счет фактурее, исправавлен баг с удалением заявки при автозаполнении" />
+    <MESSAGE value="Добавлено журналирование ошибок" />
+    <MESSAGE value="Туева хуча доработок, на этом этапе все работает и всех все устраивает" />
+    <MESSAGE value="Исправлен расчет дат в отчете о проживании (реестр)&#10;Добавлен отчет о жильцах" />
+    <MESSAGE value="В отчете о проживании добавлен период в качестве входных параметров." />
+    <MESSAGE value="Изменено обновление статусов у секций и комнат" />
+    <MESSAGE value="Добавлен отчет реестр по организациям жильцов" />
+    <MESSAGE value="Доработан реестр для сторонников исправлены ошибки;&#10;Отчет по МВЗ;&#10;Ускорен отчет по загруженности;&#10;Возможно что то еще что я забыл ы)" />
+    <MESSAGE value="Добавлен краткий отчет о загруженности" />
+    <MESSAGE value="Добавлено поле года в договора, исправлен запрос для дежурного" />
+    <MESSAGE value="Доработан отчет по МВЗ и другие баг фиксы" />
+    <MESSAGE value="Добавлена возможность создания периодов для статусов" />
+    <MESSAGE value="Добавлена справка" />
+    <MESSAGE value="Исправлены баги, добавлены мероприятия, улучшен отчет ежемесячный" />
+    <MESSAGE value="Мелкие исправления в отчетах + сортировка филиалов" />
+    <MESSAGE value="Мелкие исправления" />
+    <MESSAGE value="Добавлены доп. услуги о колонка комнаты для договоров у Ермака" />
+    <MESSAGE value="Исправил МВЗ под новую структуру БД." />
+    <MESSAGE value="Метод для заселения, для интеграции с 1С &quot;Учебный процесс&quot;" />
+    <MESSAGE value="Удаление записи о проживании.&#10;Окно с исконками для 3+ людей в комнате.&#10;Исправлена ошибка в отчете по загруженности.&#10;Заселение 0% у дежурных.&#10;В отчет по МВЗ добавлено возможность выгрузки по всем ЛПУ" />
+    <MESSAGE value="Баг создания договора. Переделана шахматка." />
+    <option name="LAST_COMMIT_MESSAGE" value="Баг создания договора. Переделана шахматка." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java</url>
+          <line>25</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/ru/sgp/service/plans/PlansByHelicopterService.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="java.lang.String" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory">
+        <watch expression="bed.getName()" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

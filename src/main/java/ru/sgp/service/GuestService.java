@@ -168,7 +168,7 @@ public class GuestService {
         // -----
 
         if (guestDTO.getBedName() != null) {
-            Optional<Bed> bedOpt = bedRepository.findByRoomAndName(room, guestDTO.getBedName());
+            Optional<Bed> bedOpt = bedRepository.findById(guestDTO.getBedId());
             if (bedOpt.isPresent()) {
                 guest.setBed(bedOpt.get());
             }

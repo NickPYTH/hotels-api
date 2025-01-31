@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.RoomDTO;
 import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
@@ -33,9 +34,8 @@ public class RoomController {
     public ResponseEntity<List<RoomDTO>> getAllByHotelId(@RequestParam Long id) {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<RoomDTO> response = roomService.getAllByFlatId(id);
         try {
-
+            List<RoomDTO> response = roomService.getAllByFlatId(id);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/getAllByFlatId", duration, "");
             record.setStatus("OK");
@@ -51,6 +51,35 @@ public class RoomController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/room/getAllByFlatId");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getAllBeds")
+    public ResponseEntity<List<BedDTO>> getAllBeds(@RequestParam Long roomId) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<BedDTO> response = roomService.getAllBeds(roomId);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/getAllBeds", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/room/getAllBeds");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/room/getAllBeds", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/room/getAllBeds");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

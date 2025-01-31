@@ -36,5 +36,6 @@ public class GuestDTO {
     private Boolean checkouted;
     private String contractNumber;
     private Long contractId;
+    private Long bedId;
     private String bedName;
 }

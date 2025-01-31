@@ -10,7 +10,7 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- !!! фильтр для включение ограничения доступа-->
+    <!-- !!! фильтр для включение ограничения доступа
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>договор
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -19,7 +19,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+    -->
 
     <!-- сервлет обработки REST запросов-->
     <servlet>

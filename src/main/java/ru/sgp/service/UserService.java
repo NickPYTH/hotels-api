@@ -202,14 +202,29 @@ public class UserService {
             Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
             String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS));
-            parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
+            if (filial.getId() == 930L) {
+                String hoursCount = String.valueOf((double)TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)/60);
+                parameters.put("daysCount", hoursCount);
+            }
+            else
+                parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         } else {
             Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
             String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1);
-            parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
+            if (filial.getId() == 930L) {
+                String hoursCount = String.valueOf(TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS));
+                parameters.put("daysCount", hoursCount);
+            }
+            else
+                parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         }
         parameters.put("date", dateFormat.format(new Date()));
+        if (filial.getId() == 930L) {
+            parameters.put("date", dateFormat.format(dateFinish));
+            parameters.put("fio", guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
+            parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname().charAt(0) + ". " + respEmp.getSecondName().charAt(0) + ".");
+        }
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
         return export(jasperPrint);
     }

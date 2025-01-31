@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="hotels">
+    <output-path>$PROJECT_DIR$/out/artifacts/hotels</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="flight-api" />
+          <element id="jpa-descriptors" facet="flight-api/jpa/JPA" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="antlr-2.7.7" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="flight-api/web/Web" />
+    </root>
+  </artifact>
+</component>
