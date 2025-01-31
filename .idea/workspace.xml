@@ -9,26 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Баг создания договора. Переделана шахматка.">
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-29.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-30.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/BedDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-22.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/RoomDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/RoomDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/main.47967829e19316d24d40.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/main.47967829e19316d24d40.js.LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js.LICENSE.txt" afterDir="false" />
-    </list>
+    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Догрузил настройки проекта" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -448,15 +429,7 @@
       <workItem from="1738061866656" duration="12827000" />
       <workItem from="1738147703043" duration="37394000" />
       <workItem from="1738298146842" duration="4851000" />
-      <workItem from="1738314855183" duration="1026000" />
-    </task>
-    <task id="LOCAL-00001" summary="Апдейта заявки вертолетов">
-      <option name="closed" value="true" />
-      <created>1721381109095</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1721381109095</updated>
+      <workItem from="1738314855183" duration="1834000" />
     </task>
     <task id="LOCAL-00002" summary="Рефакторинг + Разработка счета-фактур">
       <option name="closed" value="true" />
@@ -842,7 +815,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738214922261</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Догрузил настройки проекта">
+      <option name="closed" value="true" />
+      <created>1738318542079</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1738318542081</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -876,7 +857,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Добавлен фильтр по филиалу пользователя" />
     <MESSAGE value="Исправлен формат дат в модальном окне создания\редактирования полетов, и в гриде всех записей в заявках филиала" />
     <MESSAGE value="Исправлен формат дат в разделе заявок на полеты" />
     <MESSAGE value="Исправлен формат дат для разделов &quot;Плаинирование&quot; и &quot;Документы&quot;, исправлен метод для автозаполнения заявок в счете фактуры и прочие мелочи" />
@@ -901,7 +881,8 @@
     <MESSAGE value="Метод для заселения, для интеграции с 1С &quot;Учебный процесс&quot;" />
     <MESSAGE value="Удаление записи о проживании.&#10;Окно с исконками для 3+ людей в комнате.&#10;Исправлена ошибка в отчете по загруженности.&#10;Заселение 0% у дежурных.&#10;В отчет по МВЗ добавлено возможность выгрузки по всем ЛПУ" />
     <MESSAGE value="Баг создания договора. Переделана шахматка." />
-    <option name="LAST_COMMIT_MESSAGE" value="Баг создания договора. Переделана шахматка." />
+    <MESSAGE value="Догрузил настройки проекта" />
+    <option name="LAST_COMMIT_MESSAGE" value="Догрузил настройки проекта" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
