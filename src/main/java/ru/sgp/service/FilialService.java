@@ -378,17 +378,6 @@ public class FilialService {
             }
             Hotel hotelModel = hotelRepository.findByNameAndFilial(hotel.trim(), filialModel);
 
-//            for (Hotel h : hotelRepository.findAll()) {
-//                if (h.getFilial().getId() == filialModel.getId()) {
-//                    commendantsRepository.deleteAllByHotel(h);
-//                    responsibilitiesRepository.deleteAllByHotel(h);
-//                    bedRepository.deleteAllByRoomFlatHotel(h);
-//                    roomRepository.deleteAllByFlatHotel(h);
-//                    flatRepository.deleteAllByHotel(h);
-//                    hotelRepository.delete(h);
-//                }
-//            }
-
 
             if (hotelModel == null) {
                 hotelModel = new Hotel();

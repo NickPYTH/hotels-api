@@ -7,10 +7,14 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.dto.report.GuestReportDTO;
@@ -18,6 +22,7 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,6 +46,10 @@ public class GuestService {
     ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private HotelRepository hotelRepository;
+    @Autowired
+    private FilialRepository filialRepository;
+    @Autowired
+    private FlatRepository flatRepository;
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -409,4 +418,69 @@ public class GuestService {
         }
         return response;
     }
+
+    @Transactional
+    public List<String> loadGuestsFrom1C(MultipartFile file) throws IOException, ParseException {
+        SimpleDateFormat dateTimeFormatterDotes = new SimpleDateFormat("dd.MM####yyyy HH:mm");
+        Hotel hotel = hotelRepository.getById(182L);
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        List<Guest> test = new ArrayList<>();
+        for (int i = 1; i <= 1000; i++) {
+            XSSFRow row = worksheet.getRow(i);
+            if (row == null)
+                break;
+
+            String guestStr = row.getCell(0).getStringCellValue();
+            String dateStartStr = row.getCell(1).getStringCellValue();
+            Date dateStart = dateTimeFormatterDotes.parse(dateStartStr);
+            String dateFinishStr = row.getCell(2).getStringCellValue();
+            Date dateFinish = dateTimeFormatterDotes.parse(dateFinishStr);
+            Double flatNameD = row.getCell(3).getNumericCellValue();
+            String flatName = String.valueOf(flatNameD.intValue());
+            Flat flat = flatRepository.findByNameAndHotel(flatName, hotel);
+            //Contract contract = contractRepository.getById(1240L); // for Ermak
+            Contract contract = contractRepository.getById(1241L); // for Obssch 100 mest
+            for (Bed bed : bedRepository.findAllByRoomFlat(flat)) {
+                List<Guest> guests = guestRepository.findAllByBed(bed);
+                boolean guestExists = false;
+                for (Guest guest : guests) {
+                    if ((dateStart.before(guest.getDateStart()) && dateFinish.before(guest.getDateStart())) || // Левый диапазон
+                            dateStart.after(guest.getDateFinish()) && dateFinish.after(guest.getDateFinish())) { // Правый диапазон
+
+                    } else {
+                        guestExists = true;
+                        break;
+                    }
+                }
+                if (!guestExists) { // Тогда селим и break
+                    Guest guest = new Guest();
+                    guest.setFirstname("");
+                    guest.setLastname(guestStr);
+                    guest.setSecondName("");
+                    guest.setMale(true);
+                    guest.setNote("1C int " + guestStr);
+                    guest.setDateStart(dateStart);
+                    guest.setDateFinish(dateFinish);
+                    guest.setEmployee(null);
+                    guest.setOrganization(organizationRepository.getById(11L));
+                    guest.setRegPoMestu(false);
+                    guest.setMemo("-");
+                    guest.setBilling(contract.getBilling());
+                    guest.setReason(contract.getReason());
+                    guest.setContract(contract);
+                    guest.setCheckouted(false);
+                    guest.setRoom(bed.getRoom());
+                    guest.setBed(bed);
+                    guestRepository.save(guest);
+                    test.add(guest);
+                    break;
+                }
+            }
+
+
+        }
+        return new ArrayList<>();
+    }
+
 }

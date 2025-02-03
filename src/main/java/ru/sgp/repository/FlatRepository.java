@@ -21,4 +21,6 @@ public interface FlatRepository extends JpaRepository<Flat, Long> {
     Integer countAllByHotel(Hotel hotel);
 
     void deleteAllByHotel(Hotel h);
+
+    Flat findByNameAndHotel(String flatName, Hotel hotel);
 }

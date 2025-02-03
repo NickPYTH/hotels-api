@@ -22,7 +22,7 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoom(Date dateFinish, Date dateStart, Room room);
 
-    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(Date tmp, Date tmp1);
+    List<Guest>  findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(Date tmp, Date tmp1);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfter(Date tmp, Date tmp1);
 
@@ -52,5 +52,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllByBed(Bed bed);
 
     List<Guest> findAllByDateStartGreaterThanEqualAndDateFinishLessThanEqualAndBedAndIdIsNot(Date date, Date date1, Bed bed, Long id);
+
 
 }

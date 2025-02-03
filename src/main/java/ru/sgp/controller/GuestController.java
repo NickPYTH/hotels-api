@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.model.Log;
@@ -18,6 +19,7 @@ import ru.sgp.service.GuestService;
 import ru.sgp.service.HistoryService;
 import ru.sgp.utils.SecurityManager;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -339,6 +341,11 @@ public class GuestController {
             logsRepository.save(record);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping(path = "/integration/loadGuestsFrom1C", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public List<String> loadGuestsFrom1C(@RequestParam("file") MultipartFile file) throws IOException, ParseException {
+        return guestService.loadGuestsFrom1C(file);
     }
 
 }
