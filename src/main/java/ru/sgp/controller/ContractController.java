@@ -219,8 +219,8 @@ public class ContractController {
     public ResponseEntity<byte[]> getMonthReportByFilial(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
         try {
+            byte[] reportData = contractService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByFilial", duration, "");
             record.setStatus("OK");
