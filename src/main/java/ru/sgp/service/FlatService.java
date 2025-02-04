@@ -194,7 +194,7 @@ public class FlatService {
             roomDTO.setFlatId(flatId);
             roomDTO.setBedsCount(room.getBedsCount());
             List<GuestDTO> guestDTOList = new ArrayList<>();
-            for (Guest guest : guestRepository.findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+            for (Guest guest : guestRepository.findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
                 GuestDTO guestDTO = new GuestDTO();
                 guestDTO.setId(guest.getId());
                 guestDTO.setFirstname(guest.getFirstname());
@@ -218,7 +218,6 @@ public class FlatService {
                 guestDTO.setCheckouted(guest.getCheckouted());
                 guestDTO.setBedName(guest.getBed().getName());
                 guestDTO.setBedId(guest.getBed().getId());
-                //String daysCount = String.valueOf(TimeUnit.HOURS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS) / 24);
                 Date cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
                 Date cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
                 String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedFinishDate.getTime() - cuttedStartDate.getTime(), TimeUnit.MILLISECONDS));
@@ -335,7 +334,7 @@ public class FlatService {
                             if ((start.isAfter(guestStart) || start.isEqual(guestStart)) && (start.isBefore(guestFinish) || start.isEqual(guestFinish))) {
                                 Integer busyPercentStart = 100;
                                 Integer busyPercentFinish = 100;
-                                String guestDatesRange = "&" + dateTimeFormatter.format(guest.getDateStart()) + "-" + dateTimeFormatter.format(guest.getDateFinish());
+                                String guestDatesRange = "&" + dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateStart()))) / 24 * 100);
                                     if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
@@ -343,7 +342,7 @@ public class FlatService {
                                     } else
                                         record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#" + busyPercentStart);
                                 } else if (start.isEqual(guestFinish)) { // Начало совпало вычисляем процент занятого дня
-                                    busyPercentFinish = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateFinish()))) / 24 * 100);
+                                    busyPercentFinish = (int) ((Double.parseDouble(timeFormatter.format(guest.getDateFinish()))) / 24 * 100);
                                     if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
                                         record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) + "||" + guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#-" + busyPercentFinish);
                                     } else
