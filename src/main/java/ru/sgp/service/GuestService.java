@@ -51,6 +51,8 @@ public class GuestService {
     @Autowired
     private FlatRepository flatRepository;
 
+
+
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -150,6 +152,7 @@ public class GuestService {
             Guest guestTmp = guests.get(0);
             GuestDTO tmp = new GuestDTO();
             tmp.setError("Dates range error");
+            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
             tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
             tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
@@ -200,6 +203,7 @@ public class GuestService {
             roomRepository.save(room);
         }
         guestDTO.setId(guest.getId());
+        /*guestDTO.setFilialName();*/
         return guestDTO;
     }
 
