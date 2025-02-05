@@ -25,7 +25,7 @@ public class HistoryService {
         ObjectMapper mapper = new ObjectMapper();
         history.setRequest(request);
         history.setEntityType("guest");
-        history.setEntityId(guestBefore.getId());
+        history.setEntityId(guestAfter.getId());
         history.setStateBefore(mapper.writeValueAsString(guestBefore));
         history.setStateAfter(mapper.writeValueAsString(guestAfter));
         historyRepository.save(history);

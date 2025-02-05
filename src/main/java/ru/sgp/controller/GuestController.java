@@ -128,12 +128,14 @@ public class GuestController {
         }
     }
 
+    @Transactional
     @PostMapping(path = "/create")
     public ResponseEntity<GuestDTO> create(@RequestBody GuestDTO guestDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
             GuestDTO response = guestService.create(guestDTO);
+            GuestDTO emptyGuestBefore = new GuestDTO();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/create", duration, "");
             record.setStatus("OK");
@@ -142,6 +144,7 @@ public class GuestController {
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
+            historyService.updateGuest(record, emptyGuestBefore, response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
