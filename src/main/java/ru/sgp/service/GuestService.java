@@ -52,7 +52,6 @@ public class GuestService {
     private FlatRepository flatRepository;
 
 
-
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -218,11 +217,16 @@ public class GuestService {
     @Transactional
     public List<GuestDTO> update(GuestDTO guestDTO) throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
-        Room room = roomRepository.getById(guestDTO.getRoomId());
+        Bed bed = bedRepository.getById(guestDTO.getBedId());
         Guest guest = guestRepository.getById(guestDTO.getId());
+
+        // Запоминаем предыдущее состояние
         GuestDTO guestBefore = modelMapper.map(guest, GuestDTO.class);
         List<GuestDTO> response = new ArrayList<>();
         response.add(guestBefore);
+        // -----
+
+        // Определяем кто перед нами работник Газпрома или сторонник
         if (guestDTO.getTabnum() != null) {
             Employee employee = employeeRepository.findByTabnum(guestDTO.getTabnum());
             guest.setEmployee(employee);
@@ -239,40 +243,40 @@ public class GuestService {
                 }
             } else guest.setOrganization(org);
         }
+        // -----
+
+        // Заполняем простые поля
         guest.setRegPoMestu(guestDTO.getRegPoMestu());
         guest.setFirstname(guestDTO.getFirstname());
         guest.setLastname(guestDTO.getLastname());
         guest.setSecondName(guestDTO.getSecondName());
+        guest.setMale(guestDTO.getMale());
+        guest.setMemo(guestDTO.getMemo());
+        guest.setRoom(bed.getRoom());
+        guest.setBed(bed);
+        // -----
+
+        // Устанавливаем договор и его зависимости
         if (guestDTO.getContractId() != null) {
             Contract contract = contractRepository.getById(guestDTO.getContractId());
+            guest.setReason(contract.getReason());
+            guest.setBilling(contract.getBilling());
             guest.setContract(contract);
         }
-        guest.setMale(guestDTO.getMale());
 
+        // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте
         Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
-        List<Guest> guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndOrganizationAndLastnameAndFirstnameAndSecondNameAndCheckouted(dateFinish, dateStart, guest.getOrganization(), guest.getLastname(), guest.getFirstname(), guest.getSecondName(), false);
-        if (guests.size() == 1) {
-            Guest guestTmp = guests.get(0);
-            if (guestTmp.getId() == guest.getId()) {
-                guest.setDateStart(dateStart);
-                guest.setDateFinish(dateFinish);
-            } else {
-                GuestDTO tmp = new GuestDTO();
-                tmp.setError("Dates range error");
-                tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-                tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-                tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-                tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-                response.add(tmp);
-                return response;
-            }
-        } else if (guests.size() > 1) {
+        List<Guest> guests = guestRepository.findAllByDateStartLessThanEqualAndDateFinishGreaterThanEqualAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
+        if (!guests.isEmpty()) {
             Guest guestTmp = guests.get(0);
             GuestDTO tmp = new GuestDTO();
             tmp.setError("Dates range error");
+            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
             tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
             tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
+            tmp.setRoomName(guestTmp.getRoom().getName());
+            tmp.setBedName(guestTmp.getBed().getName());
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
             response.add(tmp);
@@ -281,21 +285,10 @@ public class GuestService {
             guest.setDateStart(dateStart);
             guest.setDateFinish(dateFinish);
         }
+        // -----
 
-        guest.setMemo(guestDTO.getMemo());
-        guest.setBilling(guestDTO.getBilling());
-        Reason reason = reasonRepository.findByName(guestDTO.getReason());
-        if (reason == null) {
-            Reason newReason = new Reason();
-            newReason.setIsDefault(false);
-            newReason.setName(guestDTO.getReason());
-            reasonRepository.save(newReason);
-            guest.setReason(newReason);
-        } else guest.setReason(reason);
-        guest.setRoom(room);
-        guestRepository.save(guest);
-
-        response.add(guestDTO);
+        guestRepository.save(guest); // Сохраняем
+        response.add(guestDTO); // Добавляем обновленную сущность для логов
         return response;
     }
 
