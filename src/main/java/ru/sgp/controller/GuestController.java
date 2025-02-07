@@ -44,9 +44,8 @@ public class GuestController {
     public ResponseEntity<List<GuestDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<GuestDTO> response = guestService.getAll();
         try {
-
+            List<GuestDTO> response = guestService.getAll();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getAll", duration, "");
             record.setStatus("OK");
@@ -134,8 +133,7 @@ public class GuestController {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            GuestDTO response = guestService.create(guestDTO);
-            GuestDTO emptyGuestBefore = new GuestDTO();
+            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/create", duration, "");
             record.setStatus("OK");
@@ -144,8 +142,8 @@ public class GuestController {
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
-            historyService.updateGuest(record, emptyGuestBefore, response);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            historyService.updateGuest(record, response.get(0), response.get(1));
+            return new ResponseEntity<>(response.get(1), HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/create", duration, e.getMessage());
@@ -226,6 +224,35 @@ public class GuestController {
         Log record = new Log();
         try {
             GuestDTO response = guestService.getFioByTabnum(tabnum);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getFioByTabnum", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getFioByTabnum");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/getFioByTabnum", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guest/getFioByTabnum");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getTabnumByFio")
+    public ResponseEntity<GuestDTO> getTabnumByFio(@RequestParam String lastname, @RequestParam String firstname, @RequestParam String secondName) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        GuestDTO response = guestService.getTabnumByFio(lastname, firstname, secondName);
+        try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getFioByTabnum", duration, "");
             record.setStatus("OK");

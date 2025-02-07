@@ -92,7 +92,11 @@ public class FlatService {
                     guestDTO.setFirstname(guest.getFirstname());
                     guestDTO.setLastname(guest.getLastname());
                     guestDTO.setSecondName(guest.getSecondName());
+                    guestDTO.setBedName(guest.getBed().getName());
+                    guestDTO.setBedId(guest.getBed().getId());
                     guestDTO.setRoomId(room.getId());
+                    if (guest.getContract() != null)
+                        guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setRoomName(room.getName());
                     guestDTO.setFlatId(room.getFlat().getId());
                     guestDTO.setFlatName(flat.getName());
@@ -105,7 +109,8 @@ public class FlatService {
                     guestDTO.setNote(guest.getNote());
                     guestDTO.setRegPoMestu(guest.getRegPoMestu());
                     guestDTO.setMemo(guest.getMemo());
-                    guestDTO.setReason(guest.getReason().getName());
+                    if (guest.getReason() != null)
+                        guestDTO.setReason(guest.getReason().getName());
                     guestDTO.setBilling(guest.getBilling());
                     guestDTO.setMale(guest.getMale());
                     guestDTO.setCheckouted(guest.getCheckouted());

@@ -595,9 +595,8 @@ public class FilialService {
 
     @Transactional
     public FilialDTO getWithStats(String dateStr, Long filialId) throws ParseException {
-        SimpleDateFormat dateTimeFormatter1 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date date = dateTimeFormatter1.parse(dateStr);
+        Date date = dateTimeFormatter.parse(dateStr);
         Filial filial = filialRepository.getById(filialId);
         FilialDTO filialDTO = new FilialDTO();
         filialDTO.setId(filial.getId());
@@ -616,10 +615,11 @@ public class FilialService {
                 List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
                 for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                     bedsCount += room.getBedsCount();
-                    emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                    int size = guestRepository.countAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date);
+                    emptyBedsCountWithBusy += room.getBedsCount() - size;
                     List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
                     if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {
-                        emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                        emptyBedsCount += room.getBedsCount() - size;
                     }
                 }
             }

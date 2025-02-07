@@ -15,7 +15,7 @@ public class ContractDTO {
     private Float cost;
     private String note;
     private String billing;
-    private String osnovanie;
+    private String reason;
     private Long reasonId;
     private Integer year;
     private Integer roomNumber;

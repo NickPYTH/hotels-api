@@ -72,6 +72,7 @@ public class HotelService {
             hotelDTO.setName(hotel.getName());
             hotelDTO.setBedsCount(bedsCount.get());
             hotelDTO.setFlatsCount(flatRepository.countAllByHotel(hotel));
+            hotelDTO.setLocation(hotel.getLocation());
             Integer countBusyBeds = 0;
             List<Long> flatsExcludeList = new ArrayList<>();
             List<Long> roomExcludeList = new ArrayList<>();
@@ -142,6 +143,7 @@ public class HotelService {
             hotelDTO.setName(hotel.getName());
             hotelDTO.setBedsCount(bedsCount.get());
             hotelDTO.setFlatsCount(flatRepository.countAllByHotel(hotel));
+            hotelDTO.setLocation(hotel.getLocation());
             Integer countBusyBeds = 0;
             List<Long> flatsExcludeList = new ArrayList<>();
             List<Long> roomExcludeList = new ArrayList<>();

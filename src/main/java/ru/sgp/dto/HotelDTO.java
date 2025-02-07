@@ -14,4 +14,5 @@ public class HotelDTO {
     private Integer emptyBedsCount;
     private Integer busyBedsCount;
     private Integer flatsCount;
+    private String location;
 }

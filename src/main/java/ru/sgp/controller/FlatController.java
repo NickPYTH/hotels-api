@@ -37,10 +37,9 @@ public class FlatController {
     public ResponseEntity<List<FlatDTO>> getAllByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-
         List<FlatDTO> response = flatService.getAllByHotelId(id, date);
-        try {
 
+        try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelId", duration, "");
             record.setStatus("OK");

@@ -80,7 +80,7 @@ public class ContractService {
             contractDTO.setCost(contract.getCost());
             contractDTO.setReasonId(contract.getReason().getId());
             contractDTO.setNote(contract.getNote());
-            contractDTO.setOsnovanie(contract.getReason().getName());
+            contractDTO.setReason(contract.getReason().getName());
             contractDTO.setBilling(contract.getBilling());
             contractDTO.setYear(contract.getYear());
             contractDTO.setRoomNumber(contract.getRoomNumber());
@@ -113,7 +113,7 @@ public class ContractService {
         Contract contract = contractRepository.getById(contractDTO.getId());
         Filial filial = filialRepository.getById(contractDTO.getFilialId());
         Hotel hotel = hotelRepository.getById(contractDTO.getHotelId());
-        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getOsnovanie()));
+        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getReason()));
         Organization organization = organizationRepository.getById(contractDTO.getOrganizationId());
         contract.setBilling(contractDTO.getBilling());
         contract.setReason(reason);
@@ -134,7 +134,7 @@ public class ContractService {
         Filial filial = filialRepository.getById(contractDTO.getFilialId());
         Hotel hotel = hotelRepository.getById(contractDTO.getHotelId());
         Organization organization = organizationRepository.getById(contractDTO.getOrganizationId());
-        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getOsnovanie()));
+        Reason reason = reasonRepository.getById(Long.parseLong(contractDTO.getReason()));
         contract.setBilling(contractDTO.getBilling());
         contract.setReason(reason);
         contract.setFilial(filial);
@@ -582,7 +582,7 @@ public class ContractService {
             contractDTO.setCost(contract.getCost());
             contractDTO.setReasonId(contract.getReason().getId());
             contractDTO.setNote(contract.getNote());
-            contractDTO.setOsnovanie(contract.getReason().getName());
+            contractDTO.setReason(contract.getReason().getName());
             contractDTO.setBilling(contract.getBilling());
             contractDTO.setYear(contract.getYear());
             contractDTO.setRoomNumber(contract.getRoomNumber());

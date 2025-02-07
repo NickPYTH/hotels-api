@@ -13,6 +13,8 @@ import java.util.List;
 public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, boolean checkouted, Date date, Date date1);
 
+    Integer countAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, boolean checkouted, Date date, Date date1);
+
     List<Guest> findAllByRoomAndCheckouted(Room room, boolean checkouted);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(Date maxDate, Date minDate, boolean checkouted, Room room);
@@ -39,7 +41,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(Date tmp, Date tmp1, Hotel hotel);
 
-    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndLastnameAndFirstnameAndSecondNameAndCheckouted(Date dateFinish, Date dateStart, String lastName, String firstName, String secondName, boolean checkouted);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndLastname(Date dateFinish, Date dateStart, String lastName);
 
@@ -47,13 +48,14 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotelFilial(Date tmp, Date tmp1, Filial filial);
 
-    List<Guest> findAllByRoomAndDateStartGreaterThan(Room room, Date date);
 
     List<Guest> findAllByBed(Bed bed);
 
+    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(Date date, Date date1, Bed bed); // Для поиска пересечения дат проживания по месту при создании
 
-    List<Guest> findAllByDateStartLessThanEqualAndDateFinishGreaterThanEqualAndBedAndIdIsNot(Date date, Date date1, Bed bed, Long id);
-
+    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(Date date, Date date1, Bed bed, Long id); // Для поиска пересечения дат проживания по месту при обновлении
 
     List<Guest> findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Room room, Date date, Date date1);
+
+    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNot(Date dateFinish, Date dateStart, String firstname, String lastname, String secondName, Bed bed);
 }

@@ -83,6 +83,8 @@ public class GuestService {
             guestDTO.setNote(guest.getNote());
             guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
             guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+            guestDTO.setBedId(guest.getBed().getId());
+            guestDTO.setBedName(guest.getBed().getName());
             guestDTO.setRoomId(guest.getRoom().getId());
             guestDTO.setRoomName(guest.getRoom().getName());
             guestDTO.setFlatName(guest.getRoom().getFlat().getName());
@@ -93,117 +95,17 @@ public class GuestService {
             guestDTO.setFilialId(guest.getRoom().getFlat().getHotel().getFilial().getId());
             guestDTO.setMemo(guest.getMemo());
             guestDTO.setBilling(guest.getBilling());
-            guestDTO.setReason(guest.getReason().getName());
+            if (guest.getReason() != null)
+                guestDTO.setReason(guest.getReason().getName());
             guestDTO.setMale(guest.getMale());
             guestDTO.setCheckouted(guest.getCheckouted());
+            if (guest.getContract() != null)
+                guestDTO.setContractId(guest.getContract().getId());
             if (guest.getOrganization() != null) guestDTO.setOrganization(guest.getOrganization().getName());
             guestDTO.setRegPoMestu(guest.getRegPoMestu());
             response.add(guestDTO);
         }
         return response;
-    }
-
-    @Transactional
-    public GuestDTO create(GuestDTO guestDTO) throws ParseException {
-        Room room = roomRepository.getById(guestDTO.getRoomId());
-        Guest guest = new Guest();
-        Organization orgTmp;
-        if (guestDTO.getTabnum() != null) {
-            Employee employee = employeeRepository.findByTabnum(guestDTO.getTabnum());
-            guest.setEmployee(employee);
-            orgTmp = organizationRepository.getById(11L); // ADM
-            guest.setOrganization(orgTmp);
-        } else { // Установка подрядной организации без договора если такое имеется
-            orgTmp = organizationRepository.findByName(guestDTO.getOrganization());
-            if (orgTmp == null) {
-                if (guestDTO.getOrganization().length() > 0) {
-                    orgTmp = new Organization();
-                    orgTmp.setName(guestDTO.getOrganization());
-                    organizationRepository.save(orgTmp);
-                    guest.setOrganization(orgTmp);
-                }
-            } else guest.setOrganization(orgTmp);
-        }
-        guest.setRegPoMestu(guestDTO.getRegPoMestu());
-        guest.setFirstname(guestDTO.getFirstname());
-        guest.setLastname(guestDTO.getLastname());
-        guest.setSecondName(guestDTO.getSecondName());
-        guest.setMale(guestDTO.getMale());
-        if (guestDTO.getContractId() != null) {
-            Contract contract = contractRepository.getById(guestDTO.getContractId());
-            guest.setContract(contract);
-        } else {
-            List<Contract> contract1List = contractRepository.findAllByFilialAndHotelAndOrganization(room.getFlat().getHotel().getFilial(), room.getFlat().getHotel(), organizationRepository.getById(2L));
-            if (contract1List.size() > 0) {
-                guest.setContract(contract1List.get(0));
-            }
-        }
-        guest.setCheckouted(false);
-
-        Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
-        Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
-        guest.setDateStart(dateStart);
-        guest.setDateFinish(dateFinish);
-
-        // Проверка существования жильца в заданном диапазоне и оргнанизации
-        List<Guest> guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndOrganizationAndLastnameAndFirstnameAndSecondNameAndCheckouted(dateFinish, dateStart, guest.getOrganization(), guest.getLastname(), guest.getFirstname(), guest.getSecondName(), false);
-        if (guests.size() > 0) {
-            Guest guestTmp = guests.get(0);
-            GuestDTO tmp = new GuestDTO();
-            tmp.setError("Dates range error");
-            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
-            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-            return tmp;
-        } else {
-            guest.setDateStart(dateStart);
-            guest.setDateFinish(dateFinish);
-        }
-        // -----
-
-        // Проверка комнаты на всем выбранном периоде
-        List<Guest> guests1 = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(dateFinish, dateStart, false, room);
-        if (guests1.size() >= room.getBedsCount()) {
-            Guest guestTmp = guests1.get(0);
-            GuestDTO tmp = new GuestDTO();
-            tmp.setError("Room busy");
-            tmp.setNote(guest.getLastname() + " " + guest.getLastname() + " " + guest.getSecondName());
-            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-            return tmp;
-        }
-        // -----
-
-        if (guestDTO.getBedName() != null) {
-            Optional<Bed> bedOpt = bedRepository.findById(guestDTO.getBedId());
-            if (bedOpt.isPresent()) {
-                guest.setBed(bedOpt.get());
-            }
-        }
-
-        guest.setRoom(room);
-        guest.setMemo(guestDTO.getMemo());
-        guest.setBilling(guestDTO.getBilling());
-        Reason reason = reasonRepository.findByName(guestDTO.getReason());
-        if (reason == null) {
-            Reason newReason = new Reason();
-            newReason.setIsDefault(false);
-            newReason.setName(guestDTO.getReason());
-            reasonRepository.save(newReason);
-            guest.setReason(newReason);
-        } else guest.setReason(reason);
-        guestRepository.save(guest);
-        if (guestRepository.findAllByRoomAndCheckouted(room, false).size() == room.getBedsCount()) {
-            //room.setStatus(statusRepository.getById(2L)); // 2 mean no beds
-            roomRepository.save(room);
-        }
-        guestDTO.setId(guest.getId());
-        /*guestDTO.setFilialName();*/
-        return guestDTO;
     }
 
     @Transactional
@@ -218,12 +120,20 @@ public class GuestService {
     public List<GuestDTO> update(GuestDTO guestDTO) throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
         Bed bed = bedRepository.getById(guestDTO.getBedId());
-        Guest guest = guestRepository.getById(guestDTO.getId());
+
+        // Проверка на создание или обновление карточки жильца
+        boolean createRequest = guestDTO.getId() == null;
+        Guest guest;
+        if (createRequest) guest = new Guest();
+        else guest = guestRepository.getById(guestDTO.getId());
+        // -----
 
         // Запоминаем предыдущее состояние
-        GuestDTO guestBefore = modelMapper.map(guest, GuestDTO.class);
+        GuestDTO guestBeforeState;
+        if (createRequest) guestBeforeState = new GuestDTO();
+        else guestBeforeState = modelMapper.map(guest, GuestDTO.class);
         List<GuestDTO> response = new ArrayList<>();
-        response.add(guestBefore);
+        response.add(guestBeforeState);
         // -----
 
         // Определяем кто перед нами работник Газпрома или сторонник
@@ -235,7 +145,7 @@ public class GuestService {
         } else {
             Organization org = organizationRepository.findByName(guestDTO.getOrganization());
             if (org == null) {
-                if (guestDTO.getOrganization().length() > 0) {
+                if (!guestDTO.getOrganization().isEmpty()) {
                     Organization newOrganization = new Organization();
                     newOrganization.setName(guestDTO.getOrganization());
                     organizationRepository.save(newOrganization);
@@ -267,12 +177,41 @@ public class GuestService {
         // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте
         Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
-        List<Guest> guests = guestRepository.findAllByDateStartLessThanEqualAndDateFinishGreaterThanEqualAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
+        List<Guest> guests = new ArrayList<>();
+
+        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
+        guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNot(dateFinish, dateStart, guest.getFirstname(), guest.getLastname(), guest.getSecondName(), guest.getBed());
         if (!guests.isEmpty()) {
             Guest guestTmp = guests.get(0);
             GuestDTO tmp = new GuestDTO();
             tmp.setError("Dates range error");
-            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
+            tmp.setLastname(guestTmp.getLastname());
+            tmp.setFirstname(guestTmp.getFirstname());
+            tmp.setSecondName(guestTmp.getSecondName());
+            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
+            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
+            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
+            tmp.setRoomName(guestTmp.getRoom().getName());
+            tmp.setBedName(guestTmp.getBed().getName());
+            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
+            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
+            response.add(tmp);
+            return response;
+        }
+        // -----
+
+        if (createRequest)
+            guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
+        else
+            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
+        if (!guests.isEmpty()) {
+            Guest guestTmp = guests.get(0);
+            GuestDTO tmp = new GuestDTO();
+            tmp.setError("Dates range error");
+            tmp.setLastname(guestTmp.getLastname());
+            tmp.setFirstname(guestTmp.getFirstname());
+            tmp.setSecondName(guestTmp.getSecondName());
+            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
             tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
             tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
             tmp.setRoomName(guestTmp.getRoom().getName());
@@ -288,6 +227,7 @@ public class GuestService {
         // -----
 
         guestRepository.save(guest); // Сохраняем
+        guestDTO.setId(guest.getId());
         response.add(guestDTO); // Добавляем обновленную сущность для логов
         return response;
     }
@@ -301,6 +241,19 @@ public class GuestService {
             guestDTO.setSecondName(employee.getSecondName());
             guestDTO.setEmail(findUsernameByTabnum(tabnum));
             guestDTO.setMale(employee.getMale() == 1);
+        }
+        return guestDTO;
+    }
+
+    public GuestDTO getTabnumByFio(String lastname, String firstname, String secondName) {
+        List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
+        GuestDTO guestDTO = new GuestDTO();
+        if (!employees.isEmpty()) {
+            guestDTO.setFirstname(employees.get(0).getFirstname());
+            guestDTO.setLastname(employees.get(0).getLastname());
+            guestDTO.setSecondName(employees.get(0).getSecondName());
+            guestDTO.setTabnum(employees.get(0).getTabnum());
+            guestDTO.setMale(employees.get(0).getMale() == 1);
         }
         return guestDTO;
     }

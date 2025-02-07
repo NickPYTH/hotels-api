@@ -77,8 +77,8 @@ public class FilialController {
     public ResponseEntity<FilialDTO> getWithStats(@RequestParam String date, @RequestParam Long filialId) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        FilialDTO response = filialService.getWithStats(date, filialId);
         try {
+            FilialDTO response = filialService.getWithStats(date, filialId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getWithStats", duration, "");
             record.setStatus("OK");
