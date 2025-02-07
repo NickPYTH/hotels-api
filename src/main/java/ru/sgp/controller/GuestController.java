@@ -251,23 +251,23 @@ public class GuestController {
     public ResponseEntity<GuestDTO> getTabnumByFio(@RequestParam String lastname, @RequestParam String firstname, @RequestParam String secondName) {
         long startTime = System.nanoTime();
         Log record = new Log();
-        GuestDTO response = guestService.getTabnumByFio(lastname, firstname, secondName);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getFioByTabnum", duration, "");
+            GuestDTO response = guestService.getTabnumByFio(lastname, firstname, secondName);
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getTabnumByFio", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guest/getFioByTabnum");
+            record.setPath("/guest/getTabnumByFio");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/getFioByTabnum", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/getTabnumByFio", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guest/getFioByTabnum");
+            record.setPath("/guest/getTabnumByFio");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
