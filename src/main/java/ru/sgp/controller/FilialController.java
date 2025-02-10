@@ -1,5 +1,6 @@
 package ru.sgp.controller;
 
+import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,11 +136,12 @@ public class FilialController {
     public ResponseEntity<byte[]> getFilialReport(@RequestParam(name = "id") Long filialId,
                                                   @RequestParam(name = "checkouted") boolean checkouted,
                                                   @RequestParam(name = "dateStart") String dateStart,
-                                                  @RequestParam(name = "dateFinish") String dateFinish) {
+                                                  @RequestParam(name = "dateFinish") String dateFinish) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = filialService.getFilialReport(filialId, checkouted, dateStart, dateFinish);
+
         try {
-            byte[] reportData = filialService.getFilialReport(filialId, checkouted, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getFilialReport", duration, "");
             record.setStatus("OK");

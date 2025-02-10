@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sgp.dto.ContractDTO;
 import ru.sgp.dto.OrganizationDTO;
+import ru.sgp.dto.report.ContractReportDTO;
 import ru.sgp.dto.report.MVZReportDTO;
 import ru.sgp.dto.report.MonthReportDTO;
 import ru.sgp.model.*;
@@ -654,6 +655,32 @@ public class ContractService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("periodStart", dateStart);
         parameters.put("periodFinish", dateFinish);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint);
+    }
+
+    public byte[] getAllReport() throws JRException {
+        List<ContractReportDTO> reportData = new ArrayList<>();
+        for (Contract contract: contractRepository.findAllByOrderById()) {
+            ContractReportDTO contractDTO = new ContractReportDTO();
+            contractDTO.setId(contract.getId());
+            contractDTO.setFilial(contract.getFilial().getName());
+            contractDTO.setHotel(contract.getHotel().getName());
+            contractDTO.setCompany(contract.getOrganization().getName());
+            contractDTO.setContractNumber(contract.getDocnum());
+            contractDTO.setCost(contract.getCost());
+            contractDTO.setReason(contract.getReason().getName());
+            contractDTO.setBilling(contract.getBilling());
+            if (contract.getNote() != null) contractDTO.setNote(contract.getNote());
+            else contractDTO.setNote("");
+            if (contract.getRoomNumber() != null) contractDTO.setRoomName(contract.getRoomNumber().toString());
+            else contractDTO.setRoomName("");
+            contractDTO.setYear(contract.getYear());
+            reportData.add(contractDTO);
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/Contracts.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint);
     }

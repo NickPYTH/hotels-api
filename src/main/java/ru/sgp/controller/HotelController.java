@@ -1,5 +1,6 @@
 package ru.sgp.controller;
 
+import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,11 +193,12 @@ public class HotelController {
     @GetMapping(path = "/getHotelReport")
     public ResponseEntity<byte[]> getHotelReport(@RequestParam(name = "id") Long hotelId, @RequestParam(name = "checkouted") boolean checkouted,
                                                  @RequestParam(name = "dateStart") String dateStart,
-                                                 @RequestParam(name = "dateFinish") String dateFinish) throws ParseException {
+                                                 @RequestParam(name = "dateFinish") String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = hotelService.getHotelReport(hotelId, checkouted, dateStart, dateFinish);
+
         try {
-            byte[] reportData = hotelService.getHotelReport(hotelId, checkouted, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getHotelReport", duration, "");
             record.setStatus("OK");

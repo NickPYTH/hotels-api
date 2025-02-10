@@ -204,21 +204,23 @@ public class HotelService {
                     guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
                 else
                     guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(dateFinish, dateStart, checkouted, room);
-                guests.forEach(guest -> {
+                for (Guest guest : guests) {
                     FilialReportDTO record = new FilialReportDTO();
                     record.setFilial(filial.getName());
                     record.setHotel(hotel.getName());
                     record.setFlat(flat.getName());
                     record.setFloor(flat.getFloor());
                     record.setRoom(room.getId().toString());
-                    record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+                    if (guest.getCheckouted() != null)
+                        record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+                    else record.setCheckouted("-");
                     record.setDateStart(dateFormatter.format(guest.getDateStart()));
                     record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
                     if (guest.getEmployee() != null)
                         record.setTabnum(guest.getEmployee().getTabnum());
                     record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
                     reportData.add(record);
-                });
+                }
             }
         }
 

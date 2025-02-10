@@ -19,4 +19,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     List<Contract> findAllByFilialAndHotelAndReasonAndOrganizationAndBilling(Filial filial, Hotel hotel, Reason reason, Organization org, String billing);
 
     List<Contract> findAllByFilialAndHotelAndOrganization(Filial filial, Hotel hotel, Organization orgTmp);
+
+    List<Contract> findAllByOrderById();
 }

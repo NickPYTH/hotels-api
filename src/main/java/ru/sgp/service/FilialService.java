@@ -144,7 +144,7 @@ public class FilialService {
                         guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
                     else
                         guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(dateFinish, dateStart, checkouted, room);
-                    guests.forEach(guest -> {
+                    for (Guest guest: guests) {
                         FilialReportDTO record = new FilialReportDTO();
                         record.setFilial(filial.getName());
                         record.setHotel(hotel.getName());
@@ -153,7 +153,10 @@ public class FilialService {
                         record.setRoom(room.getName());
                         record.setDateStart(dateFormatter.format(guest.getDateStart()));
                         record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
-                        record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+                        if (guest.getCheckouted() != null)
+                            record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+                        else
+                            record.setCheckouted("-");
                         Date cuttedStartDate = null;
                         Date cuttedFinishDate = null;
                         int daysCount = 0;
@@ -182,11 +185,13 @@ public class FilialService {
                             record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
                         } else {
                             record.setTabnum(0);
-                            record.setGuestFilial(guest.getOrganization().getName());
+                            if (guest.getOrganization() != null)
+                                record.setGuestFilial(guest.getOrganization().getName());
+                            else record.setGuestFilial("");
                         }
                         record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
                         reportData.add(record);
-                    });
+                    }
                 }
             }
         }
@@ -247,7 +252,9 @@ public class FilialService {
                 record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
             } else {
                 record.setTabnum(0);
-                record.setGuestFilial(guest.getOrganization().getName());
+                if (guest.getOrganization() != null)
+                    record.setGuestFilial(guest.getOrganization().getName());
+                else record.setGuestFilial("");
             }
             record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
             reportData.add(record);
@@ -430,8 +437,8 @@ public class FilialService {
             String docnum = "";
             Double cost = 0.0;
             String note = "";
-            Double roomNumber = 0.0;
-            for (int j = 0; j < 10; j++) {
+            String roomNumber = "";
+            for (int j = 0; j < 11; j++) {
                 if (row.getCell(j) != null) {
                     if (row.getCell(j).getCellType() == CellType.STRING) {
                         if (j == 1)
@@ -440,19 +447,19 @@ public class FilialService {
                             hotel = row.getCell(j).getStringCellValue().trim();
                         if (j == 3)
                             organization = row.getCell(j).getStringCellValue().trim();
-                        if (j == 4)
-                            reason = row.getCell(j).getStringCellValue().trim();
-                        if (j == 5)
-                            billing = row.getCell(j).getStringCellValue().trim();
                         if (j == 6)
+                            reason = row.getCell(j).getStringCellValue().trim();
+                        if (j == 7)
+                            billing = row.getCell(j).getStringCellValue().trim();
+                        if (j == 4)
                             docnum = row.getCell(j).getStringCellValue().trim();
                         if (j == 8)
                             note = row.getCell(j).getStringCellValue().trim();
+                        if (j == 10)
+                            roomNumber = row.getCell(j).getStringCellValue().trim();
                     } else {
-                        if (j == 7)
+                        if (j == 5)
                             cost = row.getCell(j).getNumericCellValue();
-                        if (j == 9)
-                            roomNumber = row.getCell(j).getNumericCellValue();
                     }
                 }
             }
@@ -476,7 +483,8 @@ public class FilialService {
             contractModel.setCost(cost.floatValue());
             contractModel.setYear(2025);
             contractModel.setNote(note);
-            contractModel.setRoomNumber(roomNumber.intValue());
+            if (roomNumber != "")
+                contractModel.setRoomNumber(Integer.valueOf(roomNumber));
             contractRepository.save(contractModel);
         }
         List<String> response = new ArrayList<>();
