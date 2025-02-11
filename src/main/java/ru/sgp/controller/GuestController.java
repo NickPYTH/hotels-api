@@ -196,20 +196,20 @@ public class GuestController {
         try {
             GuestDTO response = guestService.delete(id);
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/delete/"+id, duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/delete/" + id, duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guest/delete/"+id);
+            record.setPath("/guest/delete/" + id);
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/delete/"+id, duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guest/delete/" + id, duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guest/delete/"+id);
+            record.setPath("/guest/delete/" + id);
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -376,6 +376,12 @@ public class GuestController {
     @PostMapping(path = "/integration/loadGuestsFrom1C", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public List<String> loadGuestsFrom1C(@RequestParam("file") MultipartFile file) throws IOException, ParseException {
         return guestService.loadGuestsFrom1C(file);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping(path = "/manyGuestUpload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public List<GuestDTO> manyGuestUpload(@RequestParam("file") MultipartFile file) throws IOException, ParseException {
+        return guestService.manyGuestUpload(file);
     }
 
 }

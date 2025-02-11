@@ -225,6 +225,9 @@ public class GuestService {
 
         guestRepository.save(guest); // Сохраняем
         guestDTO.setId(guest.getId());
+        guestDTO.setRoomName(guest.getBed().getRoom().getName());
+        guestDTO.setFlatName(guest.getBed().getRoom().getFlat().getName());
+        guestDTO.setBedName(guest.getBed().getName());
         response.add(guestDTO); // Добавляем обновленную сущность для логов
         return response;
     }
@@ -287,8 +290,7 @@ public class GuestService {
                 guestReportDTO.setContract(guest.getContract().getDocnum());
                 guestReportDTO.setBilling(guest.getContract().getBilling());
                 guestReportDTO.setReason(guest.getContract().getReason().getName());
-            }
-            else {
+            } else {
                 guestReportDTO.setContract("");
                 guestReportDTO.setBilling("");
                 guestReportDTO.setReason("");
@@ -356,7 +358,7 @@ public class GuestService {
                     // Пока будут константами уточнить
                     guest.setContract(contractRepository.getById(865L));
                     guest.setMemo(data.getEventName());
-                    if (guest.getContract() != null ){
+                    if (guest.getContract() != null) {
                         guest.getContract().setBilling(contractRepository.getById(865L).getBilling());
                         guest.getContract().setReason(reasonRepository.getById(4L));
                     }
@@ -435,4 +437,27 @@ public class GuestService {
         return new ArrayList<>();
     }
 
+    public List<GuestDTO> manyGuestUpload(MultipartFile file) throws IOException {
+        List<GuestDTO> guests = new ArrayList<>();
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        for (int i = 1; i <= 1000; i++) {
+            XSSFRow row = worksheet.getRow(i);
+            if (row == null)
+                break;
+            String lastname = row.getCell(0).getStringCellValue().trim();
+            String firstname = row.getCell(1).getStringCellValue().trim();
+            String secondName = row.getCell(2).getStringCellValue().trim();
+            List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
+            if (!employees.isEmpty()) {
+                GuestDTO guestDTO = new GuestDTO();
+                guestDTO.setLastname(lastname);
+                guestDTO.setFirstname(firstname);
+                guestDTO.setSecondName(secondName);
+                guestDTO.setTabnum(employees.get(0).getTabnum());
+                guests.add(guestDTO);
+            }
+        }
+        return guests;
+    }
 }

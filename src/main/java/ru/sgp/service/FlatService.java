@@ -59,6 +59,7 @@ public class FlatService {
             flatDTO.setName(flat.getName());
             flatDTO.setFloor(flat.getFloor());
             flatDTO.setHotelName(hotel.getName());
+            flatDTO.setFilialId(hotel.getFilial().getId());
             flatDTO.setRoomsCount(roomRepository.findAllByFlatOrderById(flat).size());
             flatDTO.setTech(flat.getTech());
             if (flat.getCategory() != null) {
