@@ -71,7 +71,7 @@ public class FlatService {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                 List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
                 bedsCount += room.getBedsCount();
-                emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date).size();
+                emptyBedsCount += room.getBedsCount() - guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date).size();
                 RoomDTO roomDTO = new RoomDTO();
                 roomDTO.setId(room.getId());
                 roomDTO.setName(room.getName());
@@ -86,7 +86,7 @@ public class FlatService {
                 }
                 roomDTO.setBedsCount(room.getBedsCount());
                 List<GuestDTO> guestDTOList = new ArrayList<>();
-                for (Guest guest : guestRepository.findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+                for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
                     GuestDTO guestDTO = new GuestDTO();
                     guestDTO.setId(guest.getId());
                     guestDTO.setFirstname(guest.getFirstname());
@@ -109,9 +109,11 @@ public class FlatService {
                     guestDTO.setNote(guest.getNote());
                     guestDTO.setRegPoMestu(guest.getRegPoMestu());
                     guestDTO.setMemo(guest.getMemo());
-                    if (guest.getReason() != null)
-                        guestDTO.setReason(guest.getReason().getName());
-                    guestDTO.setBilling(guest.getBilling());
+                    if (guest.getContract() != null) {
+                        if (guest.getContract().getReason() != null)
+                            guestDTO.setReason(guest.getContract().getReason().getName());
+                        guestDTO.setBilling(guest.getContract().getBilling());
+                    }
                     guestDTO.setMale(guest.getMale());
                     guestDTO.setCheckouted(guest.getCheckouted());
                     if (guest.getEmployee() != null) {
@@ -199,7 +201,7 @@ public class FlatService {
             roomDTO.setFlatId(flatId);
             roomDTO.setBedsCount(room.getBedsCount());
             List<GuestDTO> guestDTOList = new ArrayList<>();
-            for (Guest guest : guestRepository.findAllByRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
+            for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
                 GuestDTO guestDTO = new GuestDTO();
                 guestDTO.setId(guest.getId());
                 guestDTO.setFirstname(guest.getFirstname());
@@ -218,8 +220,10 @@ public class FlatService {
                 guestDTO.setNote(guest.getNote());
                 guestDTO.setRegPoMestu(guest.getRegPoMestu());
                 guestDTO.setMemo(guest.getMemo());
-                guestDTO.setReason(guest.getReason().getName());
-                guestDTO.setBilling(guest.getBilling());
+                if (guest.getContract() != null) {
+                    guestDTO.setReason(guest.getContract().getReason().getName());
+                    guestDTO.setBilling(guest.getContract().getBilling());
+                }
                 guestDTO.setCheckouted(guest.getCheckouted());
                 guestDTO.setBedName(guest.getBed().getName());
                 guestDTO.setBedId(guest.getBed().getId());
@@ -268,11 +272,12 @@ public class FlatService {
         flatDTO.setRoomsCount(roomDTOList.size());
 
         // Experiments
-//        for (Bed bed: bedRepository.findAll()) {
+//        int c = 0;
+//        for (Bed bed : bedRepository.findAllByRoomFlatHotel(flat.getHotel())) {
 //            //Bed bed = bedRepository.getById(639L);
 //            List<Guest> guestOneBedList = guestRepository.findAllByBed(bed);
 //            for (Guest guest : guestOneBedList) {  // Будем проходить по жильцам привзяанным к одной кровати и с пересекающимися диапазонами
-//                List<Guest> guestOverlapList = guestRepository.findAllByDateStartGreaterThanEqualAndDateFinishLessThanEqualAndBedAndIdIsNot(guest.getDateStart(), guest.getDateFinish(), bed, guest.getId());
+//                List<Guest> guestOverlapList = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(guest.getDateFinish(), guest.getDateStart(), bed, guest.getId());
 //                if (!guestOverlapList.isEmpty()) {
 //                    guestOverlapList.add(guest);
 //                    List<Bed> bedExp = bedRepository.findAllByRoom(bed.getRoom());
@@ -282,6 +287,7 @@ public class FlatService {
 //                                if (i < guestOverlapList.size()) {
 //                                    if (guestOverlapList.get(i) != null) {
 //                                        guestOverlapList.get(i).setBed(bedExp.get(i));
+//                                        c++;
 //                                    }
 //                                }
 //                            }
@@ -324,6 +330,8 @@ public class FlatService {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                 for (Bed bed : bedRepository.findAllByRoom(room)) {
                     HashMap<String, String> record = new HashMap<>();
+                    record.put("hotelId", flat.getHotel().getId().toString());
+                    record.put("filialId", flat.getHotel().getFilial().getId().toString());
                     record.put("section", flat.getName());
                     record.put("sectionId", flat.getId().toString());
                     record.put("room", room.getId().toString());
@@ -383,7 +391,7 @@ public class FlatService {
         List<GuestDTO> response = new ArrayList<>();
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                for (Guest guest : guestRepository.findAllByRoomAndDateFinishLessThanEqualAndCheckouted(room, date, false)) {
+                for (Guest guest : guestRepository.findAllByBedRoomAndDateFinishLessThanEqualAndCheckouted(room, date, false)) {
                     GuestDTO guestDTO = new GuestDTO();
                     guestDTO.setId(guest.getId());
                     guestDTO.setFirstname(guest.getFirstname());
@@ -402,8 +410,10 @@ public class FlatService {
                     guestDTO.setNote(guest.getNote());
                     guestDTO.setRegPoMestu(guest.getRegPoMestu());
                     guestDTO.setMemo(guest.getMemo());
-                    guestDTO.setReason(guest.getReason().getName());
-                    guestDTO.setBilling(guest.getBilling());
+                    if (guest.getContract() != null) {
+                        guestDTO.setReason(guest.getContract().getReason().getName());
+                        guestDTO.setBilling(guest.getContract().getBilling());
+                    }
                     guestDTO.setMale(guest.getMale());
                     guestDTO.setCheckouted(guest.getCheckouted());
                     Integer daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));

@@ -168,18 +168,23 @@ public class UserService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         Guest guest = guestRepository.getById(guestId);
-        Room room = guest.getRoom();
+        Room room = guest.getBed().getRoom();
         Flat flat = room.getFlat();
         Hotel hotel = flat.getHotel();
         Filial filial = hotel.getFilial();
-        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/CheckoutReport.jrxml"));
+        JasperReport jasperReport;
+        if (filial.getId() == 930L)
+            jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/CheckoutReportUEZS.jrxml"));
+        else
+            jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/CheckoutReportGeneral.jrxml"));
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("filial", filial.getName());
         parameters.put("hotelName", hotel.getName());
         parameters.put("hotelLocation", hotel.getLocation());
         parameters.put("reportNumber", filial.getCode().toString() + "/" + guest.getId().toString()); // 1930 + id guest
         parameters.put("reportDate", dateFormat.format(new Date()));
-        parameters.put("fio", guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
+        parameters.put("fioFull", guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
+        parameters.put("fio", guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
         if (guest.getEmployee() != null) {
             parameters.put("tabnum", guest.getEmployee().getTabnum().toString());
         } else parameters.put("tabnum", "");
@@ -187,11 +192,15 @@ public class UserService {
             Filial guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             String guestJob = guestFilial.getName();
             parameters.put("guestJob", guestJob);
-        } else parameters.put("guestJob", guest.getOrganization().getName());
+        } else {
+            if (guest.getOrganization() != null)
+            parameters.put("guestJob", guest.getOrganization().getName());
+            else parameters.put("guestJob", "");
+        }
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
         Employee respEmp = user.getEmployee();
-        parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname() + " " + respEmp.getSecondName());
+        parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname().charAt(0) + ". " + respEmp.getSecondName().charAt(0) + ".");
         parameters.put("roomNumber", flat.getName());
         parameters.put("korpusNumber", "");
         parameters.put("checkInDate", dateFormat.format(dateStart));
@@ -203,27 +212,23 @@ public class UserService {
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
             String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS));
             if (filial.getId() == 930L) {
-                String hoursCount = String.valueOf((double)TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)/60);
-                parameters.put("daysCount", hoursCount);
-            }
-            else
+                Double hoursCount = (double) TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS) / 60;
+                parameters.put("daysCount", String.valueOf((int)(hoursCount /6)*0.25));
+            } else
                 parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         } else {
             Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
             String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1);
             if (filial.getId() == 930L) {
-                String hoursCount = String.valueOf(TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS));
-                parameters.put("daysCount", hoursCount);
-            }
-            else
+                Long hoursCount = TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS);
+                parameters.put("daysCount", String.valueOf((int)((double)hoursCount /6)*0.25));
+            } else
                 parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         }
         parameters.put("date", dateFormat.format(new Date()));
         if (filial.getId() == 930L) {
             parameters.put("date", dateFormat.format(dateFinish));
-            parameters.put("fio", guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
-            parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname().charAt(0) + ". " + respEmp.getSecondName().charAt(0) + ".");
         }
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
         return export(jasperPrint);

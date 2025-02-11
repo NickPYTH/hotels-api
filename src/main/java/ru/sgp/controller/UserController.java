@@ -192,8 +192,9 @@ public class UserController {
     public ResponseEntity<byte[]> getCheckoutReport(@RequestParam Long id, @RequestParam Integer roomNumber, @RequestParam String periodStart, @RequestParam String periodEnd) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = userService.getCheckoutReport(id, roomNumber, periodStart, periodEnd);
+
         try {
-            byte[] reportData = userService.getCheckoutReport(id, roomNumber, periodStart, periodEnd);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/user/getCheckoutReport", duration, "");
             record.setStatus("OK");

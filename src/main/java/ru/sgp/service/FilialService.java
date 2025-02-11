@@ -98,10 +98,10 @@ public class FilialService {
                     List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
                     for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                         bedsCount += room.getBedsCount();
-                        emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                        emptyBedsCountWithBusy += room.getBedsCount() - guestRepository.findAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
                         List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
                         if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {
-                            emptyBedsCount += room.getBedsCount() - guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
+                            emptyBedsCount += room.getBedsCount() - guestRepository.findAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).size();
                         }
                     }
                 }
@@ -141,9 +141,9 @@ public class FilialService {
                 for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                     List<Guest> guests = new ArrayList<>();
                     if (checkouted)
-                        guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
+                        guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoom(dateFinish, dateStart, room);
                     else
-                        guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(dateFinish, dateStart, checkouted, room);
+                        guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndBedRoom(dateFinish, dateStart, checkouted, room);
                     for (Guest guest: guests) {
                         FilialReportDTO record = new FilialReportDTO();
                         record.setFilial(filial.getName());
@@ -170,16 +170,18 @@ public class FilialService {
                         if (daysCount == 0) daysCount = 1;
                         record.setNights(daysCount);
                         if (guest.getContract() != null) {
+                            record.setReason(guest.getContract().getReason().getName());
+                            record.setBilling(guest.getContract().getBilling());
                             record.setContract(guest.getContract().getDocnum());
                             record.setContractPrice(guest.getContract().getCost());
                             record.setPeriodPrice(daysCount * guest.getContract().getCost());
                         } else {
+                            record.setReason("");
+                            record.setBilling("");
                             record.setContract("");
                             record.setContractPrice(0f);
                             record.setPeriodPrice(0f);
                         }
-                        record.setReason(guest.getReason() != null ? guest.getReason().getName() : "");
-                        record.setBilling(guest.getBilling());
                         if (guest.getEmployee() != null) {
                             record.setTabnum(guest.getEmployee().getTabnum());
                             record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
@@ -237,16 +239,18 @@ public class FilialService {
             if (daysCount == 0) daysCount = 1;
             record.setNights(daysCount);
             if (guest.getContract() != null) {
+                record.setReason(guest.getContract().getReason().getName());
+                record.setBilling(guest.getContract().getBilling());
                 record.setContract(guest.getContract().getDocnum());
                 record.setContractPrice(guest.getContract().getCost());
                 record.setPeriodPrice(daysCount * guest.getContract().getCost());
             } else {
+                record.setReason("");
+                record.setBilling("");
                 record.setContract("");
                 record.setContractPrice(0f);
                 record.setPeriodPrice(0f);
             }
-            record.setReason(guest.getReason() != null ? guest.getReason().getName() : "");
-            record.setBilling(guest.getBilling());
             if (guest.getEmployee() != null) {
                 record.setTabnum(guest.getEmployee().getTabnum());
                 record.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
@@ -292,12 +296,12 @@ public class FilialService {
                 List<Long> flatsExcludeList = new ArrayList<>();
                 List<Long> roomExcludeList = new ArrayList<>();
                 Date date = new Date();
-                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
+                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
                     if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                     if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
-                    Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                    Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
                     if (guestHotel.getId() == hotel.getId()) {
-                        Room guestRoom = guest.getRoom();
+                        Room guestRoom = guest.getBed().getRoom();
                         Flat guestFlat = guestRoom.getFlat();
                         List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
                         List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
@@ -623,7 +627,7 @@ public class FilialService {
                 List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
                 for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                     bedsCount += room.getBedsCount();
-                    int size = guestRepository.countAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date);
+                    int size = guestRepository.countAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date);
                     emptyBedsCountWithBusy += room.getBedsCount() - size;
                     List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
                     if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {

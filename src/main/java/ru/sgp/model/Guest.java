@@ -50,20 +50,9 @@ public class Guest {
     @Column(name = "checkouted")
     private Boolean checkouted;
 
-    @Column(name = "billing")
-    private String billing;
-
-    @OneToOne
-    @JoinColumn(name = "reason")
-    private Reason reason;
-
     @OneToOne
     @JoinColumn(name = "contract")
     private Contract contract;
-
-    @OneToOne
-    @JoinColumn(name = "room")
-    private Room room;
 
     @OneToOne
     @JoinColumn(name = "employee")

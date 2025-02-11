@@ -85,22 +85,22 @@ public class GuestService {
             guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
             guestDTO.setBedId(guest.getBed().getId());
             guestDTO.setBedName(guest.getBed().getName());
-            guestDTO.setRoomId(guest.getRoom().getId());
-            guestDTO.setRoomName(guest.getRoom().getName());
-            guestDTO.setFlatName(guest.getRoom().getFlat().getName());
-            guestDTO.setFlatId(guest.getRoom().getFlat().getId());
-            guestDTO.setHotelName(guest.getRoom().getFlat().getHotel().getName());
-            guestDTO.setHotelId(guest.getRoom().getFlat().getHotel().getId());
-            guestDTO.setFilialName(guest.getRoom().getFlat().getHotel().getFilial().getName());
-            guestDTO.setFilialId(guest.getRoom().getFlat().getHotel().getFilial().getId());
+            guestDTO.setRoomId(guest.getBed().getRoom().getId());
+            guestDTO.setRoomName(guest.getBed().getRoom().getName());
+            guestDTO.setFlatName(guest.getBed().getRoom().getFlat().getName());
+            guestDTO.setFlatId(guest.getBed().getRoom().getFlat().getId());
+            guestDTO.setHotelName(guest.getBed().getRoom().getFlat().getHotel().getName());
+            guestDTO.setHotelId(guest.getBed().getRoom().getFlat().getHotel().getId());
+            guestDTO.setFilialName(guest.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            guestDTO.setFilialId(guest.getBed().getRoom().getFlat().getHotel().getFilial().getId());
             guestDTO.setMemo(guest.getMemo());
-            guestDTO.setBilling(guest.getBilling());
-            if (guest.getReason() != null)
-                guestDTO.setReason(guest.getReason().getName());
             guestDTO.setMale(guest.getMale());
             guestDTO.setCheckouted(guest.getCheckouted());
-            if (guest.getContract() != null)
+            if (guest.getContract() != null) {
                 guestDTO.setContractId(guest.getContract().getId());
+                guestDTO.setBilling(guest.getContract().getBilling());
+                guestDTO.setReason(guest.getContract().getReason().getName());
+            }
             if (guest.getOrganization() != null) guestDTO.setOrganization(guest.getOrganization().getName());
             guestDTO.setRegPoMestu(guest.getRegPoMestu());
             response.add(guestDTO);
@@ -162,15 +162,12 @@ public class GuestService {
         guest.setSecondName(guestDTO.getSecondName());
         guest.setMale(guestDTO.getMale());
         guest.setMemo(guestDTO.getMemo());
-        guest.setRoom(bed.getRoom());
         guest.setBed(bed);
         // -----
 
         // Устанавливаем договор и его зависимости
         if (guestDTO.getContractId() != null) {
             Contract contract = contractRepository.getById(guestDTO.getContractId());
-            guest.setReason(contract.getReason());
-            guest.setBilling(contract.getBilling());
             guest.setContract(contract);
         }
 
@@ -188,10 +185,10 @@ public class GuestService {
             tmp.setLastname(guestTmp.getLastname());
             tmp.setFirstname(guestTmp.getFirstname());
             tmp.setSecondName(guestTmp.getSecondName());
-            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
-            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-            tmp.setRoomName(guestTmp.getRoom().getName());
+            tmp.setFilialName(guestTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            tmp.setHotelName(guestTmp.getBed().getRoom().getFlat().getHotel().getName());
+            tmp.setFlatName(guestTmp.getBed().getRoom().getFlat().getName());
+            tmp.setRoomName(guestTmp.getBed().getRoom().getName());
             tmp.setBedName(guestTmp.getBed().getName());
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
@@ -201,7 +198,7 @@ public class GuestService {
         // -----
 
         if (createRequest)
-            guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
+            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
         else
             guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
         if (!guests.isEmpty()) {
@@ -211,10 +208,10 @@ public class GuestService {
             tmp.setLastname(guestTmp.getLastname());
             tmp.setFirstname(guestTmp.getFirstname());
             tmp.setSecondName(guestTmp.getSecondName());
-            tmp.setFilialName(guestTmp.getRoom().getFlat().getHotel().getFilial().getName());
-            tmp.setHotelName(guestTmp.getRoom().getFlat().getHotel().getName());
-            tmp.setFlatName(guestTmp.getRoom().getFlat().getName());
-            tmp.setRoomName(guestTmp.getRoom().getName());
+            tmp.setFilialName(guestTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            tmp.setHotelName(guestTmp.getBed().getRoom().getFlat().getHotel().getName());
+            tmp.setFlatName(guestTmp.getBed().getRoom().getFlat().getName());
+            tmp.setRoomName(guestTmp.getBed().getRoom().getName());
             tmp.setBedName(guestTmp.getBed().getName());
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
@@ -275,21 +272,28 @@ public class GuestService {
             guestReportDTO.setName(guest.getFirstname());
             guestReportDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
             guestReportDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-            guestReportDTO.setRoom(guest.getRoom().getFlat().getName());
-            guestReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
-            guestReportDTO.setFilial(guest.getRoom().getFlat().getHotel().getFilial().getName());
-            guestReportDTO.setOrg(guest.getOrganization().getName());
+            guestReportDTO.setRoom(guest.getBed().getRoom().getFlat().getName());
+            guestReportDTO.setHotel(guest.getBed().getRoom().getFlat().getHotel().getName());
+            guestReportDTO.setFilial(guest.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            if (guest.getOrganization() != null)
+                guestReportDTO.setOrg(guest.getOrganization().getName());
             guestReportDTO.setRepPoMestu(guest.getRegPoMestu() ? "+" : "-");
             guestReportDTO.setCz(guest.getMemo());
-            guestReportDTO.setBilling(guest.getBilling());
-            guestReportDTO.setReason(guest.getReason().getName());
             guestReportDTO.setMale(guest.getMale() ? "man" : "woman");
-            guestReportDTO.setCheckouted(guest.getCheckouted() ? "+" : "-");
-            if (guest.getContract() != null)
+            if (guest.getCheckouted() != null)
+                guestReportDTO.setCheckouted(guest.getCheckouted() ? "+" : "-");
+            else guestReportDTO.setCheckouted("");
+            if (guest.getContract() != null) {
                 guestReportDTO.setContract(guest.getContract().getDocnum());
-            else
+                guestReportDTO.setBilling(guest.getContract().getBilling());
+                guestReportDTO.setReason(guest.getContract().getReason().getName());
+            }
+            else {
                 guestReportDTO.setContract("");
-            guestReportDTO.setBed(guest.getRoom().getName());
+                guestReportDTO.setBilling("");
+                guestReportDTO.setReason("");
+            }
+            guestReportDTO.setBed(guest.getBed().getRoom().getName());
             guestReportDTOS.add(guestReportDTO);
         }
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/GuestReport.jrxml"));
@@ -347,14 +351,15 @@ public class GuestService {
                     guest.setDateStart(dateStart);
                     guest.setDateFinish(dateFinish);
                     guest.setBed(bed);
-                    guest.setRoom(bed.getRoom());
                     guest.setCheckouted(false);
                     guest.setMale(employee.getMale() == 1 ? true : false);
                     // Пока будут константами уточнить
                     guest.setContract(contractRepository.getById(865L));
                     guest.setMemo(data.getEventName());
-                    guest.setBilling(contractRepository.getById(865L).getBilling());
-                    guest.setReason(reasonRepository.getById(4L));
+                    if (guest.getContract() != null ){
+                        guest.getContract().setBilling(contractRepository.getById(865L).getBilling());
+                        guest.getContract().setReason(reasonRepository.getById(4L));
+                    }
                     // -----
                     guests.add(guest);
                     break;
@@ -416,11 +421,8 @@ public class GuestService {
                     guest.setOrganization(organizationRepository.getById(11L));
                     guest.setRegPoMestu(false);
                     guest.setMemo("-");
-                    guest.setBilling(contract.getBilling());
-                    guest.setReason(contract.getReason());
                     guest.setContract(contract);
                     guest.setCheckouted(false);
-                    guest.setRoom(bed.getRoom());
                     guest.setBed(bed);
                     guestRepository.save(guest);
                     test.add(guest);

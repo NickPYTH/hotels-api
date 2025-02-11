@@ -76,27 +76,24 @@ public class HotelService {
             Integer countBusyBeds = 0;
             List<Long> flatsExcludeList = new ArrayList<>();
             List<Long> roomExcludeList = new ArrayList<>();
-            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
                 if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                 if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
-                Hotel guestHotel = guest.getRoom().getFlat().getHotel();
-                if (guestHotel.getId() == hotel.getId()) {
-                    Room guestRoom = guest.getRoom();
-                    Flat guestFlat = guestRoom.getFlat();
-                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
-                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
-                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                            flatsExcludeList.add(guestFlat.getId());
-                        }
-                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
-                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
-                            roomExcludeList.add(guestRoom.getId());
-                        }
-                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
-                }
+                Room guestRoom = guest.getBed().getRoom();
+                Flat guestFlat = guestRoom.getFlat();
+                List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                    if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                        flatsExcludeList.add(guestFlat.getId());
+                    } else countBusyBeds += 1;
+                } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                    if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                        countBusyBeds += bedRepository.countByRoom(guestRoom);
+                        roomExcludeList.add(guestRoom.getId());
+                    } else countBusyBeds += 1;
+                } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
             }
             if (hotelDTO.getBedsCount() > 0) {
                 hotelDTO.setBusyBedsCount(countBusyBeds);
@@ -147,27 +144,24 @@ public class HotelService {
             Integer countBusyBeds = 0;
             List<Long> flatsExcludeList = new ArrayList<>();
             List<Long> roomExcludeList = new ArrayList<>();
-            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(date, date, hotel)) {
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
                 if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                 if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
-                Hotel guestHotel = guest.getRoom().getFlat().getHotel();
-                if (Objects.equals(guestHotel.getId(), hotel.getId())) {
-                    Room guestRoom = guest.getRoom();
-                    Flat guestFlat = guestRoom.getFlat();
-                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
-                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
-                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                            flatsExcludeList.add(guestFlat.getId());
-                        }
-                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
-                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
-                            roomExcludeList.add(guestRoom.getId());
-                        }
-                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
-                }
+                Room guestRoom = guest.getBed().getRoom();
+                Flat guestFlat = guestRoom.getFlat();
+                List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                    if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                        countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                        flatsExcludeList.add(guestFlat.getId());
+                    } else countBusyBeds += 1;
+                } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                    if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                        countBusyBeds += bedRepository.countByRoom(guestRoom);
+                        roomExcludeList.add(guestRoom.getId());
+                    } else countBusyBeds += 1;
+                } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
             }
             if (hotelDTO.getBedsCount() > 0) {
                 hotelDTO.setBusyBedsCount(countBusyBeds);
@@ -201,9 +195,9 @@ public class HotelService {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                 List<Guest> guests = new ArrayList<>();
                 if (checkouted)
-                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
+                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoom(dateFinish, dateStart, room);
                 else
-                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndRoom(dateFinish, dateStart, checkouted, room);
+                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndBedRoom(dateFinish, dateStart, checkouted, room);
                 for (Guest guest : guests) {
                     FilialReportDTO record = new FilialReportDTO();
                     record.setFilial(filial.getName());
@@ -238,7 +232,7 @@ public class HotelService {
         Filial filial = hotel.getFilial();
         for (Flat flat : flatRepository.findAllByHotelAndFloorOrderById(hotel, floor)) {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                guestRepository.findAllByRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).forEach(guest -> {
+                guestRepository.findAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).forEach(guest -> {
                     FilialReportDTO record = new FilialReportDTO();
                     record.setFilial(filial.getName());
                     record.setHotel(hotel.getName());
@@ -285,16 +279,16 @@ public class HotelService {
                 Integer countBusyBeds = 0; // расчет занятых мест в отеле за конкретный день
                 List<Long> flatsExcludeList = new ArrayList<>();
                 List<Long> roomExcludeList = new ArrayList<>();
-                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotel(tmp, tmp, hotel)) {
+                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(tmp, tmp, hotel)) {
                     if (roomExcludeList.contains(guest.getBed().getRoom().getId())) {
                         continue;
                     }
                     if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) {
                         continue;
                     }
-                    Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+                    Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
                     if (Objects.equals(guestHotel.getId(), hotel.getId())) {
-                        Room guestRoom = guest.getRoom();
+                        Room guestRoom = guest.getBed().getRoom();
                         Flat guestFlat = guestRoom.getFlat();
                         List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(tmp, tmp, guestRoom);
                         List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(tmp, tmp, guestFlat);

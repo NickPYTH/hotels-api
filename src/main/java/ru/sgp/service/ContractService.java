@@ -179,7 +179,7 @@ public class ContractService {
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             }
-            Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+            Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
             if (empFilial != null) {
                 if (guestFilial != null) {
                     if (guestFilial.getId() != empFilial.getId()) continue;
@@ -187,13 +187,15 @@ public class ContractService {
             } else {
                 if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
-            if (!guest.getBilling().equals(billing)) continue;
-            if (guest.getReason().getId() != reason.getId()) continue;
+            if (guest.getContract() != null){
+                if (!guest.getContract().getBilling().equals(billing)) continue;
+                if (guest.getContract().getReason().getId() != reason.getId()) continue;
+            } else continue;
             if (responsibilities.getHotel() != guestHotel) continue;
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(minDate);
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getRoom().getFlat().getHotel(), guest.getReason(), calendar.get(Calendar.YEAR));
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), calendar.get(Calendar.YEAR));
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -297,7 +299,7 @@ public class ContractService {
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             }
-            Hotel guestHotel = guest.getRoom().getFlat().getHotel();
+            Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
             if (empFilial != null) {
                 if (guestFilial != null) {
                     if (guestFilial.getId() != empFilial.getId()) continue;
@@ -305,15 +307,17 @@ public class ContractService {
             } else {
                 if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
-            if (!guest.getBilling().equals(billing)) continue;
-            if (guest.getReason().getId() != reason.getId()) continue;
+            if (guest.getContract() != null){
+                if (!guest.getContract().getBilling().equals(billing)) continue;
+                if (guest.getContract().getReason().getId() != reason.getId()) continue;
+            } else continue;
             if (responsibilities.getHotel() != guestHotel) continue;
             if (guest.getEmployee() == null) continue;
             if (mvzRepository.findByIdAndNameIsContainingIgnoreCase(guest.getEmployee().getMvzId(), ceh).isEmpty())  // Проверка цеха
                 continue;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(minDate);
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getRoom().getFlat().getHotel(), guest.getReason(), calendar.get(Calendar.YEAR));
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), calendar.get(Calendar.YEAR));
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -416,10 +420,10 @@ public class ContractService {
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             if (guest.getEmployee() != null) continue;
             if (guest.getOrganization() != organization) continue;
-            if (guest.getReason().getId() != reason.getId()) continue;
-            if (responsibilities.getHotel() != guest.getRoom().getFlat().getHotel()) continue;
-            if (!guest.getBilling().equals(billing)) continue;
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getRoom().getFlat().getHotel(), guest.getReason(), guest.getOrganization());
+            if (guest.getContract().getReason().getId() != reason.getId()) continue;
+            if (responsibilities.getHotel() != guest.getBed().getRoom().getFlat().getHotel()) continue;
+            if (!guest.getContract().getBilling().equals(billing)) continue;
+            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), guest.getOrganization());
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -501,14 +505,14 @@ public class ContractService {
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
-        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotelFilial(maxDate, minDate, filial)) { // тут должен быть фильтр гостя по заднному филиалу
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelFilial(maxDate, minDate, filial)) { // тут должен быть фильтр гостя по заднному филиалу
             if (guest.getEmployee() == null) continue; // только работников
             MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
             if (mvz != null) {
                 MVZReportDTO mvzReportDTO = new MVZReportDTO();
                 mvzReportDTO.setId(String.valueOf(count));
                 mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-                mvzReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
+                mvzReportDTO.setHotel(guest.getBed().getRoom().getFlat().getHotel().getName());
                 Long daysCount = 1L;
                 Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
                 Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
@@ -539,8 +543,13 @@ public class ContractService {
                 mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
                 mvzReportDTO.setFilial(filial.getName());
                 mvzReportDTO.setOrgUnit(mvz.getOrganization());
-                mvzReportDTO.setReason(guest.getReason().getName());
-                mvzReportDTO.setBilling(guest.getBilling());
+                if (guest.getContract() != null) {
+                    mvzReportDTO.setReason(guest.getContract().getReason().getName());
+                    mvzReportDTO.setBilling(guest.getContract().getBilling());
+                } else {
+                    mvzReportDTO.setReason("");
+                    mvzReportDTO.setBilling("");
+                }
                 reportData.add(mvzReportDTO);
                 count++;
             }
@@ -599,14 +608,14 @@ public class ContractService {
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
         for (Filial filial : filialRepository.findByNameIsContainingIgnoreCase(lpu)) {
-            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoomFlatHotelFilial(maxDate, minDate, filial)) {
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelFilial(maxDate, minDate, filial)) {
                 if (guest.getEmployee() == null) continue; // только работников
                 MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
                 if (mvz != null) {
                     MVZReportDTO mvzReportDTO = new MVZReportDTO();
                     mvzReportDTO.setId(String.valueOf(count));
                     mvzReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-                    mvzReportDTO.setHotel(guest.getRoom().getFlat().getHotel().getName());
+                    mvzReportDTO.setHotel(guest.getBed().getRoom().getFlat().getHotel().getName());
                     Long daysCount = 1L;
                     Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
                     Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
@@ -637,8 +646,13 @@ public class ContractService {
                     mvzReportDTO.setGuestFilial(filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName());
                     mvzReportDTO.setFilial(filial.getName());
                     mvzReportDTO.setOrgUnit(mvz.getOrganization());
-                    mvzReportDTO.setReason(guest.getReason().getName());
-                    mvzReportDTO.setBilling(guest.getBilling());
+                    if (guest.getContract() != null) {
+                        mvzReportDTO.setReason(guest.getContract().getReason().getName());
+                        mvzReportDTO.setBilling(guest.getContract().getBilling());
+                    } else {
+                        mvzReportDTO.setReason("");
+                        mvzReportDTO.setBilling("");
+                    }
                     reportData.add(mvzReportDTO);
                     count++;
                 }
