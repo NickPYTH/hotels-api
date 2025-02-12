@@ -380,8 +380,8 @@ public class GuestController {
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping(path = "/manyGuestUpload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public List<GuestDTO> manyGuestUpload(@RequestParam("file") MultipartFile file) throws IOException, ParseException {
-        return guestService.manyGuestUpload(file);
+    public List<GuestDTO> manyGuestUpload(@RequestParam Boolean mode, @RequestParam("file") MultipartFile file) throws IOException, ParseException {
+        return guestService.manyGuestUpload(file, mode);
     }
 
 }

@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -437,7 +438,7 @@ public class GuestService {
         return new ArrayList<>();
     }
 
-    public List<GuestDTO> manyGuestUpload(MultipartFile file) throws IOException {
+    public List<GuestDTO> manyGuestUpload(MultipartFile file, Boolean mode) throws IOException {
         List<GuestDTO> guests = new ArrayList<>();
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
@@ -445,17 +446,36 @@ public class GuestService {
             XSSFRow row = worksheet.getRow(i);
             if (row == null)
                 break;
-            String lastname = row.getCell(0).getStringCellValue().trim();
-            String firstname = row.getCell(1).getStringCellValue().trim();
-            String secondName = row.getCell(2).getStringCellValue().trim();
-            List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
-            if (!employees.isEmpty()) {
-                GuestDTO guestDTO = new GuestDTO();
-                guestDTO.setLastname(lastname);
-                guestDTO.setFirstname(firstname);
-                guestDTO.setSecondName(secondName);
-                guestDTO.setTabnum(employees.get(0).getTabnum());
-                guests.add(guestDTO);
+            if (mode) {
+                Employee employee = null;
+                if (row.getCell(0).getCellType() == CellType.STRING){
+                    Integer tabnum = Integer.valueOf(row.getCell(0).getStringCellValue());
+                    employee = employeeRepository.findByTabnum(tabnum);
+                } else {
+                    Integer tabnum = (int) row.getCell(0).getNumericCellValue();
+                    employee = employeeRepository.findByTabnum(tabnum);
+                }
+                if (employee != null) {
+                    GuestDTO guestDTO = new GuestDTO();
+                    guestDTO.setLastname(employee.getLastname());
+                    guestDTO.setFirstname(employee.getFirstname());
+                    guestDTO.setSecondName(employee.getSecondName());
+                    guestDTO.setTabnum(employee.getTabnum());
+                    guests.add(guestDTO);
+                }
+            } else {
+                String lastname = row.getCell(0).getStringCellValue().trim();
+                String firstname = row.getCell(1).getStringCellValue().trim();
+                String secondName = row.getCell(2).getStringCellValue().trim();
+                List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
+                if (!employees.isEmpty()) {
+                    GuestDTO guestDTO = new GuestDTO();
+                    guestDTO.setLastname(lastname);
+                    guestDTO.setFirstname(firstname);
+                    guestDTO.setSecondName(secondName);
+                    guestDTO.setTabnum(employees.get(0).getTabnum());
+                    guests.add(guestDTO);
+                }
             }
         }
         return guests;

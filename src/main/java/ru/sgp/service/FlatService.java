@@ -338,6 +338,7 @@ public class FlatService {
                     record.put("room", room.getId().toString());
                     record.put("roomName", room.getName());
                     record.put("bed", bed.getName());
+                    record.put("bedId", bed.getId().toString());
                     for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed)) {
                         LocalDateTime start = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                         int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
