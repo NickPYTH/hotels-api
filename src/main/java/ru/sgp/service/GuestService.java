@@ -17,10 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.UserDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.dto.report.GuestReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
+import ru.sgp.utils.SecurityManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,11 +71,23 @@ public class GuestService {
     private ContractRepository contractRepository;
     @Autowired
     private BedRepository bedRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public List<GuestDTO> getAll() {
+        SecurityManager.getCurrentUser();
+        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
+        UserDTO userDTO = new UserDTO();
+        User user = userRepository.findByUsername(username);
         List<GuestDTO> response = new ArrayList<>();
-        for (Guest guest : guestRepository.findAll()) {
+        List<Guest> guests = new ArrayList<>();
+        if (user.getRole().getId() == 1L) guests = guestRepository.findAll();
+        else {
+            Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
+            guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
+        }
+        for (Guest guest : guests) {
             GuestDTO guestDTO = new GuestDTO();
             if (guest.getEmployee() != null) guestDTO.setTabnum(guest.getEmployee().getTabnum());
             if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
