@@ -15,10 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -118,8 +115,10 @@ public class FlatService {
                     guestDTO.setMale(guest.getMale());
                     guestDTO.setCheckouted(guest.getCheckouted());
                     if (guest.getEmployee() != null) {
-                        if (guest.getEmployee().getIdPoststaff() != null)
-                            guestDTO.setPost(postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
+                        if (guest.getEmployee().getIdPoststaff() != null) {
+                            Optional<Post> post = postRepository.findById(guest.getEmployee().getIdPoststaff().longValue());
+                            if (post.isPresent()) guestDTO.setPost(post.get().getName());
+                        }
                     }
                     if (guest.getEmployee() != null) {
                         Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
@@ -235,7 +234,6 @@ public class FlatService {
                 if (guest.getContract() != null) {
                     guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setCostByNight(guest.getContract().getCost());
-                    guestDTO.setNote(guest.getContract().getDocnum());
                     if (Integer.parseInt(guestDTO.getDaysCount()) > 0)
                         guestDTO.setCost(guestDTO.getCostByNight() * Integer.parseInt(guestDTO.getDaysCount()));
                     else
@@ -245,8 +243,11 @@ public class FlatService {
                 if (guest.getEmployee() != null) {
                     Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
                     String guestPost = "";
-                    if (guest.getEmployee().getIdPoststaff() != null)
-                        guestPost = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+                    if (guest.getEmployee().getIdPoststaff() != null) {
+                        Optional<Post> post = postRepository.findById(guest.getEmployee().getIdPoststaff().longValue());
+                        if (post.isPresent())
+                            guestPost = post.get().getName();
+                    }
                     guestDTO.setFilialEmployee(filial.getName());
                     guestDTO.setPost(guestPost);
                     guestDTO.setTabnum(guest.getEmployee().getTabnum());
@@ -347,24 +348,26 @@ public class FlatService {
                             LocalDateTime guestStart = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                             LocalDateTime guestFinish = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                             if ((start.isAfter(guestStart) || start.isEqual(guestStart)) && (start.isBefore(guestFinish) || start.isEqual(guestFinish))) {
-                                Integer busyPercentStart = 100;
-                                Integer busyPercentFinish = 100;
-                                String guestDatesRange = "&" + dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
+                                int busyPercentStart = 100;
+                                int busyPercentFinish = 100;
+                                String guestDatesRange =  dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
+                                String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                String fio = guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".";
+                                String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote();
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateStart()))) / 24 * 100);
-                                    if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
-                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) + "||" + guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#" + busyPercentStart);
-                                    } else
-                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#" + busyPercentStart);
+                                    if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СЛЕВА в ячейке
+                                        record.put(startStr, record.get(startStr) + "||" + guestInfo + "#" + busyPercentStart);
+                                    else
+                                        record.put(startStr, guestInfo + "#" + busyPercentStart); // Частично занимает ЛЕВУЮ часть
                                 } else if (start.isEqual(guestFinish)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentFinish = (int) ((Double.parseDouble(timeFormatter.format(guest.getDateFinish()))) / 24 * 100);
-                                    if (record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) != null) {
-                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), record.get(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) + "||" + guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#-" + busyPercentFinish);
-                                    } else
-                                        record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#-" + busyPercentFinish);
-                                } else {
-                                    record.put(start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + "." + guestDatesRange + "#100");
-                                }
+                                    if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СПРАВА в ячейке
+                                        record.put(startStr, record.get(startStr) + "||" + guestInfo + "#-" + busyPercentFinish);
+                                    else
+                                        record.put(startStr, guestInfo + "#-" + busyPercentFinish); // Частично занимает ПРАВУЮ часть
+                                } else // Если жилец полностью занимает весь день, всю ячейку
+                                    record.put(startStr, guestInfo + "#100");
                                 if (record.get("dates") == null)
                                     record.put("dates", dateTimeFormatter.format(guest.getDateStart()) + " - " + dateTimeFormatter.format(guest.getDateFinish()));
                                 if (record.get("post") == null) {

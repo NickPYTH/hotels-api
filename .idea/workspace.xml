@@ -9,7 +9,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Догрузил настройки проекта" />
+    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Доступ к записям о проживании для дежурных">
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-12.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-13.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-14.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-17.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/61463d6abc8687ccca3f5c05af3ca6a7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/css/main.7a61d283.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/main.34dd6705fa31a00a3c66.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3/storage_v2/_src_/database/hotel.tMHtBQ/schema/hotel.tMHtBQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3/storage_v2/_src_/database/hotel.tMHtBQ/schema/hotel.tMHtBQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/9d4c1689-8cd6-450e-afdc-57dfde8fa3c3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" beforeDir="false" afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-24.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-27.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-28.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-29.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-30.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flight-api.iml" beforeDir="false" afterPath="$PROJECT_DIR$/flight-api.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FilialController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FilialController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/GuestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/GuestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FilialService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FilialService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportUEZS.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportUEZS.jrxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/css/main.71d04754.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js.LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/web/main.34dd6705fa31a00a3c66.js.LICENSE.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,7 +118,7 @@
     &quot;database.data.extractors.current.export.id&quot;: &quot;Excel (xlsx)&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/SGP.RU/sirenkoniv/Рабочий стол/hotels2001.sql&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nick/IdeaProjects/hotel_api&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -95,7 +130,7 @@
     &quot;rest.client.default.execution.environment&quot;: &quot;dev&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;,
     &quot;settings.editor.splitter.proportion&quot;: &quot;0.26133144&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;07e201c3c12cc9205b140e6cb0475393&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;0dcb1009a7529a5846795da4e907fa6d&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -113,22 +148,22 @@
       <recent name="ru.sgp.repository" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/reports" />
       <recent name="$PROJECT_DIR$/lib" />
       <recent name="$PROJECT_DIR$/nginx" />
       <recent name="$PROJECT_DIR$/logs" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/web" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/web" />
       <recent name="$PROJECT_DIR$/apache-tomcat-9.0.96/webapps" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="ru.sgp.dto.report" />
       <recent name="ru.sgp.dto" />
       <recent name="ru.sgp.repository" />
       <recent name="ru.sgp.model" />
       <recent name="ru.sgp.controller" />
-      <recent name="ru.sgp.service" />
     </key>
   </component>
   <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.91">
@@ -141,7 +176,7 @@
     <configuration name="generated-requests | Заселение жильцов из 1С учебный процесс" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" requestIdentifier="Заселение жильцов из 1С учебный процесс" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="Tomcat 9.0.91" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.91" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+    <configuration name="Tomcat 9.0.91" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.91" ALTERNATIVE_JRE_ENABLED="true" ALTERNATIVE_JRE_PATH="corretto-17" nameIsGenerated="true">
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
@@ -430,62 +465,25 @@
       <workItem from="1738147703043" duration="37394000" />
       <workItem from="1738298146842" duration="4851000" />
       <workItem from="1738314855183" duration="1834000" />
-    </task>
-    <task id="LOCAL-00002" summary="Рефакторинг + Разработка счета-фактур">
-      <option name="closed" value="true" />
-      <created>1721479177047</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1721479177047</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Доделано создание\редактирование счетов-фактур, туду стоимости полетов + getCosts летит с ошибкой 400">
-      <option name="closed" value="true" />
-      <created>1721649441374</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1721649441375</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Мелкие доделки">
-      <option name="closed" value="true" />
-      <created>1721735621414</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1721735621414</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Деплой на тестовый сервер">
-      <option name="closed" value="true" />
-      <created>1722406647761</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1722406647761</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Разработан отчет-счета фактуры">
-      <option name="closed" value="true" />
-      <created>1722827748418</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1722827748418</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Исправлен формат даты (убраны везде HH mm SS)">
-      <option name="closed" value="true" />
-      <created>1722916193453</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1722916193453</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Порция багфиксов">
-      <option name="closed" value="true" />
-      <created>1722943634622</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1722943634622</updated>
+      <workItem from="1738822880753" duration="22166000" />
+      <workItem from="1738926685564" duration="3577000" />
+      <workItem from="1739157446710" duration="180000" />
+      <workItem from="1739158716150" duration="115000" />
+      <workItem from="1739158970720" duration="42885000" />
+      <workItem from="1739330843734" duration="1702000" />
+      <workItem from="1739338362617" duration="8000" />
+      <workItem from="1739338401333" duration="201000" />
+      <workItem from="1739340003533" duration="622000" />
+      <workItem from="1739351455420" duration="1881000" />
+      <workItem from="1739354891780" duration="10884000" />
+      <workItem from="1739446161418" duration="22000" />
+      <workItem from="1739503864592" duration="988000" />
+      <workItem from="1739513863111" duration="1970000" />
+      <workItem from="1739520102299" duration="2434000" />
+      <workItem from="1739525650997" duration="7000" />
+      <workItem from="1739783644307" duration="4382000" />
+      <workItem from="1739799593581" duration="2126000" />
+      <workItem from="1739883910796" duration="4399000" />
     </task>
     <task id="LOCAL-00009" summary="Порция багфиксов">
       <option name="closed" value="true" />
@@ -823,7 +821,63 @@
       <option name="project" value="LOCAL" />
       <updated>1738318542081</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Исправление ошибок + Добавлен поиск табельного по ФИО">
+      <option name="closed" value="true" />
+      <created>1738922343337</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1738922343337</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Исправлен фильтр проверяющий пересечения дат жильца с другими филиалами, теперь првоерка идет только в рамках одного филиала">
+      <option name="closed" value="true" />
+      <created>1738933435418</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1738933435418</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Мелкие исправления, коммит перед рефакторингом модели Guest">
+      <option name="closed" value="true" />
+      <created>1739174594834</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1739174594834</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Багфиксы, оптимизация">
+      <option name="closed" value="true" />
+      <created>1739265104468</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1739265104468</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Массовая загрузка">
+      <option name="closed" value="true" />
+      <created>1739275853002</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1739275853002</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Багфиксы + массовая загрузка по таб. номерам">
+      <option name="closed" value="true" />
+      <created>1739372893620</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1739372893620</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Доступ к записям о проживании для дежурных">
+      <option name="closed" value="true" />
+      <created>1739373495426</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1739373495426</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -857,13 +911,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Исправлен формат дат в модальном окне создания\редактирования полетов, и в гриде всех записей в заявках филиала" />
-    <MESSAGE value="Исправлен формат дат в разделе заявок на полеты" />
-    <MESSAGE value="Исправлен формат дат для разделов &quot;Плаинирование&quot; и &quot;Документы&quot;, исправлен метод для автозаполнения заявок в счете фактуры и прочие мелочи" />
-    <MESSAGE value="Исправен дизайн раачета к счет фактурее, исправавлен баг с удалением заявки при автозаполнении" />
-    <MESSAGE value="Добавлено журналирование ошибок" />
-    <MESSAGE value="Туева хуча доработок, на этом этапе все работает и всех все устраивает" />
-    <MESSAGE value="Исправлен расчет дат в отчете о проживании (реестр)&#10;Добавлен отчет о жильцах" />
     <MESSAGE value="В отчете о проживании добавлен период в качестве входных параметров." />
     <MESSAGE value="Изменено обновление статусов у секций и комнат" />
     <MESSAGE value="Добавлен отчет реестр по организациям жильцов" />
@@ -882,7 +929,14 @@
     <MESSAGE value="Удаление записи о проживании.&#10;Окно с исконками для 3+ людей в комнате.&#10;Исправлена ошибка в отчете по загруженности.&#10;Заселение 0% у дежурных.&#10;В отчет по МВЗ добавлено возможность выгрузки по всем ЛПУ" />
     <MESSAGE value="Баг создания договора. Переделана шахматка." />
     <MESSAGE value="Догрузил настройки проекта" />
-    <option name="LAST_COMMIT_MESSAGE" value="Догрузил настройки проекта" />
+    <MESSAGE value="Исправление ошибок + Добавлен поиск табельного по ФИО" />
+    <MESSAGE value="Исправлен фильтр проверяющий пересечения дат жильца с другими филиалами, теперь првоерка идет только в рамках одного филиала" />
+    <MESSAGE value="Мелкие исправления, коммит перед рефакторингом модели Guest" />
+    <MESSAGE value="Багфиксы, оптимизация" />
+    <MESSAGE value="Массовая загрузка" />
+    <MESSAGE value="Багфиксы + массовая загрузка по таб. номерам" />
+    <MESSAGE value="Доступ к записям о проживании для дежурных" />
+    <option name="LAST_COMMIT_MESSAGE" value="Доступ к записям о проживании для дежурных" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -904,11 +958,6 @@
         <PinnedItemInfo parentTag="java.lang.String" />
       </pinned-members>
     </pin-to-top-manager>
-    <watches-manager>
-      <configuration name="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory">
-        <watch expression="bed.getName()" language="JAVA" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

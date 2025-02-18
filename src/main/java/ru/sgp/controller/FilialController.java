@@ -78,8 +78,9 @@ public class FilialController {
     public ResponseEntity<FilialDTO> getWithStats(@RequestParam String date, @RequestParam Long filialId) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        FilialDTO response = filialService.getWithStats(date, filialId);
+
         try {
-            FilialDTO response = filialService.getWithStats(date, filialId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getWithStats", duration, "");
             record.setStatus("OK");
@@ -139,9 +140,8 @@ public class FilialController {
                                                   @RequestParam(name = "dateFinish") String dateFinish) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = filialService.getFilialReport(filialId, checkouted, dateStart, dateFinish);
-
         try {
+            byte[] reportData = filialService.getFilialReport(filialId, checkouted, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getFilialReport", duration, "");
             record.setStatus("OK");
@@ -202,11 +202,11 @@ public class FilialController {
     }
 
     @GetMapping(path = "/getShortReport")
-    public ResponseEntity<byte[]> getShortReport() {
+    public ResponseEntity<byte[]> getShortReport(@RequestParam Long filialId) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            byte[] reportData = filialService.getShortReport();
+            byte[] reportData = filialService.getShortReport(filialId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getShortReport", duration, "");
             record.setStatus("OK");

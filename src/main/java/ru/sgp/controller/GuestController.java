@@ -315,10 +315,9 @@ public class GuestController {
     public ResponseEntity<byte[]> getGuestReport() throws JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = guestService.getGuestReport();
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
+            byte[] reportData = guestService.getGuestReport();
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/getGuestReport", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -347,10 +346,9 @@ public class GuestController {
     public ResponseEntity<List<GuestDTO>> addGuestsForEvent(@RequestBody AddGuestsForEventDTO body) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<GuestDTO> response = guestService.addGuestsForEvent(body);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
+            List<GuestDTO> response = guestService.addGuestsForEvent(body);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/addGuestsForEvent", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

@@ -448,7 +448,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Serif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{daysCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{daysCount}+" (KC)"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="190" width="222" height="20" uuid="0fe2923c-1231-43f3-88fa-cda480e72e31"/>
@@ -997,7 +997,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Serif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{daysCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{daysCount} +" (KC)"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="600" width="227" height="20" uuid="63cf4179-081c-4636-9519-6ae91fd568f5"/>

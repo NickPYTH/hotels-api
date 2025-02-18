@@ -78,11 +78,12 @@ public class GuestService {
     public List<GuestDTO> getAll() {
         SecurityManager.getCurrentUser();
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
-        UserDTO userDTO = new UserDTO();
         User user = userRepository.findByUsername(username);
         List<GuestDTO> response = new ArrayList<>();
         List<Guest> guests = new ArrayList<>();
-        if (user.getRole().getId() == 1L) guests = guestRepository.findAll();
+        if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
+            guests = guestRepository.findAll();
+        }
         else {
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
             guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
@@ -178,6 +179,7 @@ public class GuestService {
         guest.setMale(guestDTO.getMale());
         guest.setMemo(guestDTO.getMemo());
         guest.setBed(bed);
+        guest.setNote(guestDTO.getNote());
         // -----
 
         // Устанавливаем договор и его зависимости

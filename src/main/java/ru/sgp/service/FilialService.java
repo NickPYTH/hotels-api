@@ -144,7 +144,7 @@ public class FilialService {
                         guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoom(dateFinish, dateStart, room);
                     else
                         guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndBedRoom(dateFinish, dateStart, checkouted, room);
-                    for (Guest guest: guests) {
+                    for (Guest guest : guests) {
                         FilialReportDTO record = new FilialReportDTO();
                         record.setFilial(filial.getName());
                         record.setHotel(hotel.getName());
@@ -278,58 +278,58 @@ public class FilialService {
         return export(jasperPrint);
     }
 
-    public byte[] getShortReport() throws JRException {
+    public byte[] getShortReport(Long filialId) throws JRException {
         List<ShortReportDTO> reportData = new ArrayList<>();
-        for (Filial filial : filialRepository.findAll()) {
-            for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
-                ShortReportDTO record = new ShortReportDTO();
-                record.setFilial(filial.getName());
-                record.setHotel(hotel.getName());
-                AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
-                flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
-                    roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
-                        bedsCount.updateAndGet(v -> v + room.getBedsCount());
-                    });
+        Filial filial = filialRepository.findById(filialId).get();
+        for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
+            ShortReportDTO record = new ShortReportDTO();
+            record.setFilial(filial.getName());
+            record.setHotel(hotel.getName());
+            AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
+            flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
+                roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                    bedsCount.updateAndGet(v -> v + room.getBedsCount());
                 });
-                record.setAll(bedsCount.get());
-                Integer countBusyBeds = 0;
-                List<Long> flatsExcludeList = new ArrayList<>();
-                List<Long> roomExcludeList = new ArrayList<>();
-                Date date = new Date();
-                for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
-                    if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
-                    if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
-                    Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
-                    if (guestHotel.getId() == hotel.getId()) {
-                        Room guestRoom = guest.getBed().getRoom();
-                        Flat guestFlat = guestRoom.getFlat();
-                        List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
-                        List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
-                        if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                            if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
-                                countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
-                                flatsExcludeList.add(guestFlat.getId());
-                            }
-                        } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
-                            if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
-                                countBusyBeds += bedRepository.countByRoom(guestRoom);
-                                roomExcludeList.add(guestRoom.getId());
-                            }
-                        } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
-                    }
+            });
+            record.setAll(bedsCount.get());
+            Integer countBusyBeds = 0;
+            List<Long> flatsExcludeList = new ArrayList<>();
+            List<Long> roomExcludeList = new ArrayList<>();
+            Date date = new Date();
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
+                if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
+                if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
+                Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
+                if (guestHotel.getId() == hotel.getId()) {
+                    Room guestRoom = guest.getBed().getRoom();
+                    Flat guestFlat = guestRoom.getFlat();
+                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        }
+                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        }
+                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
-                if (record.getAll() > 0) {
-                    record.setBusy(countBusyBeds);
-                    record.setVacant(record.getAll() - record.getBusy());
-                    record.setPercent((int) (((float) record.getBusy() / (float) record.getAll()) * 100));
-                } else {
-                    record.setBusy(0);
-                    record.setVacant(0);
-                    record.setPercent(0);
-                }
-                reportData.add(record);
             }
+            if (record.getAll() > 0) {
+                record.setBusy(countBusyBeds);
+                record.setVacant(record.getAll() - record.getBusy());
+                record.setPercent((int) (((float) record.getBusy() / (float) record.getAll()) * 100));
+            } else {
+                record.setBusy(0);
+                record.setVacant(0);
+                record.setPercent(0);
+            }
+            reportData.add(record);
         }
+
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/ShortReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
@@ -614,31 +614,63 @@ public class FilialService {
         filialDTO.setId(filial.getId());
         filialDTO.setName(filial.getName());
         List<HotelDTO> hotelDTOList = new ArrayList<>();
-        int bedsCount = 0;
-        int emptyBedsCount = 0;
-        int emptyBedsCountWithBusy = 0;
+        int bedsCountFilial = 0;
+        int emptyBedsCountFilial = 0;
         for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
             HotelDTO hotelDTO = new HotelDTO();
             hotelDTO.setId(hotel.getId());
             hotelDTO.setName(hotel.getName());
             hotelDTO.setFilialId(filial.getId());
             hotelDTOList.add(hotelDTO);
-            for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-                List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
-                for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                    bedsCount += room.getBedsCount();
-                    int size = guestRepository.countAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date);
-                    emptyBedsCountWithBusy += room.getBedsCount() - size;
-                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
-                    if (flatLocksList.isEmpty() && roomLocksList.isEmpty()) {
-                        emptyBedsCount += room.getBedsCount() - size;
-                    }
+        }
+
+        for (Hotel hotel : hotelRepository.findAllByFilial(filial)) {
+            ShortReportDTO record = new ShortReportDTO();
+            record.setFilial(filial.getName());
+            record.setHotel(hotel.getName());
+            AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
+            flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
+                roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                    bedsCount.updateAndGet(v -> v + room.getBedsCount());
+                });
+            });
+            record.setAll(bedsCount.get());
+            Integer countBusyBeds = 0;
+            List<Long> flatsExcludeList = new ArrayList<>();
+            List<Long> roomExcludeList = new ArrayList<>();
+            for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(date, date, hotel)) {
+                if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
+                if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
+                Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
+                if (guestHotel.getId() == hotel.getId()) {
+                    Room guestRoom = guest.getBed().getRoom();
+                    Flat guestFlat = guestRoom.getFlat();
+                    List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
+                    List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
+                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            flatsExcludeList.add(guestFlat.getId());
+                        }
+                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            roomExcludeList.add(guestRoom.getId());
+                        }
+                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
+            if (record.getAll() > 0) {
+                record.setBusy(countBusyBeds);
+                bedsCountFilial += record.getAll();
+                emptyBedsCountFilial += record.getAll() - record.getBusy();
+            }
         }
-        filialDTO.setBedsCount(bedsCount);
-        filialDTO.setEmptyBedsCount(emptyBedsCount);
-        filialDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
+
+
+        filialDTO.setBedsCount(bedsCountFilial);
+        filialDTO.setEmptyBedsCount(emptyBedsCountFilial);
+        //filialDTO.setEmptyBedsCountWithBusy(emptyBedsCountWithBusy);
         filialDTO.setHotels(hotelDTOList);
         filialDTO.setExcluded(filial.getExcluded());
         return filialDTO;

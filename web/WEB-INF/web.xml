@@ -21,7 +21,7 @@
     </filter-mapping>
     -->
 
-    <!-- сервлет обработки REST запросов-->
+    <!-- сервлет обработки REST запросов -->
     <servlet>
         <servlet-name>REST</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

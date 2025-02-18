@@ -229,6 +229,7 @@ public class UserService {
         parameters.put("date", dateFormat.format(new Date()));
         if (filial.getId() == 930L) {
             parameters.put("date", dateFormat.format(dateFinish));
+            parameters.put("reportDate", dateFormat.format(dateFinish));
         }
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
         return export(jasperPrint);
