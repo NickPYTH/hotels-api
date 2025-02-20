@@ -353,7 +353,15 @@ public class FlatService {
                                 String guestDatesRange =  dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
                                 String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                                 String fio = guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".";
-                                String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote();
+                                if (fio.length() > 16) fio = fio.substring(0, 15); // Обрезаем иначе не поместится в ячейку минимальную
+                                String post = "";
+                                String filial = "emptyF";
+                                if (guest.getEmployee() != null) {
+                                    filial = filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName();
+                                    if (guest.getEmployee().getIdPoststaff() != null)
+                                        post = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+                                }
+                                String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote() + "&" + post + "&" + filial;
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateStart()))) / 24 * 100);
                                     if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СЛЕВА в ячейке
@@ -370,11 +378,6 @@ public class FlatService {
                                     record.put(startStr, guestInfo + "#100");
                                 if (record.get("dates") == null)
                                     record.put("dates", dateTimeFormatter.format(guest.getDateStart()) + " - " + dateTimeFormatter.format(guest.getDateFinish()));
-                                if (record.get("post") == null) {
-                                    if (guest.getEmployee() != null)
-                                        if (guest.getEmployee().getIdPoststaff() != null)
-                                            record.put("post", postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName());
-                                }
                             }
                             start = start.plusDays(1);
                             count++;
