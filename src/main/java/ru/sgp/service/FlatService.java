@@ -392,7 +392,7 @@ public class FlatService {
     }
 
     @Transactional
-    public List<GuestDTO> getAllNotCheckotedBeforeTodayByHotelId(Long hotelId, String dateStr) throws
+    public List<GuestDTO> getAllNotCheckoutedBeforeTodayByHotelId(Long hotelId, String dateStr) throws
             ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
         Date date = dateTimeFormatter.parse(dateStr);
@@ -449,6 +449,30 @@ public class FlatService {
                     response.add(guestDTO);
                 }
             }
+        }
+        return response;
+    }
+
+    public List<FlatDTO> getAll(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
+        Hotel hotel = hotelRepository.getById(hotelId);
+        List<FlatDTO> response = new ArrayList<>();
+        for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
+            Boolean isVacant = null;
+            if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+                Date dateStart = dateTimeFormatter.parse(dateStartStr);
+                Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
+                for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
+                    for (Bed bed : bedRepository.findAllByRoom(room)) {
+                        isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
+                        if (isVacant) break;
+                    }
+                }
+            }
+            FlatDTO flatDTO = new FlatDTO();
+            flatDTO.setId(flat.getId());
+            if (isVacant == null) flatDTO.setName(flat.getName());
+            else flatDTO.setName(flat.getName() + " " + isVacant);
+            response.add(flatDTO);
         }
         return response;
     }

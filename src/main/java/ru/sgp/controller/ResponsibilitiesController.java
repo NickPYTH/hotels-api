@@ -62,6 +62,7 @@ public class ResponsibilitiesController {
 
     @GetMapping(path = "/getAllByHotelId")
     public ResponseEntity<List<ResponsibilitiesDTO>> getAllByHotelId(@RequestParam Long hotelId) {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         long startTime = System.nanoTime();
         Log record = new Log();
         try {

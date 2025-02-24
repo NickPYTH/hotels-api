@@ -302,14 +302,14 @@ public class ContractService {
             Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
             if (empFilial != null) {
                 if (guestFilial != null) {
-                    if (guestFilial.getId() != empFilial.getId()) continue;
+                    if (!Objects.equals(guestFilial.getId(), empFilial.getId())) continue;
                 } else continue;
             } else {
                 if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
             if (guest.getContract() != null){
                 if (!guest.getContract().getBilling().equals(billing)) continue;
-                if (guest.getContract().getReason().getId() != reason.getId()) continue;
+                if (!Objects.equals(guest.getContract().getReason().getId(), reason.getId())) continue;
             } else continue;
             if (responsibilities.getHotel() != guestHotel) continue;
             if (guest.getEmployee() == null) continue;

@@ -9,4 +9,5 @@ public class BedDTO {
     private Long id;
     private String name;
     private GuestDTO guest;
+    private RoomDTO room;
 }

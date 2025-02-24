@@ -284,7 +284,17 @@ public class GuestService {
 
     public byte[] getGuestReport() throws JRException {
         List<GuestReportDTO> guestReportDTOS = new ArrayList<>();
-        for (Guest guest : guestRepository.findAll()) {
+        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
+        User user = userRepository.findByUsername(username);
+        List<GuestDTO> response = new ArrayList<>();
+        List<Guest> guests = new ArrayList<>();
+        if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
+            guests = guestRepository.findAll();
+        } else {
+            Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
+            guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
+        }
+        for (Guest guest : guests) {
             GuestReportDTO guestReportDTO = new GuestReportDTO();
             guestReportDTO.setId(guest.getId().toString());
             guestReportDTO.setSurname(guest.getLastname());
