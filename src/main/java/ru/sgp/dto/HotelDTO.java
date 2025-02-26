@@ -15,4 +15,5 @@ public class HotelDTO {
     private Integer busyBedsCount;
     private Integer flatsCount;
     private String location;
+    private FilialDTO filial;
 }

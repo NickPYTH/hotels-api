@@ -23,4 +23,5 @@ public class FlatDTO {
     private Boolean tech;
     private Long flatLockId;
     private List<RoomDTO> rooms;
+    private HotelDTO hotel;
 }

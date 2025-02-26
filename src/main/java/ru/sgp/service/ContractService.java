@@ -174,24 +174,22 @@ public class ContractService {
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
-        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, responsibilities.getHotel())) {
             Filial guestFilial = null;
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             }
-            Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
             if (empFilial != null) {
                 if (guestFilial != null) {
-                    if (guestFilial.getId() != empFilial.getId()) continue;
+                    if (!Objects.equals(guestFilial.getId(), empFilial.getId())) continue;
                 } else continue;
             } else {
                 if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
             if (guest.getContract() != null){
                 if (!guest.getContract().getBilling().equals(billing)) continue;
-                if (guest.getContract().getReason().getId() != reason.getId()) continue;
+                if (!Objects.equals(guest.getContract().getReason().getId(), reason.getId())) continue;
             } else continue;
-            if (responsibilities.getHotel() != guestHotel) continue;
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(minDate);
@@ -417,11 +415,9 @@ public class ContractService {
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
-        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndOrganization(maxDate, minDate, responsibilities.getHotel(), organization)) {
             if (guest.getEmployee() != null) continue;
-            if (guest.getOrganization() != organization) continue;
-            if (guest.getContract().getReason().getId() != reason.getId()) continue;
-            if (responsibilities.getHotel() != guest.getBed().getRoom().getFlat().getHotel()) continue;
+            if (!Objects.equals(guest.getContract().getReason().getId(), reason.getId())) continue;
             if (!guest.getContract().getBilling().equals(billing)) continue;
             List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), guest.getOrganization());
             MonthReportDTO monthReportDTO = new MonthReportDTO();

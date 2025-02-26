@@ -17,4 +17,5 @@ public class RoomDTO {
     private Long roomLockId;
     private List<GuestDTO> guests;
     private List<BedDTO> beds;
+    private FlatDTO flat;
 }

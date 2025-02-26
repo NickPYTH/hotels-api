@@ -300,18 +300,18 @@ public class FilialService {
                 if (roomExcludeList.contains(guest.getBed().getRoom().getId())) continue;
                 if (flatsExcludeList.contains(guest.getBed().getRoom().getFlat().getId())) continue;
                 Hotel guestHotel = guest.getBed().getRoom().getFlat().getHotel();
-                if (guestHotel.getId() == hotel.getId()) {
+                if (Objects.equals(guestHotel.getId(), hotel.getId())) {
                     Room guestRoom = guest.getBed().getRoom();
                     Flat guestFlat = guestRoom.getFlat();
                     List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
                     List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
                     if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
-                        if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
+                        if (flatLocksList.get(0).getStatus().getId() == 4L || flatLocksList.get(0).getStatus().getId() == 2L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
                             countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
                             flatsExcludeList.add(guestFlat.getId());
                         }
                     } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
-                        if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
+                        if (roomLocksList.get(0).getStatus().getId() == 3L || roomLocksList.get(0).getStatus().getId() == 2L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
                             countBusyBeds += bedRepository.countByRoom(guestRoom);
                             roomExcludeList.add(guestRoom.getId());
                         }

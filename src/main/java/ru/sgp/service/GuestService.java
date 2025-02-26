@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.ReservationDTO;
 import ru.sgp.dto.UserDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.dto.report.GuestReportDTO;
@@ -53,6 +55,8 @@ public class GuestService {
     private FilialRepository filialRepository;
     @Autowired
     private FlatRepository flatRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
 
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
@@ -182,15 +186,62 @@ public class GuestService {
         guest.setNote(guestDTO.getNote());
         // -----
 
-        // Устанавливаем договор и его зависимости
+        // Устанавливаем договор
         if (guestDTO.getContractId() != null) {
             Contract contract = contractRepository.getById(guestDTO.getContractId());
             guest.setContract(contract);
+        } else {
+            guest.setContract(null);
         }
 
-        // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте
+        // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте БРОНИ
         Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
+        List<Reservation> reservations = new ArrayList<>();
+
+        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
+        if (guest.getEmployee() != null) { // Если ты не работник то нет смысла проверять с бронями - бронируются только работники
+            reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndTabnumAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getEmployee().getTabnum(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
+            if (!reservations.isEmpty()) {
+                Reservation reservationTmp = reservations.get(0);
+                GuestDTO tmp = new GuestDTO();
+                tmp.setError("Dates range error");
+                tmp.setLastname(guest.getEmployee().getLastname());
+                tmp.setFirstname(guest.getEmployee().getFirstname());
+                tmp.setSecondName(guest.getEmployee().getSecondName());
+                tmp.setFilialName(reservationTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+                tmp.setHotelName(reservationTmp.getBed().getRoom().getFlat().getHotel().getName());
+                tmp.setFlatName(reservationTmp.getBed().getRoom().getFlat().getName());
+                tmp.setRoomName(reservationTmp.getBed().getRoom().getName());
+                tmp.setBedName(reservationTmp.getBed().getName());
+                tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
+                tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
+                response.add(tmp);
+                return response;
+            }
+        }
+        // -----
+        reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
+        if (!reservations.isEmpty()) {
+            Reservation reservationTmp = reservations.get(0);
+            GuestDTO tmp = new GuestDTO();
+            tmp.setError("Dates range error");
+            tmp.setLastname(guest.getEmployee().getLastname());
+            tmp.setFirstname(guest.getEmployee().getFirstname());
+            tmp.setSecondName(guest.getEmployee().getSecondName());
+            tmp.setFilialName(reservationTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+            tmp.setHotelName(reservationTmp.getBed().getRoom().getFlat().getHotel().getName());
+            tmp.setFlatName(reservationTmp.getBed().getRoom().getFlat().getName());
+            tmp.setRoomName(reservationTmp.getBed().getRoom().getName());
+            tmp.setBedName(reservationTmp.getBed().getName());
+            tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
+            tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
+            response.add(tmp);
+            return response;
+        }
+        // -----
+
+        // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте ЗАПИСИ О ПРОЖИВАНИИ
         List<Guest> guests = new ArrayList<>();
 
         // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место

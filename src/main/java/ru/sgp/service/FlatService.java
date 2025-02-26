@@ -40,6 +40,10 @@ public class FlatService {
     private RoomLocksRepository roomLocksRepository;
     @Autowired
     private FlatLocksRepository flatLocksRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -84,6 +88,8 @@ public class FlatService {
                 }
                 roomDTO.setBedsCount(room.getBedsCount());
                 List<GuestDTO> guestDTOList = new ArrayList<>();
+
+                // Получаем записи о проживании
                 for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
                     GuestDTO guestDTO = new GuestDTO();
                     guestDTO.setId(guest.getId());
@@ -93,8 +99,7 @@ public class FlatService {
                     guestDTO.setBedName(guest.getBed().getName());
                     guestDTO.setBedId(guest.getBed().getId());
                     guestDTO.setRoomId(room.getId());
-                    if (guest.getContract() != null)
-                        guestDTO.setContractId(guest.getContract().getId());
+                    if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setRoomName(room.getName());
                     guestDTO.setFlatId(room.getFlat().getId());
                     guestDTO.setFlatName(flat.getName());
@@ -107,6 +112,7 @@ public class FlatService {
                     guestDTO.setNote(guest.getNote());
                     guestDTO.setRegPoMestu(guest.getRegPoMestu());
                     guestDTO.setMemo(guest.getMemo());
+                    guestDTO.setIsReservation(false);
                     if (guest.getContract() != null) {
                         if (guest.getContract().getReason() != null)
                             guestDTO.setReason(guest.getContract().getReason().getName());
@@ -117,10 +123,8 @@ public class FlatService {
                     if (guest.getEmployee() != null) {
                         if (guest.getEmployee().getIdPoststaff() != null) {
                             Optional<Post> post = postRepository.findById(guest.getEmployee().getIdPoststaff().longValue());
-                            if (post.isPresent()) guestDTO.setPost(post.get().getName());
+                            post.ifPresent(value -> guestDTO.setPost(value.getName()));
                         }
-                    }
-                    if (guest.getEmployee() != null) {
                         Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
                         guestDTO.setFilialEmployee(filial.getName());
                         guestDTO.setTabnum(guest.getEmployee().getTabnum());
@@ -132,6 +136,34 @@ public class FlatService {
                     }
                     guestDTOList.add(guestDTO);
                 }
+                // -----
+
+                // Получаем брони
+                for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+                    GuestDTO guestDTO = new GuestDTO();
+                    Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
+                    guestDTO.setId(reservation.getId());
+                    guestDTO.setFirstname(employee.getFirstname());
+                    guestDTO.setLastname(employee.getLastname());
+                    guestDTO.setSecondName(employee.getSecondName());
+                    guestDTO.setBedName(reservation.getBed().getName());
+                    guestDTO.setBedId(reservation.getBed().getId());
+                    guestDTO.setRoomId(room.getId());
+                    guestDTO.setRoomName(room.getName());
+                    guestDTO.setFlatId(room.getFlat().getId());
+                    guestDTO.setFlatName(flat.getName());
+                    guestDTO.setFilialId(flat.getHotel().getFilial().getId());
+                    guestDTO.setFilialName(flat.getHotel().getFilial().getName());
+                    guestDTO.setHotelId(flat.getHotel().getId());
+                    guestDTO.setHotelName(flat.getHotel().getName());
+                    guestDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
+                    guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
+                    guestDTO.setNote(reservation.getNote());
+                    guestDTO.setIsReservation(true);
+                    guestDTOList.add(guestDTO);
+                }
+                // -----
+
                 roomDTO.setGuests(guestDTOList);
                 roomDTOList.add(roomDTO);
             }
@@ -201,6 +233,8 @@ public class FlatService {
             roomDTO.setFlatId(flatId);
             roomDTO.setBedsCount(room.getBedsCount());
             List<GuestDTO> guestDTOList = new ArrayList<>();
+
+            // Получаем записи о проживании
             for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
                 GuestDTO guestDTO = new GuestDTO();
                 guestDTO.setId(guest.getId());
@@ -257,8 +291,37 @@ public class FlatService {
                         guestDTO.setOrganization(guest.getOrganization().getName());
                     }
                 }
+                guestDTO.setIsReservation(false);
                 guestDTOList.add(guestDTO);
             }
+            // -----
+
+            // Получаем брони
+            for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+                GuestDTO guestDTO = new GuestDTO();
+                Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
+                guestDTO.setId(reservation.getId());
+                guestDTO.setFirstname(employee.getFirstname());
+                guestDTO.setLastname(employee.getLastname());
+                guestDTO.setSecondName(employee.getSecondName());
+                guestDTO.setBedName(reservation.getBed().getName());
+                guestDTO.setBedId(reservation.getBed().getId());
+                guestDTO.setRoomId(room.getId());
+                guestDTO.setRoomName(room.getName());
+                guestDTO.setFlatId(room.getFlat().getId());
+                guestDTO.setFlatName(flat.getName());
+                guestDTO.setFilialId(flat.getHotel().getFilial().getId());
+                guestDTO.setFilialName(flat.getHotel().getFilial().getName());
+                guestDTO.setHotelId(flat.getHotel().getId());
+                guestDTO.setHotelName(flat.getHotel().getName());
+                guestDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
+                guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
+                guestDTO.setNote(reservation.getNote());
+                guestDTO.setIsReservation(true);
+                guestDTOList.add(guestDTO);
+            }
+            // -----
+
             roomDTO.setGuests(guestDTOList);
             List<BedDTO> bedDTOList = new ArrayList<>();
             for (Bed bed : bedRepository.findAllByRoom(room)) {
@@ -272,34 +335,6 @@ public class FlatService {
         }
         flatDTO.setRooms(roomDTOList);
         flatDTO.setRoomsCount(roomDTOList.size());
-
-        // Experiments
-//        int c = 0;
-//        for (Bed bed : bedRepository.findAllByRoomFlatHotel(flat.getHotel())) {
-//            //Bed bed = bedRepository.getById(639L);
-//            List<Guest> guestOneBedList = guestRepository.findAllByBed(bed);
-//            for (Guest guest : guestOneBedList) {  // Будем проходить по жильцам привзяанным к одной кровати и с пересекающимися диапазонами
-//                List<Guest> guestOverlapList = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(guest.getDateFinish(), guest.getDateStart(), bed, guest.getId());
-//                if (!guestOverlapList.isEmpty()) {
-//                    guestOverlapList.add(guest);
-//                    List<Bed> bedExp = bedRepository.findAllByRoom(bed.getRoom());
-//                    for (int i = 0; i < 6; i++) {
-//                        if (i < bedExp.size()) {
-//                            if (bedExp.get(i) != null) {
-//                                if (i < guestOverlapList.size()) {
-//                                    if (guestOverlapList.get(i) != null) {
-//                                        guestOverlapList.get(i).setBed(bedExp.get(i));
-//                                        c++;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-        // -----
 
         return flatDTO;
     }
@@ -340,6 +375,8 @@ public class FlatService {
                     record.put("roomName", room.getName());
                     record.put("bed", bed.getName());
                     record.put("bedId", bed.getId().toString());
+
+                    // Заполнение из таблицы ЗАПИСИ О ПРОЖИВАНИИ
                     for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed)) {
                         LocalDateTime start = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                         int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
@@ -361,7 +398,7 @@ public class FlatService {
                                     if (guest.getEmployee().getIdPoststaff() != null)
                                         post = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
                                 }
-                                String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote() + "&" + post + "&" + filial;
+                                String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote() + "&" + post + "&" + filial + "&" + false;  // Последний параметр это бронь
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(guest.getDateStart()))) / 24 * 100);
                                     if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СЛЕВА в ячейке
@@ -383,6 +420,52 @@ public class FlatService {
                             count++;
                         }
                     }
+                    // -----
+
+                    // Заполнение из таблицы БРОНИРОВАНИЕ
+                    for (Reservation reservation : reservationRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed)) {
+                        LocalDateTime start = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                        int daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS)));
+                        int count = 0;
+                        while (count <= daysCount) {
+                            LocalDateTime guestStart = dateFormatter.parse(dateTimeFormatter.format(reservation.getDateStart())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                            LocalDateTime guestFinish = dateFormatter.parse(dateTimeFormatter.format(reservation.getDateFinish())).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                            if ((start.isAfter(guestStart) || start.isEqual(guestStart)) && (start.isBefore(guestFinish) || start.isEqual(guestFinish))) {
+                                int busyPercentStart = 100;
+                                int busyPercentFinish = 100;
+                                String guestDatesRange =  dateTimeFormatter.format(reservation.getDateStart()) + " :: " + dateTimeFormatter.format(reservation.getDateFinish());
+                                String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
+                                String fio = employee.getLastname() + " " + employee.getFirstname().charAt(0) + ". " + employee.getSecondName().charAt(0) + ".";
+                                if (fio.length() > 16) fio = fio.substring(0, 15); // Обрезаем иначе не поместится в ячейку минимальную
+                                String post = "";
+                                String filial = "emptyF";
+                                filial = filialRepository.findByCode(employee.getIdFilial()).getName();
+                                if (employee.getIdPoststaff() != null)
+                                    post = postRepository.getById(employee.getIdPoststaff().longValue()).getName();
+                                String guestInfo = fio + "&" + guestDatesRange + "&" + true + "&"+ reservation.getNote() + "&" + post + "&" + filial + "&" + true; // Последний параметр это бронь
+                                if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
+                                    busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(reservation.getDateStart()))) / 24 * 100);
+                                    if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СЛЕВА в ячейке
+                                        record.put(startStr, record.get(startStr) + "||" + guestInfo + "#" + busyPercentStart);
+                                    else
+                                        record.put(startStr, guestInfo + "#" + busyPercentStart); // Частично занимает ЛЕВУЮ часть
+                                } else if (start.isEqual(guestFinish)) { // Начало совпало вычисляем процент занятого дня
+                                    busyPercentFinish = (int) ((Double.parseDouble(timeFormatter.format(reservation.getDateFinish()))) / 24 * 100);
+                                    if (record.get(startStr) != null) // Если есть запись, но новый жилец будет СПРАВА в ячейке
+                                        record.put(startStr, record.get(startStr) + "||" + guestInfo + "#-" + busyPercentFinish);
+                                    else
+                                        record.put(startStr, guestInfo + "#-" + busyPercentFinish); // Частично занимает ПРАВУЮ часть
+                                } else // Если жилец полностью занимает весь день, всю ячейку
+                                    record.put(startStr, guestInfo + "#100");
+                                if (record.get("dates") == null)
+                                    record.put("dates", dateTimeFormatter.format(reservation.getDateStart()) + " - " + dateTimeFormatter.format(reservation.getDateFinish()));
+                            }
+                            start = start.plusDays(1);
+                            count++;
+                        }
+                    }
+                    // -----
 
                     result.add(record);
                 }
