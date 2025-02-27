@@ -28,6 +28,9 @@ public class Reservation {
     @Column(name = "secondname")
     private String secondname;
 
+    @Column(name = "male")
+    private Boolean male;
+
     @Column(name = "date_start")
     private Date dateStart;
 

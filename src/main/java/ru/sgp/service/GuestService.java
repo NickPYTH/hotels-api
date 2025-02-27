@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -326,8 +327,19 @@ public class GuestService {
         return guestDTO;
     }
 
+    @Transactional
     public GuestDTO delete(Long id) {
-        GuestDTO guestDTO = new GuestDTO();
+        ModelMapper modelMapper = new ModelMapper();
+        Guest guest = guestRepository.getById(id);
+        GuestDTO guestDTO = modelMapper.map(guest, GuestDTO.class);
+        Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
+        if (reservationOptional.isPresent()){
+            Reservation reservation = reservationOptional.get();
+            reservation.setGuest(null);
+            reservation.setDateStart(reservation.getDateStartConfirmed());
+            reservation.setDateFinish(reservation.getDateFinishConfirmed());
+            reservationRepository.save(reservation);
+        }
         guestRepository.deleteById(id);
         guestDTO.setId(id);
         return guestDTO;

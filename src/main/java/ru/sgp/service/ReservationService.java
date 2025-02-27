@@ -84,6 +84,7 @@ public class ReservationService {
         reservation.setFirstname(reservationDTO.getFirstname());
         reservation.setLastname(reservationDTO.getLastname());
         reservation.setSecondname(reservationDTO.getSecondname());
+        reservation.setMale(reservationDTO.getMale());
         reservation.setDateStart(dateStart);
         reservation.setDateFinish(dateFinish);
         reservation.setBed(bedRepository.getById(reservationDTO.getBed().getId()));
@@ -132,7 +133,10 @@ public class ReservationService {
 
         // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
         Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
-        guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, employee.getLastname(), employee.getFirstname(), employee.getSecondName(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
+        if (employee != null)
+            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, employee.getLastname(), employee.getFirstname(), employee.getSecondName(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
+        else
+            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, reservationDTO.getLastname(), reservationDTO.getFirstname(), reservationDTO.getSecondname(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
         if (!guests.isEmpty()) {
             Guest guestTmp = guests.get(0);
             ReservationDTO tmp = new ReservationDTO();

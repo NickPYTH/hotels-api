@@ -141,11 +141,11 @@ public class FlatService {
                 // Получаем брони
                 for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
                     GuestDTO guestDTO = new GuestDTO();
-                    Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
                     guestDTO.setId(reservation.getId());
-                    guestDTO.setFirstname(employee.getFirstname());
-                    guestDTO.setLastname(employee.getLastname());
-                    guestDTO.setSecondName(employee.getSecondName());
+                    Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
+                    guestDTO.setFirstname(employee!=null?employee.getFirstname():reservation.getFirstname());
+                    guestDTO.setLastname(employee!=null?employee.getLastname():reservation.getLastname());
+                    guestDTO.setSecondName(employee!=null?employee.getSecondName():reservation.getSecondname());
                     guestDTO.setBedName(reservation.getBed().getName());
                     guestDTO.setBedId(reservation.getBed().getId());
                     guestDTO.setRoomId(room.getId());
@@ -301,9 +301,9 @@ public class FlatService {
                 GuestDTO guestDTO = new GuestDTO();
                 Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
                 guestDTO.setId(reservation.getId());
-                guestDTO.setFirstname(employee.getFirstname());
-                guestDTO.setLastname(employee.getLastname());
-                guestDTO.setSecondName(employee.getSecondName());
+                guestDTO.setFirstname(employee!=null?employee.getFirstname():reservation.getFirstname());
+                guestDTO.setLastname(employee!=null?employee.getLastname():reservation.getLastname());
+                guestDTO.setSecondName(employee!=null?employee.getSecondName():reservation.getSecondname());
                 guestDTO.setBedName(reservation.getBed().getName());
                 guestDTO.setBedId(reservation.getBed().getId());
                 guestDTO.setRoomId(room.getId());

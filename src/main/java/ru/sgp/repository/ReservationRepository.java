@@ -3,13 +3,11 @@ package ru.sgp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.sgp.model.Bed;
-import ru.sgp.model.Filial;
-import ru.sgp.model.Reservation;
-import ru.sgp.model.Room;
+import ru.sgp.model.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -22,4 +20,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, Date date, Date date1);
 
     List<Reservation> findAllByDateStartBeforeAndDateFinishAfterAndBed(Date dateFinish, Date dateStart, Bed bed);
+
+    Optional<Reservation> findByGuest(Guest guest);
 }

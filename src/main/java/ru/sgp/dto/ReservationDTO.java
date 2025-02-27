@@ -19,4 +19,5 @@ public class ReservationDTO {
     private GuestDTO guest;
     private StatusDTO status;
     private String error;
+    private Boolean male;
 }
