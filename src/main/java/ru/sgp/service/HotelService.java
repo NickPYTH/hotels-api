@@ -64,9 +64,10 @@ public class HotelService {
             HotelDTO hotelDTO = new HotelDTO();
             AtomicReference<Integer> bedsCount = new AtomicReference<>(0);
             flatRepository.findAllByHotelOrderById(hotel).forEach(flat -> {
-                roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
-                    bedsCount.updateAndGet(v -> v + room.getBedsCount());
-                });
+                if (!flat.getTech())
+                    roomRepository.findAllByFlatOrderById(flat).forEach(room -> {
+                        bedsCount.updateAndGet(v -> v + room.getBedsCount());
+                    });
             });
             hotelDTO.setId(hotel.getId());
             hotelDTO.setName(hotel.getName());

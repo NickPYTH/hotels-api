@@ -250,8 +250,8 @@ public class ContractController {
     public ResponseEntity<byte[]> getMonthReportByUttist(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing, @RequestParam String ceh) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMonthReportByUttist(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing, ceh);
         try {
+            byte[] reportData = contractService.getMonthReportByUttist(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing, ceh);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByFilial", duration, "");
             record.setStatus("OK");
@@ -281,9 +281,8 @@ public class ContractController {
     public ResponseEntity<byte[]> getMonthReport(@RequestParam Long organizationId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMonthReportByOrganization(organizationId, responsibilityId, reasonId, dateStart, dateFinish, billing);
-
         try {
+            byte[] reportData = contractService.getMonthReportByOrganization(organizationId, responsibilityId, reasonId, dateStart, dateFinish, billing);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMonthReportByOrganization", duration, "");
             record.setStatus("OK");
@@ -313,10 +312,9 @@ public class ContractController {
     public ResponseEntity<byte[]> getMVZReport(@RequestParam Long filialId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMVZReport(filialId, dateStart, dateFinish);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
+            byte[] reportData = contractService.getMVZReport(filialId, dateStart, dateFinish);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReport", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -345,10 +343,9 @@ public class ContractController {
     public ResponseEntity<byte[]> getMVZReportOnlyLPU(@RequestParam String lpu, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getMVZReportOnlyLPU(lpu, dateStart, dateFinish);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
+            byte[] reportData = contractService.getMVZReportOnlyLPU(lpu, dateStart, dateFinish);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReportOnlyLPU", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -377,10 +374,9 @@ public class ContractController {
     public ResponseEntity<byte[]> getAllReport() throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = contractService.getAllReport();
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-
+            byte[] reportData = contractService.getAllReport();
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getAllReport", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

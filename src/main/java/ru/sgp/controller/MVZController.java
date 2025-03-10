@@ -46,9 +46,8 @@ public class MVZController {
     public ResponseEntity<List<MVZDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<MVZDTO> response = mvzService.getAll();
         try {
-
+            List<MVZDTO> response = mvzService.getAll();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/MVZ/getAll", duration, "");
             record.setStatus("OK");
@@ -163,8 +162,8 @@ public class MVZController {
     public ResponseEntity<byte[]> getMVZReportShort(@RequestParam Long empFilialId, @RequestParam Long filialId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = mvzService.getMVZReportShort(empFilialId, filialId, dateStart, dateFinish);
         try {
+            byte[] reportData = mvzService.getMVZReportShort(empFilialId, filialId, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/getMVZReportShort", duration, "");
             record.setStatus("OK");

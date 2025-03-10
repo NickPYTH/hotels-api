@@ -62,4 +62,8 @@ public class Guest {
     @JoinColumn(name = "bed")
     private Bed bed;
 
+    @OneToOne
+    @JoinColumn(name = "family_member_of_employee")
+    private Employee familyMemberOfEmployee;
+
 }

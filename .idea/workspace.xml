@@ -9,41 +9,44 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Доступ к записям о проживании для дежурных">
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-12.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-13.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-14.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-17.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/61463d6abc8687ccca3f5c05af3ca6a7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/css/main.7a61d283.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/main.34dd6705fa31a00a3c66.js" afterDir="false" />
+    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="апдейт">
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-03-08.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-03-09.0.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/report/LoadStatsReportDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/reports/LoadStats.jrxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3/storage_v2/_src_/database/hotel.tMHtBQ/schema/hotel.tMHtBQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/3c63c068-6867-4142-b921-c4dcd3bccdb3/storage_v2/_src_/database/hotel.tMHtBQ/schema/hotel.tMHtBQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/9d4c1689-8cd6-450e-afdc-57dfde8fa3c3.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" beforeDir="false" afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-24.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-27.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-28.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-29.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-01-30.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/flight-api.iml" beforeDir="false" afterPath="$PROJECT_DIR$/flight-api.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-12.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-13.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-14.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-02-17.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ContractController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ContractController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/EventController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/EventController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FilialController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FilialController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/GuestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/GuestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatLocksController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/FlatLocksController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/HotelController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/HotelController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/MVZController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/MVZController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ReservationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ResponsibilitiesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/ResponsibilitiesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/RoomController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/dto/GuestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/model/Guest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/model/Guest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/repository/GuestRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/ContractService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/ContractService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/EventService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/EventService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FilialService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FilialService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/FlatService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/GuestService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/HotelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/HotelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/sgp/service/RoomService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportGeneral.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportGeneral.jrxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportUEZS.jrxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reports/CheckoutReportUEZS.jrxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/css/main.71d04754.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/main.a32b9ee34a3618cc14ad.js.LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/web/main.34dd6705fa31a00a3c66.js.LICENSE.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -484,6 +487,9 @@
       <workItem from="1739783644307" duration="4382000" />
       <workItem from="1739799593581" duration="2126000" />
       <workItem from="1739883910796" duration="4399000" />
+      <workItem from="1740910813007" duration="23000" />
+      <workItem from="1740916200527" duration="1850000" />
+      <workItem from="1741420898428" duration="4517000" />
     </task>
     <task id="LOCAL-00009" summary="Порция багфиксов">
       <option name="closed" value="true" />

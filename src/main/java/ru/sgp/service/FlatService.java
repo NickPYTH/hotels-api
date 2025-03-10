@@ -292,6 +292,8 @@ public class FlatService {
                     }
                 }
                 guestDTO.setIsReservation(false);
+                if (guest.getFamilyMemberOfEmployee() != null)
+                    guestDTO.setFamilyMemberOfEmployee(guest.getFamilyMemberOfEmployee().getTabnum());
                 guestDTOList.add(guestDTO);
             }
             // -----
@@ -395,8 +397,11 @@ public class FlatService {
                                 String filial = "emptyF";
                                 if (guest.getEmployee() != null) {
                                     filial = filialRepository.findByCode(guest.getEmployee().getIdFilial()).getName();
-                                    if (guest.getEmployee().getIdPoststaff() != null)
-                                        post = postRepository.getById(guest.getEmployee().getIdPoststaff().longValue()).getName();
+                                    if (guest.getEmployee().getIdPoststaff() != null) {
+                                        Optional<Post> optionalPost = postRepository.findById(guest.getEmployee().getIdPoststaff().longValue());
+                                        if (optionalPost.isPresent())
+                                            post = optionalPost.get().getName();
+                                    }
                                 }
                                 String guestInfo = fio + "&" + guestDatesRange + "&" + guest.getMale() + "&"+ guest.getNote() + "&" + post + "&" + filial + "&" + false;  // Последний параметр это бронь
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
@@ -436,13 +441,22 @@ public class FlatService {
                                 String guestDatesRange =  dateTimeFormatter.format(reservation.getDateStart()) + " :: " + dateTimeFormatter.format(reservation.getDateFinish());
                                 String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                                 Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
-                                String fio = employee.getLastname() + " " + employee.getFirstname().charAt(0) + ". " + employee.getSecondName().charAt(0) + ".";
+                                String fio = "";
+                                if (employee != null) {
+                                    fio = employee.getLastname() + " " + employee.getFirstname().charAt(0) + ". " + employee.getSecondName().charAt(0) + ".";
+                                } else {
+                                    if (reservation.getLastname() != null) fio += reservation.getLastname();
+                                    if (reservation.getFirstname() != null && !reservation.getFirstname().isEmpty()) fio += reservation.getFirstname().charAt(0) + ". ";
+                                    if (reservation.getSecondname() != null && !reservation.getSecondname().isEmpty()) fio += reservation.getSecondname().charAt(0) + ". ";
+                                }
                                 if (fio.length() > 16) fio = fio.substring(0, 15); // Обрезаем иначе не поместится в ячейку минимальную
                                 String post = "";
-                                String filial = "emptyF";
-                                filial = filialRepository.findByCode(employee.getIdFilial()).getName();
-                                if (employee.getIdPoststaff() != null)
-                                    post = postRepository.getById(employee.getIdPoststaff().longValue()).getName();
+                                String filial = "";
+                                if (employee != null) {
+                                    filial = filialRepository.findByCode(employee.getIdFilial()).getName();
+                                    if (employee.getIdPoststaff() != null)
+                                        post = postRepository.getById(employee.getIdPoststaff().longValue()).getName();
+                                }
                                 String guestInfo = fio + "&" + guestDatesRange + "&" + true + "&"+ reservation.getNote() + "&" + post + "&" + filial + "&" + true; // Последний параметр это бронь
                                 if (start.isEqual(guestStart)) { // Начало совпало вычисляем процент занятого дня
                                     busyPercentStart = (int) ((24 - Double.parseDouble(timeFormatter.format(reservation.getDateStart()))) / 24 * 100);
@@ -547,8 +561,11 @@ public class FlatService {
                 for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
                     for (Bed bed : bedRepository.findAllByRoom(room)) {
                         isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
+                        if (isVacant)
+                            isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
                         if (isVacant) break;
                     }
+                    if (Boolean.TRUE.equals(isVacant)) break;
                 }
             }
             FlatDTO flatDTO = new FlatDTO();

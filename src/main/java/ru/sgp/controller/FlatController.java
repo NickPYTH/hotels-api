@@ -37,8 +37,8 @@ public class FlatController {
     public ResponseEntity<List<FlatDTO>> getAll(@RequestParam Long hotelId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<FlatDTO> response = flatService.getAll(hotelId, dateStart, dateFinish);
         try {
+            List<FlatDTO> response = flatService.getAll(hotelId, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAll", duration, "");
             record.setStatus("OK");
@@ -95,9 +95,8 @@ public class FlatController {
     public ResponseEntity<List<GuestDTO>> getAllNotCheckotedBeforeTodayByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<GuestDTO> response = flatService.getAllNotCheckoutedBeforeTodayByHotelId(id, date);
-
         try {
+            List<GuestDTO> response = flatService.getAllNotCheckoutedBeforeTodayByHotelId(id, date);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllNotCheckotedBeforeTodayByHotelId", duration, "");
             record.setStatus("OK");
@@ -125,9 +124,8 @@ public class FlatController {
     public ResponseEntity<List<HashMap<String, String>>> getAllByHotelIdChess(@RequestParam Long id, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<HashMap<String, String>> response = flatService.getAllByHotelIdChess(id, dateStart, dateFinish);
         try {
-
+            List<HashMap<String, String>> response = flatService.getAllByHotelIdChess(id, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelIdChess", duration, "");
             record.setStatus("OK");

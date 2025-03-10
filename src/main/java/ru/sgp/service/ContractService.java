@@ -168,7 +168,6 @@ public class ContractService {
         Reason reason = reasonRepository.getById(reasonId);
         Responsibilities responsibilities = responsibilitiesRepository.getById(responsibilityId);
         Filial filial = responsibilities.getHotel().getFilial();
-        DecimalFormat df = new DecimalFormat("#.##");
         Long daysCountSummary = 0L;
         Double costSummary = 0.0;
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
@@ -176,6 +175,7 @@ public class ContractService {
         int count = 1;
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, responsibilities.getHotel())) {
             Filial guestFilial = null;
+            if (guest.getContract() == null) continue;
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             }
@@ -240,8 +240,60 @@ public class ContractService {
             }
             monthReportDTO.setMemo(guest.getMemo());
             reportData.add(monthReportDTO);
+
+            // Добавляем членов семьи, если есть
+            List<Guest> family = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndFamilyMemberOfEmployee(maxDate, minDate, responsibilities.getHotel(), guest.getEmployee());
+            for(Guest member : family) {
+                List<Contract> contractsMember = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, member.getBed().getRoom().getFlat().getHotel(), member.getContract().getReason(), calendar.get(Calendar.YEAR));
+                MonthReportDTO memberDTO = new MonthReportDTO();
+                memberDTO.setId(String.valueOf(member.getId()));
+                memberDTO.setFio(member.getLastname() + " " + member.getFirstname() + " " + member.getSecondName());
+                memberDTO.setDateStart(dateFormatter.format(member.getDateStart()));
+                memberDTO.setDateFinish(dateFormatter.format(member.getDateFinish()));
+                if (member.getDateStart().compareTo(minDate) > 0)
+                    memberDTO.setDateStart(dateFormatter.format(member.getDateStart()));
+                else
+                    memberDTO.setDateStart(dateFormatter.format(minDate));
+                if (member.getDateFinish().compareTo(maxDate) < 0)
+                    memberDTO.setDateFinish(dateFormatter.format(member.getDateFinish()));
+                else
+                    memberDTO.setDateFinish(dateFormatter.format(maxDate));
+                Long daysCountMember = 1L;
+                Date cuttedGuestStartDateMember = dateFormatter.parse(dateTimeFormatter.format(member.getDateStart()));
+                Date cuttedGuestFinishDateMember = dateFormatter.parse(dateTimeFormatter.format(member.getDateFinish()));
+                Date cuttedPeriodStartDateMember = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
+                Date cuttedPeriodFinishDateMember = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
+                if (member.getDateStart().before(minDate) && member.getDateFinish().after(maxDate)) {  // Все дни заданного периода
+                    daysCountMember = TimeUnit.DAYS.convert(cuttedPeriodFinishDateMember.getTime() - cuttedPeriodStartDateMember.getTime(), TimeUnit.MILLISECONDS) + 1;
+                } else if (member.getDateStart().after(minDate) && member.getDateFinish().before(maxDate)) {  // Все дни внутри периода
+                    daysCountMember = TimeUnit.DAYS.convert(cuttedGuestFinishDateMember.getTime() - cuttedGuestStartDateMember.getTime(), TimeUnit.MILLISECONDS);
+                } else if (member.getDateStart().before(minDate) && member.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
+                    daysCountMember = TimeUnit.DAYS.convert(cuttedGuestFinishDateMember.getTime() - cuttedPeriodStartDateMember.getTime(), TimeUnit.MILLISECONDS);
+                } else if (member.getDateStart().after(minDate) && member.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
+                    daysCountMember = TimeUnit.DAYS.convert(cuttedPeriodFinishDateMember.getTime() - cuttedGuestStartDateMember.getTime(), TimeUnit.MILLISECONDS) + 1;
+                } else {
+                    continue;
+                }
+                if (daysCountMember == 0) daysCountMember = 1L;
+                daysCountSummary += daysCountMember;
+                memberDTO.setDaysCount(Math.toIntExact(daysCountMember));
+                if (!contractsMember.isEmpty()) {
+                    if (contractsMember.get(0).getCost() % 1 == 0)
+                        memberDTO.setCostFromContract(String.valueOf(contractsMember.get(0).getCost().intValue()));
+                    else
+                        memberDTO.setCostFromContract(contractsMember.get(0).getCost().toString().replace('.', ','));
+
+                    memberDTO.setCost(daysCountMember * contractsMember.get(0).getCost());
+                    costSummary += daysCountMember * contractsMember.get(0).getCost();
+                }
+                memberDTO.setTabnum("   ");
+                memberDTO.setMemo(member.getMemo());
+                reportData.add(memberDTO);
+                count++;
+            }
             count++;
         }
+
         reportData.sort((rec1, rec2) -> {
             return rec1.getDateStart().compareTo(rec2.getDateStart());
         });
@@ -294,6 +346,7 @@ public class ContractService {
         int count = 1;
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfter(maxDate, minDate)) {
             Filial guestFilial = null;
+            if (guest.getContract() == null) continue;
             if (guest.getEmployee() != null) {
                 guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
             }
@@ -417,6 +470,7 @@ public class ContractService {
         int count = 1;
         for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndOrganization(maxDate, minDate, responsibilities.getHotel(), organization)) {
             if (guest.getEmployee() != null) continue;
+            if (guest.getContract() == null) continue;
             if (!Objects.equals(guest.getContract().getReason().getId(), reason.getId())) continue;
             if (!guest.getContract().getBilling().equals(billing)) continue;
             List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), guest.getOrganization());

@@ -93,9 +93,8 @@ public class FlatLocksController {
     public ResponseEntity<FlatLocksDTO> create(@RequestBody FlatLocksDTO FlatLocksDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        FlatLocksDTO response = flatLocksService.create(FlatLocksDTO);
         try {
-
+            FlatLocksDTO response = flatLocksService.create(FlatLocksDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flatLocks/create", duration, "");
             record.setStatus("OK");

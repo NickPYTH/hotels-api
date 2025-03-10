@@ -39,4 +39,5 @@ public class GuestDTO {
     private Long bedId;
     private String bedName;
     private Boolean isReservation;
+    private Integer familyMemberOfEmployee;
 }

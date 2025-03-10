@@ -33,9 +33,8 @@ public class ReservationController {
     public ResponseEntity<List<ReservationDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<ReservationDTO> response = reservationService.getAll();
-
         try {
+            List<ReservationDTO> response = reservationService.getAll();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, "");
             record.setStatus("OK");

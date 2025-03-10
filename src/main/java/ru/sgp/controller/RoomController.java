@@ -63,9 +63,8 @@ public class RoomController {
     public ResponseEntity<List<BedDTO>> getAllBeds(@RequestParam Long roomId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<BedDTO> response = roomService.getAllBeds(roomId, dateStart, dateFinish);
-
         try {
+            List<BedDTO> response = roomService.getAllBeds(roomId, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/getAllBeds", duration, "");
             record.setStatus("OK");

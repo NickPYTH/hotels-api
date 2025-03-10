@@ -13,6 +13,7 @@ import ru.sgp.repository.LogRepository;
 import ru.sgp.service.EventService;
 import ru.sgp.utils.SecurityManager;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +46,7 @@ public class EventController {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            EventDTO response = eventService.create(EventDTO);
+            EventDTO response = eventService.update(EventDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", ru.sgp.utils.SecurityManager.getCurrentUser(), "/event/create", duration, "");
             record.setStatus("OK");
@@ -70,7 +71,7 @@ public class EventController {
     }
 
     @PostMapping(path = "/update")
-    public ResponseEntity<EventDTO> update(@RequestBody EventDTO EventDTO) {
+    public ResponseEntity<EventDTO> update(@RequestBody EventDTO EventDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {

@@ -196,9 +196,8 @@ public class HotelController {
                                                  @RequestParam(name = "dateFinish") String dateFinish) throws ParseException, JRException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = hotelService.getHotelReport(hotelId, checkouted, dateStart, dateFinish);
-
         try {
+            byte[] reportData = hotelService.getHotelReport(hotelId, checkouted, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/hotel/getHotelReport", duration, "");
             record.setStatus("OK");

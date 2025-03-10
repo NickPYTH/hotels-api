@@ -33,6 +33,9 @@ public class RoomService {
     @Autowired
     private BedRepository bedRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    @Autowired
+    private ReservationRepository reservationRepository;
+
     @Transactional
     public List<BedDTO> getAllBeds(Long roomId, String dateStartStr, String dateFinishStr) throws ParseException {
         Room room = roomRepository.findById(roomId).orElse(null);
@@ -43,6 +46,8 @@ public class RoomService {
                 Date dateStart = dateTimeFormatter.parse(dateStartStr);
                 Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
                 isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
+                if (isVacant)
+                    isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
             }
             BedDTO bedDTO = new BedDTO();
             bedDTO.setId(bed.getId());
@@ -63,6 +68,8 @@ public class RoomService {
                 Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
                 for (Bed bed : bedRepository.findAllByRoom(room)) {
                     isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
+                    if (isVacant)
+                        isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
                     if (isVacant) break;
                 }
             }

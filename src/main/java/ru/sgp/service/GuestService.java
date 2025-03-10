@@ -11,16 +11,12 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.GuestDTO;
-import ru.sgp.dto.ReservationDTO;
-import ru.sgp.dto.UserDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
 import ru.sgp.dto.report.GuestReportDTO;
 import ru.sgp.model.*;
@@ -88,8 +84,7 @@ public class GuestService {
         List<Guest> guests = new ArrayList<>();
         if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
             guests = guestRepository.findAll();
-        }
-        else {
+        } else {
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
             guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
         }
@@ -169,7 +164,7 @@ public class GuestService {
                 if (!guestDTO.getOrganization().isEmpty()) {
                     Organization newOrganization = new Organization();
                     newOrganization.setName(guestDTO.getOrganization());
-                    organizationRepository.save(newOrganization);
+                    //organizationRepository.save(newOrganization);
                     guest.setOrganization(newOrganization);
                 }
             } else guest.setOrganization(org);
@@ -186,6 +181,13 @@ public class GuestService {
         guest.setBed(bed);
         guest.setNote(guestDTO.getNote());
         // -----
+
+        // Если член семьи
+        if (guestDTO.getFamilyMemberOfEmployee() != null) {
+            Employee employee = employeeRepository.findByTabnum(guestDTO.getFamilyMemberOfEmployee());
+            guest.setFamilyMemberOfEmployee(employee);
+        } else guest.setFamilyMemberOfEmployee(null);
+        //
 
         // Устанавливаем договор
         if (guestDTO.getContractId() != null) {
@@ -329,11 +331,10 @@ public class GuestService {
 
     @Transactional
     public GuestDTO delete(Long id) {
-        ModelMapper modelMapper = new ModelMapper();
         Guest guest = guestRepository.getById(id);
-        GuestDTO guestDTO = modelMapper.map(guest, GuestDTO.class);
+        GuestDTO guestDTO = new GuestDTO();
         Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
-        if (reservationOptional.isPresent()){
+        if (reservationOptional.isPresent()) {
             Reservation reservation = reservationOptional.get();
             reservation.setGuest(null);
             reservation.setDateStart(reservation.getDateStartConfirmed());
@@ -347,6 +348,7 @@ public class GuestService {
 
     public byte[] getGuestReport() throws JRException {
         List<GuestReportDTO> guestReportDTOS = new ArrayList<>();
+
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
         List<GuestDTO> response = new ArrayList<>();
@@ -537,7 +539,7 @@ public class GuestService {
                 break;
             if (mode) {
                 Employee employee = null;
-                if (row.getCell(0).getCellType() == CellType.STRING){
+                if (row.getCell(0).getCellType() == CellType.STRING) {
                     Integer tabnum = Integer.valueOf(row.getCell(0).getStringCellValue());
                     employee = employeeRepository.findByTabnum(tabnum);
                 } else {

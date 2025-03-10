@@ -78,9 +78,8 @@ public class FilialController {
     public ResponseEntity<FilialDTO> getWithStats(@RequestParam String date, @RequestParam Long filialId) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        FilialDTO response = filialService.getWithStats(date, filialId);
-
         try {
+            FilialDTO response = filialService.getWithStats(date, filialId);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getWithStats", duration, "");
             record.setStatus("OK");
@@ -224,6 +223,37 @@ public class FilialController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/filial/getShortReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getLoadStatsReport")
+    public ResponseEntity<byte[]> getLoadStatsReport(@RequestParam Long hotelId, @RequestParam String dateStart, @RequestParam String dateFinish) throws JRException, ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            byte[] reportData = filialService.getLoadStatsReport(hotelId, dateStart, dateFinish);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getLoadStatsReport", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getLoadStatsReport");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=LoadStats.xlsx");
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/filial/getLoadStatsReport", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/filial/getLoadStatsReport");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
