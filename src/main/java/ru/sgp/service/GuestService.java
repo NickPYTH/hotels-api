@@ -74,6 +74,10 @@ public class GuestService {
     private BedRepository bedRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoomLocksRepository roomLocksRepository;
+    @Autowired
+    private FlatLocksRepository flatLocksRepository;
 
     @Transactional
     public List<GuestDTO> getAll() {
@@ -132,16 +136,19 @@ public class GuestService {
         return new GuestDTO();
     }
 
-    @Transactional
     public List<GuestDTO> update(GuestDTO guestDTO) throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
         Bed bed = bedRepository.getById(guestDTO.getBedId());
+        Bed oldBed = null;
 
         // Проверка на создание или обновление карточки жильца
         boolean createRequest = guestDTO.getId() == null;
         Guest guest;
         if (createRequest) guest = new Guest();
-        else guest = guestRepository.getById(guestDTO.getId());
+        else {
+            guest = guestRepository.getById(guestDTO.getId());
+            oldBed = guest.getBed();
+        }
         // -----
 
         // Запоминаем предыдущее состояние
@@ -202,13 +209,13 @@ public class GuestService {
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
         List<Reservation> reservations = new ArrayList<>();
 
-        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
-        if (guest.getEmployee() != null) { // Если ты не работник то нет смысла проверять с бронями - бронируются только работники
+        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО, чтобы задеть и работников и сторонников, а также чтобы было указано другое место
+        if (guest.getEmployee() != null) { // Если ты не работник, то нет смысла проверять с бронями - бронируются только работники !!! TODO
             reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndTabnumAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getEmployee().getTabnum(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
             if (!reservations.isEmpty()) {
                 Reservation reservationTmp = reservations.get(0);
                 GuestDTO tmp = new GuestDTO();
-                tmp.setError("Dates range error");
+                tmp.setError("datesError");
                 tmp.setLastname(guest.getEmployee().getLastname());
                 tmp.setFirstname(guest.getEmployee().getFirstname());
                 tmp.setSecondName(guest.getEmployee().getSecondName());
@@ -220,6 +227,7 @@ public class GuestService {
                 tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
                 tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
                 response.add(tmp);
+                guest.setBed(oldBed);
                 return response;
             }
         }
@@ -228,7 +236,7 @@ public class GuestService {
         if (!reservations.isEmpty()) {
             Reservation reservationTmp = reservations.get(0);
             GuestDTO tmp = new GuestDTO();
-            tmp.setError("Dates range error");
+            tmp.setError("datesError");
             tmp.setLastname(guest.getEmployee().getLastname());
             tmp.setFirstname(guest.getEmployee().getFirstname());
             tmp.setSecondName(guest.getEmployee().getSecondName());
@@ -240,6 +248,7 @@ public class GuestService {
             tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
             response.add(tmp);
+            guest.setBed(oldBed);
             return response;
         }
         // -----
@@ -252,7 +261,7 @@ public class GuestService {
         if (!guests.isEmpty()) {
             Guest guestTmp = guests.get(0);
             GuestDTO tmp = new GuestDTO();
-            tmp.setError("Dates range error");
+            tmp.setError("datesError");
             tmp.setLastname(guestTmp.getLastname());
             tmp.setFirstname(guestTmp.getFirstname());
             tmp.setSecondName(guestTmp.getSecondName());
@@ -264,6 +273,7 @@ public class GuestService {
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
             response.add(tmp);
+            guest.setBed(oldBed);
             return response;
         }
         // -----
@@ -275,7 +285,7 @@ public class GuestService {
         if (!guests.isEmpty()) {
             Guest guestTmp = guests.get(0);
             GuestDTO tmp = new GuestDTO();
-            tmp.setError("Dates range error");
+            tmp.setError("datesError");
             tmp.setLastname(guestTmp.getLastname());
             tmp.setFirstname(guestTmp.getFirstname());
             tmp.setSecondName(guestTmp.getSecondName());
@@ -287,10 +297,57 @@ public class GuestService {
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
             response.add(tmp);
+            guest.setBed(oldBed);
             return response;
         } else {
             guest.setDateStart(dateStart);
             guest.setDateFinish(dateFinish);
+        }
+        // -----
+
+
+        // Проверяем не пытаемся ли заселить в секцию/комнату со статусом закрыто/выкуплено организацией
+        if (oldBed != null && !bed.getRoom().equals(oldBed.getRoom())) {
+            List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, bed.getRoom());
+            if (!roomLocksList.isEmpty()) {
+                GuestDTO tmp = new GuestDTO();
+                if (roomLocksList.get(0).getStatus().getId() == 3L) tmp.setError("roomOrg");
+                else tmp.setError("roomLock");
+                response.add(tmp);
+                guest.setBed(oldBed);
+                return response;
+            }
+        } else if (oldBed == null) {
+            List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, bed.getRoom());
+            if (!roomLocksList.isEmpty()) {
+                GuestDTO tmp = new GuestDTO();
+                if (roomLocksList.get(0).getStatus().getId() == 3L) tmp.setError("roomOrg");
+                else tmp.setError("roomLock");
+                response.add(tmp);
+                guest.setBed(oldBed);
+                return response;
+            }
+        }
+        if (oldBed != null && !bed.getRoom().getFlat().equals(oldBed.getRoom().getFlat())) {
+            List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, bed.getRoom().getFlat());
+            if (!flatLocksList.isEmpty()) {
+                GuestDTO tmp = new GuestDTO();
+                if (flatLocksList.get(0).getStatus().getId() == 4L) tmp.setError("flatOrg");
+                else tmp.setError("flatLock");
+                response.add(tmp);
+                guest.setBed(oldBed);
+                return response;
+            }
+        } else if (oldBed == null) {
+            List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, bed.getRoom().getFlat());
+            if (!flatLocksList.isEmpty()) {
+                GuestDTO tmp = new GuestDTO();
+                if (flatLocksList.get(0).getStatus().getId() == 4L) tmp.setError("flatOrg");
+                else tmp.setError("flatLock");
+                response.add(tmp);
+                guest.setBed(oldBed);
+                return response;
+            }
         }
         // -----
 

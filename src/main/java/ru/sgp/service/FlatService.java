@@ -553,11 +553,12 @@ public class FlatService {
     public List<FlatDTO> getAll(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
         List<FlatDTO> response = new ArrayList<>();
+        Date dateStart = dateTimeFormatter.parse(dateStartStr);
+        Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
             Boolean isVacant = null;
+            String additionalInfo = "";
             if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
-                Date dateStart = dateTimeFormatter.parse(dateStartStr);
-                Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
                 for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
                     for (Bed bed : bedRepository.findAllByRoom(room)) {
                         isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
@@ -568,10 +569,15 @@ public class FlatService {
                     if (Boolean.TRUE.equals(isVacant)) break;
                 }
             }
+            List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, flat);
+            if (!flatLocks.isEmpty()){
+                isVacant = false;
+                additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
+            }
             FlatDTO flatDTO = new FlatDTO();
             flatDTO.setId(flat.getId());
             if (isVacant == null) flatDTO.setName(flat.getName());
-            else flatDTO.setName(flat.getName() + " " + isVacant);
+            else flatDTO.setName(flat.getName() + " " + isVacant + " " + additionalInfo);
             response.add(flatDTO);
         }
         return response;
