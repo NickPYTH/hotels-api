@@ -137,7 +137,7 @@ public class FlatService {
                 // -----
 
                 // Получаем брони
-                for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+                for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
                     GuestDTO guestDTO = new GuestDTO();
                     guestDTO.setId(reservation.getId());
                     Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
@@ -297,7 +297,7 @@ public class FlatService {
             // -----
 
             // Получаем брони
-            for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
+            for (Reservation reservation : reservationRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
                 GuestDTO guestDTO = new GuestDTO();
                 Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
                 guestDTO.setId(reservation.getId());
@@ -394,7 +394,7 @@ public class FlatService {
                                 int busyPercentFinish = 100;
                                 String guestDatesRange =  dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
                                 String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                                String fio = guest.getLastname();
+                                String fio = guest.getLastname() + " ";
                                 if (guest.getFirstname().length() > 0) fio += guest.getFirstname().charAt(0) + ". ";
                                 if (guest.getSecondName().length() > 0) fio += guest.getSecondName().charAt(0) + ".";
                                 if (fio.length() > 16) fio = fio.substring(0, 15); // Обрезаем иначе не поместится в ячейку минимальную

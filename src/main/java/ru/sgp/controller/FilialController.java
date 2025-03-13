@@ -170,11 +170,11 @@ public class FilialController {
     @GetMapping(path = "/getFilialReportByFIO")
     public ResponseEntity<byte[]> getFilialReportByFIO(@RequestParam(name = "lastName") String lastName,
                                                        @RequestParam(name = "dateStart") String dateStart,
-                                                       @RequestParam(name = "dateFinish") String dateFinish) {
+                                                       @RequestParam(name = "dateFinish") String dateFinish) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        byte[] reportData = filialService.getFilialReportByFIO(lastName, dateStart, dateFinish);
         try {
-            byte[] reportData = filialService.getFilialReportByFIO(lastName, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getFilialReportByFIO", duration, "");
             record.setStatus("OK");

@@ -49,6 +49,7 @@ public class ContractService {
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateFormatterDot = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final SimpleDateFormat dateTimeDotFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
@@ -198,13 +199,13 @@ public class ContractService {
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
             if (guest.getDateStart().compareTo(minDate) > 0)
-                monthReportDTO.setDateStart(dateFormatter.format(guest.getDateStart()));
+                monthReportDTO.setDateStart(dateFormatterDot.format(guest.getDateStart()));
             else
-                monthReportDTO.setDateStart(dateFormatter.format(minDate));
+                monthReportDTO.setDateStart(dateFormatterDot.format(minDate));
             if (guest.getDateFinish().compareTo(maxDate) < 0)
-                monthReportDTO.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+                monthReportDTO.setDateFinish(dateFormatterDot.format(guest.getDateFinish()));
             else
-                monthReportDTO.setDateFinish(dateFormatter.format(maxDate));
+                monthReportDTO.setDateFinish(dateFormatterDot.format(maxDate));
             Long daysCount = 1L;
             Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
@@ -251,13 +252,13 @@ public class ContractService {
                 memberDTO.setDateStart(dateFormatter.format(member.getDateStart()));
                 memberDTO.setDateFinish(dateFormatter.format(member.getDateFinish()));
                 if (member.getDateStart().compareTo(minDate) > 0)
-                    memberDTO.setDateStart(dateFormatter.format(member.getDateStart()));
+                    memberDTO.setDateStart(dateFormatterDot.format(member.getDateStart()));
                 else
-                    memberDTO.setDateStart(dateFormatter.format(minDate));
+                    memberDTO.setDateStart(dateFormatterDot.format(minDate));
                 if (member.getDateFinish().compareTo(maxDate) < 0)
-                    memberDTO.setDateFinish(dateFormatter.format(member.getDateFinish()));
+                    memberDTO.setDateFinish(dateFormatterDot.format(member.getDateFinish()));
                 else
-                    memberDTO.setDateFinish(dateFormatter.format(maxDate));
+                    memberDTO.setDateFinish(dateFormatterDot.format(maxDate));
                 Long daysCountMember = 1L;
                 Date cuttedGuestStartDateMember = dateFormatter.parse(dateTimeFormatter.format(member.getDateStart()));
                 Date cuttedGuestFinishDateMember = dateFormatter.parse(dateTimeFormatter.format(member.getDateFinish()));
@@ -305,8 +306,8 @@ public class ContractService {
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/MonthReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("periodStart", dateStart);
-        parameters.put("periodFinish", dateFinish);
+        parameters.put("periodStart", dateFormatterDot.format(dateFormatter.parse(dateStart)));
+        parameters.put("periodFinish", dateFormatterDot.format(dateFormatter.parse(dateFinish)));
         parameters.put("filial", filial.getName());
         parameters.put("hotelLocation", responsibilities.getHotel().getName() + ", " + responsibilities.getHotel().getLocation());
         parameters.put("daysCountSummary", daysCountSummary.toString());
@@ -613,8 +614,8 @@ public class ContractService {
         });
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("periodStart", dateStart);
-        parameters.put("periodFinish", dateFinish);
+        parameters.put("periodStart", dateFormatterDot.format(dateFormatter.parse(dateStart)));
+        parameters.put("periodFinish", dateFormatterDot.format(dateFormatter.parse(dateFinish)));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint);
     }
@@ -717,8 +718,8 @@ public class ContractService {
         });
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("periodStart", dateStart);
-        parameters.put("periodFinish", dateFinish);
+        parameters.put("periodStart", dateFormatterDot.format(dateFormatter.parse(dateStart)));
+        parameters.put("periodFinish", dateFormatterDot.format(dateFormatter.parse(dateFinish)));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint);
     }

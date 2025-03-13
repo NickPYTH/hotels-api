@@ -51,6 +51,9 @@ public class HotelService {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final SimpleDateFormat dateTimeDotFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private final SimpleDateFormat dateDotFormatter = new SimpleDateFormat("dd.MM.yyyy");
+
     ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private BedRepository bedRepository;
@@ -209,8 +212,8 @@ public class HotelService {
                     if (guest.getCheckouted() != null)
                         record.setCheckouted(guest.getCheckouted() ? "+" : "-");
                     else record.setCheckouted("-");
-                    record.setDateStart(dateFormatter.format(guest.getDateStart()));
-                    record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+                    record.setDateStart(dateDotFormatter.format(guest.getDateStart()));
+                    record.setDateFinish(dateDotFormatter.format(guest.getDateFinish()));
                     if (guest.getEmployee() != null)
                         record.setTabnum(guest.getEmployee().getTabnum());
                     record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -240,8 +243,8 @@ public class HotelService {
                     record.setFlat(flat.getName());
                     record.setFloor(flat.getFloor());
                     record.setRoom(room.getId().toString());
-                    record.setDateStart(dateFormatter.format(guest.getDateStart()));
-                    record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
+                    record.setDateStart(dateDotFormatter.format(guest.getDateStart()));
+                    record.setDateFinish(dateDotFormatter.format(guest.getDateFinish()));
                     if (guest.getEmployee() != null)
                         record.setTabnum(guest.getEmployee().getTabnum());
                     record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());

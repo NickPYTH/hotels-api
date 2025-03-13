@@ -124,8 +124,8 @@ public class FlatController {
     public ResponseEntity<List<HashMap<String, String>>> getAllByHotelIdChess(@RequestParam Long id, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<HashMap<String, String>> response = flatService.getAllByHotelIdChess(id, dateStart, dateFinish);
         try {
+            List<HashMap<String, String>> response = flatService.getAllByHotelIdChess(id, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flat/getAllByHotelIdChess", duration, "");
             record.setStatus("OK");

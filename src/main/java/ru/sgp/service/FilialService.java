@@ -55,6 +55,8 @@ public class FilialService {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final SimpleDateFormat dateDotFormatter = new SimpleDateFormat("dd.MM.yyyy");
+    private final SimpleDateFormat dateTimeDotFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
@@ -185,8 +187,8 @@ public class FilialService {
                             //record.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
                             //record.setDateFinish(dateTimeFormatter.format(dateFinish));
                         } else continue;
-                        record.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-                        record.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+                        record.setDateStart(dateTimeDotFormatter.format(guest.getDateStart()));
+                        record.setDateFinish(dateTimeDotFormatter.format(guest.getDateFinish()));
                         if (daysCount == 0) daysCount = 1L;
 
 
@@ -246,9 +248,10 @@ public class FilialService {
             record.setFlat(guest.getBed().getRoom().getFlat().getName());
             record.setFloor(guest.getBed().getRoom().getFlat().getFloor());
             record.setRoom(guest.getBed().getRoom().getName());
-            record.setDateStart(dateFormatter.format(guest.getDateStart()));
-            record.setDateFinish(dateFormatter.format(guest.getDateFinish()));
-            record.setCheckouted(guest.getCheckouted() ? "+" : "-");
+            record.setDateStart(dateDotFormatter.format(guest.getDateStart()));
+            record.setDateFinish(dateDotFormatter.format(guest.getDateFinish()));
+            if (guest.getCheckouted() == null) record.setCheckouted("-");
+            else record.setCheckouted(guest.getCheckouted() ? "+" : "-");
             Date cuttedStartDate = null;
             Date cuttedFinishDate = null;
             int daysCount = 0;
@@ -730,7 +733,7 @@ public class FilialService {
         BigDecimal bd = new BigDecimal(Float.toString(percent));
         bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
         reportData.setPercent(bd.toString());
-        reportData.setDates(dateStartStr + " " + dateFinishStr);
+        reportData.setDates(dateDotFormatter.format(dateStartD) + " " + dateDotFormatter.format(dateFinishD));
 
         List<LoadStatsReportDTO> data = new ArrayList<>();
         data.add(reportData);
