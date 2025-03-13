@@ -13,17 +13,15 @@ import java.util.Optional;
 
 @Repository
 public interface BedRepository extends JpaRepository<Bed, Long> {
-    Optional<Bed> findByRoomAndName(Room room, String bedName);
+    List<Bed> findAllByRoomAndIsExtra(Room room, Boolean isExtra);
+
+    Integer countByRoomFlatAndIsExtra(Flat flat, Boolean isExtra);
+
+    Integer countByRoomAndIsExtra(Room room, Boolean isExtra);
+
+    List<Bed> findAllByRoomFlatHotelAndIsExtra(Hotel hotel, Boolean isExtra);
+
+    List<Bed> findAllByRoomFlatAndIsExtra(Flat flat, Boolean isExtra);
 
     List<Bed> findAllByRoom(Room room);
-
-    Integer countByRoomFlat(Flat flat);
-
-    Integer countByRoom(Room room);
-
-    void deleteAllByRoomFlatHotel(Hotel hotel);
-
-    List<Bed> findAllByRoomFlatHotel(Hotel hotel);
-
-    List<Bed> findAllByRoomFlat(Flat flat);
 }

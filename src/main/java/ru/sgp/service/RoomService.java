@@ -89,7 +89,7 @@ public class RoomService {
         for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
             Boolean isVacant = null;
             if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
-                for (Bed bed : bedRepository.findAllByRoom(room)) {
+                for (Bed bed : bedRepository.findAllByRoomAndIsExtra(room, false)) {
                     isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
                     if (isVacant)
                         isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
@@ -126,7 +126,7 @@ public class RoomService {
 
         // Проходим по всем местам в секции пок не найдем первое сводное на запрашиваемом диапазоне
         for (Room room: roomRepository.findAllByFlatOrderById(flat)){
-            for (Bed bed: bedRepository.findAllByRoom(room)){
+            for (Bed bed: bedRepository.findAllByRoomAndIsExtra(room, false)){
                 List<Guest> guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
                 if (guests.isEmpty()){
                     ModelMapper modelMapper = new ModelMapper();

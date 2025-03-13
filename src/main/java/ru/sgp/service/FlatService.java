@@ -329,7 +329,7 @@ public class FlatService {
 
             roomDTO.setGuests(guestDTOList);
             List<BedDTO> bedDTOList = new ArrayList<>();
-            for (Bed bed : bedRepository.findAllByRoom(room)) {
+            for (Bed bed : bedRepository.findAllByRoomAndIsExtra(room, false)) {
                 BedDTO bedDTO = new BedDTO();
                 bedDTO.setId(bed.getId());
                 bedDTO.setName(bed.getName());
@@ -370,7 +370,7 @@ public class FlatService {
         Date dateFinish = dateFormatter.parse(dateFinishStr);
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                for (Bed bed : bedRepository.findAllByRoom(room)) {
+                for (Bed bed : bedRepository.findAllByRoomAndIsExtra(room, false)) {
                     HashMap<String, String> record = new HashMap<>();
                     record.put("hotelId", flat.getHotel().getId().toString());
                     record.put("filialId", flat.getHotel().getFilial().getId().toString());
@@ -569,7 +569,7 @@ public class FlatService {
             String additionalInfo = "";
             if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
                 for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
-                    for (Bed bed : bedRepository.findAllByRoom(room)) {
+                    for (Bed bed : bedRepository.findAllByRoomAndIsExtra(room, false)) {
                         isVacant = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
                         if (isVacant)
                             isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();

@@ -22,5 +22,8 @@ public class Bed {
     @JoinColumn(name = "room")
     private Room room;
 
+    @Column(name = "is_extra")
+    private Boolean isExtra;
+
 
 }

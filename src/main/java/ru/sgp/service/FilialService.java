@@ -334,12 +334,12 @@ public class FilialService {
                     List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
                     if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
                         if (flatLocksList.get(0).getStatus().getId() == 4L || flatLocksList.get(0).getStatus().getId() == 2L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            countBusyBeds += bedRepository.countByRoomFlatAndIsExtra(guestFlat, false);
                             flatsExcludeList.add(guestFlat.getId());
                         }
                     } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
                         if (roomLocksList.get(0).getStatus().getId() == 3L || roomLocksList.get(0).getStatus().getId() == 2L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            countBusyBeds += bedRepository.countByRoomAndIsExtra(guestRoom, false);
                             roomExcludeList.add(guestRoom.getId());
                         }
                     } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
@@ -673,12 +673,12 @@ public class FilialService {
                     List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
                     if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
                         if (flatLocksList.get(0).getStatus().getId() == 4L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
-                            countBusyBeds += bedRepository.countByRoomFlat(guestFlat);
+                            countBusyBeds += bedRepository.countByRoomFlatAndIsExtra(guestFlat, false);
                             flatsExcludeList.add(guestFlat.getId());
                         }
                     } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
                         if (roomLocksList.get(0).getStatus().getId() == 3L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
-                            countBusyBeds += bedRepository.countByRoom(guestRoom);
+                            countBusyBeds += bedRepository.countByRoomAndIsExtra(guestRoom, false);
                             roomExcludeList.add(guestRoom.getId());
                         }
                     } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
