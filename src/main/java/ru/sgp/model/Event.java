@@ -26,20 +26,4 @@ public class Event {
     @JoinColumn(name = "type")
     private EventType type;
 
-    @Column(name = "date_start")
-    private Date dateStart;
-
-    @Column(name = "date_finish")
-    private Date dateFinish;
-
-    @OneToOne
-    @JoinColumn(name = "hotel")
-    private Hotel hotel;
-
-    @Column(name = "man_count")
-    private Integer manCount;
-
-    @Column(name = "woman_count")
-    private Integer womenCount;
-
 }

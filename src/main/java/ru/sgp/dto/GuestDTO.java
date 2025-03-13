@@ -38,6 +38,9 @@ public class GuestDTO {
     private Long contractId;
     private Long bedId;
     private String bedName;
+    private BedDTO bed;
+    private EventDTO event;
+    private FilialDTO fromFilial;
     private Boolean isReservation;
     private Integer familyMemberOfEmployee;
 }

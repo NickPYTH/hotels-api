@@ -12,6 +12,7 @@ import ru.sgp.repository.LogRepository;
 import ru.sgp.service.ReservationService;
 import ru.sgp.utils.SecurityManager;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -115,11 +116,11 @@ public class ReservationController {
         }
     }
     @PostMapping(path = "/update")
-    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO reservationDTO) {
+    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO reservationDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        ReservationDTO response = reservationService.update(reservationDTO);
         try {
-            ReservationDTO response = reservationService.update(reservationDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/update", duration, "");
             record.setStatus("OK");

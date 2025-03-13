@@ -39,8 +39,12 @@ public class RoomService {
     public List<BedDTO> getAllBeds(Long roomId, String dateStartStr, String dateFinishStr) throws ParseException {
         Room room = roomRepository.findById(roomId).orElse(null);
         List<BedDTO> beds = new ArrayList<>();
-        Date dateStart = dateTimeFormatter.parse(dateStartStr);
-        Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        Date dateStart = null;
+        Date dateFinish = null;
+        if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+            dateStart = dateTimeFormatter.parse(dateStartStr);
+            dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        }
         for (Bed bed : bedRepository.findAllByRoom(room)) {
             Boolean isVacant = null;
             String additionalInfo = "";
@@ -49,15 +53,18 @@ public class RoomService {
                 if (isVacant)
                     isVacant = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed).isEmpty();
             }
-            List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, room.getFlat());
-            if (!flatLocks.isEmpty()){
-                isVacant = false;
-                additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
-            }
-            List<RoomLocks> roomLocks = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
-            if (!roomLocks.isEmpty()){
-                isVacant = false;
-                additionalInfo = roomLocks.get(0).getStatus().getId() == 3L ? "roomOrg" : "roomLock";
+
+            if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+                List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, room.getFlat());
+                if (!flatLocks.isEmpty()) {
+                    isVacant = false;
+                    additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
+                }
+                List<RoomLocks> roomLocks = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
+                if (!roomLocks.isEmpty()) {
+                    isVacant = false;
+                    additionalInfo = roomLocks.get(0).getStatus().getId() == 3L ? "roomOrg" : "roomLock";
+                }
             }
 
             BedDTO bedDTO = new BedDTO();
@@ -72,8 +79,12 @@ public class RoomService {
     public List<RoomDTO> getAllByFlatId(Long flatId, String dateStartStr, String dateFinishStr) throws ParseException {
         Flat flat = flatRepository.getById(flatId);
         List<RoomDTO> response = new ArrayList<>();
-        Date dateStart = dateTimeFormatter.parse(dateStartStr);
-        Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        Date dateStart = null;
+        Date dateFinish = null;
+        if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+            dateStart = dateTimeFormatter.parse(dateStartStr);
+            dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        }
         String additionalInfo = "";
         for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
             Boolean isVacant = null;
@@ -85,15 +96,17 @@ public class RoomService {
                     if (isVacant) break;
                 }
             }
-            List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, flat);
-            if (!flatLocks.isEmpty()){
-                isVacant = false;
-                additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
-            }
-            List<RoomLocks> roomLocks = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
-            if (!roomLocks.isEmpty()){
-                isVacant = false;
-                additionalInfo = roomLocks.get(0).getStatus().getId() == 3L ? "roomOrg" : "roomLock";
+            if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+                List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, flat);
+                if (!flatLocks.isEmpty()) {
+                    isVacant = false;
+                    additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
+                }
+                List<RoomLocks> roomLocks = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, room);
+                if (!roomLocks.isEmpty()) {
+                    isVacant = false;
+                    additionalInfo = roomLocks.get(0).getStatus().getId() == 3L ? "roomOrg" : "roomLock";
+                }
             }
             RoomDTO roomDTO = new RoomDTO();
             roomDTO.setId(room.getId());

@@ -93,24 +93,10 @@ public class ReservationService {
         reservation.setNote(reservationDTO.getNote());
         if (reservationDTO.getGuest() != null) reservation.setGuest(guestRepository.getById(reservationDTO.getGuest().getId()));
         else reservation.setGuest(null);
-        reservation.setStatus(reservationStatusRepository.getById(reservationDTO.getStatus().getId()));
+        //reservation.setStatus(reservationStatusRepository.getById(reservationDTO.getStatus().getId()));
 
         // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте БРОНИ
         List<Reservation> reservations = new ArrayList<>();
-
-        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
-        reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndTabnumAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, reservationDTO.getTabnum(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
-        if (!reservations.isEmpty()) {
-            Reservation reservationTmp = reservations.get(0);
-            ReservationDTO tmp = new ReservationDTO();
-            tmp.setError("Dates range error");
-            tmp.setTabnum(reservationTmp.getTabnum());
-            tmp.setBed(modelMapper.map(reservationTmp.getBed(), BedDTO.class));
-            tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
-            tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
-            return tmp;
-        }
-        // -----
 
         if (reservationDTO.getId() == null)
             reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, reservation.getBed());
@@ -130,24 +116,6 @@ public class ReservationService {
 
         // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте ЗАПИСИ О ПРОЖИВАНИИ
         List<Guest> guests = new ArrayList<>();
-
-        // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
-        Employee employee = employeeRepository.findByTabnum(reservation.getTabnum());
-        if (employee != null)
-            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, employee.getLastname(), employee.getFirstname(), employee.getSecondName(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
-        else
-            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, reservationDTO.getLastname(), reservationDTO.getFirstname(), reservationDTO.getSecondname(), reservation.getBed(), reservation.getBed().getRoom().getFlat().getHotel().getFilial());
-        if (!guests.isEmpty()) {
-            Guest guestTmp = guests.get(0);
-            ReservationDTO tmp = new ReservationDTO();
-            tmp.setError("Dates range error");
-            tmp.setFio(guestTmp.getLastname() + " " + guestTmp.getFirstname() + " " + guestTmp.getSecondName());
-            tmp.setBed(modelMapper.map(guestTmp.getBed(), BedDTO.class));
-            tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-            tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-            return tmp;
-        }
-        // -----
 
         guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, reservation.getBed());
         if (!guests.isEmpty()) {

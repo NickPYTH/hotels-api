@@ -1,12 +1,10 @@
 package ru.sgp.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.sgp.dto.BedDTO;
-import ru.sgp.dto.FlatDTO;
-import ru.sgp.dto.GuestDTO;
-import ru.sgp.dto.RoomDTO;
+import ru.sgp.dto.*;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
@@ -306,6 +304,10 @@ public class FlatService {
                 guestDTO.setFirstname(employee!=null?employee.getFirstname():reservation.getFirstname());
                 guestDTO.setLastname(employee!=null?employee.getLastname():reservation.getLastname());
                 guestDTO.setSecondName(employee!=null?employee.getSecondName():reservation.getSecondname());
+                ModelMapper modelMapper = new ModelMapper();
+                guestDTO.setBed(modelMapper.map(reservation.getBed(), BedDTO.class));
+                guestDTO.setEvent(modelMapper.map(reservation.getEvent(), EventDTO.class));
+                guestDTO.setFromFilial(modelMapper.map(reservation.getFromFilial(), FilialDTO.class));
                 guestDTO.setBedName(reservation.getBed().getName());
                 guestDTO.setBedId(reservation.getBed().getId());
                 guestDTO.setRoomId(room.getId());
@@ -320,6 +322,7 @@ public class FlatService {
                 guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
                 guestDTO.setNote(reservation.getNote());
                 guestDTO.setIsReservation(true);
+                guestDTO.setMale(reservation.getMale());
                 guestDTOList.add(guestDTO);
             }
             // -----
@@ -391,7 +394,9 @@ public class FlatService {
                                 int busyPercentFinish = 100;
                                 String guestDatesRange =  dateTimeFormatter.format(guest.getDateStart()) + " :: " + dateTimeFormatter.format(guest.getDateFinish());
                                 String startStr = start.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                                String fio = guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".";
+                                String fio = guest.getLastname();
+                                if (guest.getFirstname().length() > 0) fio += guest.getFirstname().charAt(0) + ". ";
+                                if (guest.getSecondName().length() > 0) fio += guest.getSecondName().charAt(0) + ".";
                                 if (fio.length() > 16) fio = fio.substring(0, 15); // Обрезаем иначе не поместится в ячейку минимальную
                                 String post = "";
                                 String filial = "emptyF";
@@ -553,8 +558,12 @@ public class FlatService {
     public List<FlatDTO> getAll(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
         List<FlatDTO> response = new ArrayList<>();
-        Date dateStart = dateTimeFormatter.parse(dateStartStr);
-        Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        Date dateStart = null;
+        Date dateFinish = null;
+        if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+            dateStart = dateTimeFormatter.parse(dateStartStr);
+            dateFinish = dateTimeFormatter.parse(dateFinishStr);
+        }
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
             Boolean isVacant = null;
             String additionalInfo = "";
@@ -569,10 +578,12 @@ public class FlatService {
                     if (Boolean.TRUE.equals(isVacant)) break;
                 }
             }
-            List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, flat);
-            if (!flatLocks.isEmpty()){
-                isVacant = false;
-                additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
+            if (!dateStartStr.equals("null") && !dateFinishStr.equals("null")) {
+                List<FlatLocks> flatLocks = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(dateFinish, dateStart, flat);
+                if (!flatLocks.isEmpty()) {
+                    isVacant = false;
+                    additionalInfo = flatLocks.get(0).getStatus().getId() == 4L ? "flatOrg" : "flatLock";
+                }
             }
             FlatDTO flatDTO = new FlatDTO();
             flatDTO.setId(flat.getId());

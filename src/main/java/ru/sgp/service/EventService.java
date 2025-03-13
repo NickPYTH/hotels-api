@@ -53,14 +53,8 @@ public class EventService {
         else event = new Event();
         event.setName(eventDTO.getName());
         event.setDescription(eventDTO.getDescription());
-        event.setDateStart(dateFormatter.parse(eventDTO.getDateStart()));
-        event.setDateFinish(dateFormatter.parse(eventDTO.getDateFinish()));
         EventType eventType = eventTypeRepository.getById(eventDTO.getType().getId());
         event.setType(eventType);
-        Hotel hotel = hotelRepository.getById(eventDTO.getHotel().getId());
-        event.setHotel(hotel);
-        event.setManCount(eventDTO.getManCount());
-        event.setWomenCount(eventDTO.getWomenCount());
         eventRepository.save(event);
         return eventDTO;
     }
