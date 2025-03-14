@@ -719,12 +719,12 @@ public class FilialService {
         reportData.setHotel(hotel.getName());
 
         int busyBeds = 0;
-        int daysCount = 1;
+        int daysCount = 0;
         while (dateStart.isBefore(dateFinish) || dateStart.isEqual(dateFinish)) {
+            daysCount += 1;
             Date start = Date.from(dateStart.atStartOfDay(ZoneId.systemDefault()).toInstant());
             busyBeds += guestRepository.countAllByDateStartLessThanEqualAndDateFinishGreaterThanEqualAndBedRoomFlatHotel(start, start, hotel);
             dateStart = dateStart.plusDays(1);
-            daysCount += 1;
         }
 
         reportData.setAllBeds(allBeds.get() * daysCount);
