@@ -26,7 +26,7 @@ public class ReservationController {
     LogRepository logsRepository;
     @Autowired
     private ReservationService reservationService;
-    Logger logger = LoggerFactory.getLogger(MVZController.class);
+    Logger logger = LoggerFactory.getLogger(ReservationController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 

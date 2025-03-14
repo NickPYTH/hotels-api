@@ -17,7 +17,7 @@ public class HistoryController {
     private HistoryService historyService;
 
     @GetMapping(path = "/getGuestHistory")
-    public ResponseEntity<List<HistoryDTO>> getMVZReportShort(@RequestParam Long guestId) {
+    public ResponseEntity<List<HistoryDTO>> getGuestHistory(@RequestParam Long guestId) {
         return new ResponseEntity<>(historyService.getGuestHistory(guestId), HttpStatus.OK);
     }
 }
