@@ -179,15 +179,15 @@ public class GuestService {
             if (createRequest) guestBeforeState = new GuestDTO();
             else guestBeforeState = modelMapper.map(guest, GuestDTO.class);
             response.add(guestBeforeState);
-        } else response.add(new GuestDTO());
+        } else response.add(new GuestDTO()); // TODO
         // -----
 
         // Определяем кто перед нами работник Газпрома или сторонник
         if (guestDTO.getTabnum() != null) {
             Employee employee = employeeRepository.findByTabnum(guestDTO.getTabnum());
             guest.setEmployee(employee);
-            Organization tmp = organizationRepository.getById(11L); // ADM
-            guest.setOrganization(tmp);
+            Organization gts = organizationRepository.getById(11L); // Организация - ГТС
+            guest.setOrganization(gts);
         } else {
             Organization org = organizationRepository.findByName(guestDTO.getOrganization());
             if (org == null) {

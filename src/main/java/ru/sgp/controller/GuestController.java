@@ -133,8 +133,8 @@ public class GuestController {
     public ResponseEntity<GuestDTO> create(@RequestBody GuestDTO guestDTO) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<GuestDTO> response = guestService.update(guestDTO);
         try {
+            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/create", duration, "");
             record.setStatus("OK");

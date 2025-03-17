@@ -20,8 +20,8 @@ public class GuestDTO {
     private Long hotelId;
     private String hotelName;
     private Long filialId;
-    private String filialEmployee;
     private String filialName;
+    private String filialEmployee;
     private String organization;
     private Boolean regPoMestu;
     private String memo;

@@ -490,6 +490,17 @@ public class FlatService {
                 }
             }
         }
+        result.sort((a, b) -> {
+            String sectionNameA = a.get("section");
+            String sectionNameB = b.get("section");
+            if (sectionNameA.contains("#"))
+                sectionNameA = sectionNameA.substring(0, sectionNameA.indexOf("#"));
+            if (sectionNameB.contains("#"))
+                sectionNameB = sectionNameB.substring(0, sectionNameB.indexOf("#"));
+            Integer sectionNumberA = Integer.parseInt(sectionNameA);
+            Integer sectionNumberB = Integer.parseInt(sectionNameB);
+            return sectionNumberA - sectionNumberB;
+        });
         return result;
     }
 
