@@ -22,7 +22,8 @@ public class GuestDTO {
     private Long filialId;
     private String filialName;
     private String filialEmployee;
-    private String organization;
+    private Long organizationId;
+    private String organizationName;
     private Boolean regPoMestu;
     private String memo;
     private String billing;

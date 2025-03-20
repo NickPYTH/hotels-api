@@ -129,7 +129,8 @@ public class FlatService {
                     } else {
                         if (guest.getOrganization() != null) {
                             guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                            guestDTO.setOrganization(guest.getOrganization().getName());
+                            guestDTO.setOrganizationId(guest.getOrganization().getId());
+                            guestDTO.setOrganizationName(guest.getOrganization().getName());
                         }
                     }
                     guestDTOList.add(guestDTO);
@@ -286,7 +287,8 @@ public class FlatService {
                 } else {
                     if (guest.getOrganization() != null) {
                         guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                        guestDTO.setOrganization(guest.getOrganization().getName());
+                        guestDTO.setOrganizationId(guest.getOrganization().getId());
+                        guestDTO.setOrganizationName(guest.getOrganization().getName());
                     }
                 }
                 guestDTO.setIsReservation(false);
@@ -556,7 +558,8 @@ public class FlatService {
                     } else {
                         if (guest.getOrganization() != null) {
                             guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                            guestDTO.setOrganization(guest.getOrganization().getName());
+                            guestDTO.setOrganizationId(guest.getOrganization().getId());
+                            guestDTO.setOrganizationName(guest.getOrganization().getName());
                         }
                     }
                     response.add(guestDTO);

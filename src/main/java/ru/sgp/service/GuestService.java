@@ -94,7 +94,11 @@ public class GuestService {
         }
         for (Guest guest : guests) {
             GuestDTO guestDTO = new GuestDTO();
-            if (guest.getEmployee() != null) guestDTO.setTabnum(guest.getEmployee().getTabnum());
+            if (guest.getEmployee() != null) {
+                Employee employee = guest.getEmployee();
+                guestDTO.setTabnum(employee.getTabnum());
+                guestDTO.setFilialEmployee(employee.getIdFilial().toString());
+            }
             if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
             guestDTO.setId(guest.getId());
             guestDTO.setFirstname(guest.getFirstname());
@@ -121,7 +125,10 @@ public class GuestService {
                 guestDTO.setBilling(guest.getContract().getBilling());
                 guestDTO.setReason(guest.getContract().getReason().getName());
             }
-            if (guest.getOrganization() != null) guestDTO.setOrganization(guest.getOrganization().getName());
+            if (guest.getOrganization() != null) {
+                guestDTO.setOrganizationId(guest.getOrganization().getId());
+                guestDTO.setOrganizationName(guest.getOrganization().getName());
+            }
             guestDTO.setRegPoMestu(guest.getRegPoMestu());
             response.add(guestDTO);
         }
@@ -189,15 +196,9 @@ public class GuestService {
             Organization gts = organizationRepository.getById(11L); // Организация - ГТС
             guest.setOrganization(gts);
         } else {
-            Organization org = organizationRepository.findByName(guestDTO.getOrganization());
-            if (org == null) {
-                if (!guestDTO.getOrganization().isEmpty()) {
-                    Organization newOrganization = new Organization();
-                    newOrganization.setName(guestDTO.getOrganization());
-                    //organizationRepository.save(newOrganization);
-                    guest.setOrganization(newOrganization);
-                }
-            } else guest.setOrganization(org);
+            Organization org = organizationRepository.getById(guestDTO.getOrganizationId());
+            guest.setOrganization(org);
+            guest.setEmployee(null);
         }
         // -----
 
