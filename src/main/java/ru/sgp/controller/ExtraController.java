@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/extra")
 public class ExtraController {
-
     @Autowired
     LogRepository logsRepository;
     @Autowired
@@ -28,17 +27,6 @@ public class ExtraController {
     Logger logger = LoggerFactory.getLogger(ExtraController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-    @GetMapping(path = "/getAll")
-    public ResponseEntity<List<ExtraDTO>> getAll() {
-        return new ResponseEntity<>(extraService.getAll(), HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getAllByGuest")
-    public ResponseEntity<List<ExtraDTO>> getAllByGuest(@RequestParam Long guestId) {
-        return new ResponseEntity<>(extraService.getAllByGuest(guestId), HttpStatus.OK);
-    }
-
     @PostMapping(path = "/create")
     public ResponseEntity<ExtraDTO> create(@RequestBody ExtraDTO ExtraDTO) {
         long startTime = System.nanoTime();
@@ -67,65 +55,6 @@ public class ExtraController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @PostMapping(path = "/createGuestExtra")
-    public ResponseEntity<ExtraDTO> createGuestExtra(@RequestParam Long guestId, @RequestParam Long extraId) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            ExtraDTO response = extraService.createGuestExtra(guestId, extraId);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/extra/createGuestExtra");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/extra/createGuestExtra");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @DeleteMapping(path = "/deleteGuestExtra")
-    public ResponseEntity<ExtraDTO> deleteGuestExtra(@RequestParam Long guestId, @RequestParam Long extraId) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            ExtraDTO response = extraService.deleteGuestExtra(guestId, extraId);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/extra/createGuestExtra");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/extra/createGuestExtra");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping(path = "/update")
     public ResponseEntity<ExtraDTO> update(@RequestBody ExtraDTO ExtraDTO) {
         long startTime = System.nanoTime();
@@ -154,5 +83,116 @@ public class ExtraController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping(path = "/getAll")
+    public ResponseEntity<List<ExtraDTO>> getAll() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<ExtraDTO> response = extraService.getAll();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/getAll", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/getAll");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/getAll", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/getAll");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(path = "/getAllByGuest")
+    public ResponseEntity<List<ExtraDTO>> getAllByGuest(@RequestParam Long guestId) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<ExtraDTO> response = extraService.getAllByGuest(guestId);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/getAllByGuest", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/getAllByGuest");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/getAllByGuest", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/getAllByGuest");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping(path = "/createGuestExtra")
+    public ResponseEntity<ExtraDTO> createGuestExtra(@RequestParam Long guestId, @RequestParam Long extraId) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            ExtraDTO response = extraService.createGuestExtra(guestId, extraId);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/createGuestExtra");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/createGuestExtra", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/createGuestExtra");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @DeleteMapping(path = "/deleteGuestExtra")
+    public ResponseEntity<ExtraDTO> deleteGuestExtra(@RequestParam Long guestId, @RequestParam Long extraId) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            ExtraDTO response = extraService.deleteGuestExtra(guestId, extraId);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/extra/deleteGuestExtra", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/deleteGuestExtra");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/extra/deleteGuestExtra", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/extra/deleteGuestExtra");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

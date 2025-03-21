@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +17,7 @@ import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.GuestService;
 import ru.sgp.service.HistoryService;
+import ru.sgp.service.ReportService;
 import ru.sgp.utils.SecurityManager;
 
 import java.io.IOException;
@@ -32,6 +32,8 @@ import java.util.List;
 public class GuestController {
     @Autowired
     private GuestService guestService;
+    @Autowired
+    private ReportService reportService;
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -298,43 +300,6 @@ public class GuestController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/guest/getGuestsLastnames");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public MediaType getMediaType() {
-        MediaType mediaType;
-        mediaType = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        return mediaType;
-    }
-
-    @GetMapping(path = "/getGuestReport")
-    public ResponseEntity<byte[]> getGuestReport() throws JRException {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            byte[] reportData = guestService.getGuestReport();
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/getGuestReport", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guests/getGuestReport");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=GuestReport.xlsx");
-            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/getGuestReport", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/guests/getGuestReport");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

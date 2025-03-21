@@ -1,12 +1,5 @@
 package ru.sgp.service;
 
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.export.Exporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -18,12 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
-import ru.sgp.dto.report.GuestReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
-import ru.sgp.utils.SecurityManager;
+import ru.sgp.utils.MyMapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,8 +35,6 @@ public class GuestService {
     OrganizationRepository organizationRepository;
     @Autowired
     ReasonRepository reasonRepository;
-
-    ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private HotelRepository hotelRepository;
     @Autowired
@@ -54,20 +43,6 @@ public class GuestService {
     private FlatRepository flatRepository;
     @Autowired
     private ReservationRepository reservationRepository;
-
-
-    public byte[] export(JasperPrint jasperPrint) throws JRException {
-        Exporter exporter;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exporter = new JRXlsxExporter();
-        //exporter = new JRPdfExporter();
-        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
-        exporter.exportReport();
-        return outputStream.toByteArray();
-    }
-
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
     private ContractRepository contractRepository;
     @Autowired
@@ -78,70 +53,7 @@ public class GuestService {
     private RoomLocksRepository roomLocksRepository;
     @Autowired
     private FlatLocksRepository flatLocksRepository;
-
-    @Transactional
-    public List<GuestDTO> getAll() {
-        SecurityManager.getCurrentUser();
-        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
-        User user = userRepository.findByUsername(username);
-        List<GuestDTO> response = new ArrayList<>();
-        List<Guest> guests = new ArrayList<>();
-        if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
-            guests = guestRepository.findAll();
-        } else {
-            Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
-            guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
-        }
-        for (Guest guest : guests) {
-            GuestDTO guestDTO = new GuestDTO();
-            if (guest.getEmployee() != null) {
-                Employee employee = guest.getEmployee();
-                guestDTO.setTabnum(employee.getTabnum());
-                guestDTO.setFilialEmployee(employee.getIdFilial().toString());
-            }
-            if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
-            guestDTO.setId(guest.getId());
-            guestDTO.setFirstname(guest.getFirstname());
-            guestDTO.setLastname(guest.getLastname());
-            guestDTO.setSecondName(guest.getSecondName());
-            guestDTO.setNote(guest.getNote());
-            guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-            guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-            guestDTO.setBedId(guest.getBed().getId());
-            guestDTO.setBedName(guest.getBed().getName());
-            guestDTO.setRoomId(guest.getBed().getRoom().getId());
-            guestDTO.setRoomName(guest.getBed().getRoom().getName());
-            guestDTO.setFlatName(guest.getBed().getRoom().getFlat().getName());
-            guestDTO.setFlatId(guest.getBed().getRoom().getFlat().getId());
-            guestDTO.setHotelName(guest.getBed().getRoom().getFlat().getHotel().getName());
-            guestDTO.setHotelId(guest.getBed().getRoom().getFlat().getHotel().getId());
-            guestDTO.setFilialName(guest.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-            guestDTO.setFilialId(guest.getBed().getRoom().getFlat().getHotel().getFilial().getId());
-            guestDTO.setMemo(guest.getMemo());
-            guestDTO.setMale(guest.getMale());
-            guestDTO.setCheckouted(guest.getCheckouted());
-            if (guest.getContract() != null) {
-                guestDTO.setContractId(guest.getContract().getId());
-                guestDTO.setBilling(guest.getContract().getBilling());
-                guestDTO.setReason(guest.getContract().getReason().getName());
-            }
-            if (guest.getOrganization() != null) {
-                guestDTO.setOrganizationId(guest.getOrganization().getId());
-                guestDTO.setOrganizationName(guest.getOrganization().getName());
-            }
-            guestDTO.setRegPoMestu(guest.getRegPoMestu());
-            response.add(guestDTO);
-        }
-        return response;
-    }
-
-    @Transactional
-    public GuestDTO checkout(Long id) {
-        Guest guest = guestRepository.findById(id).get();
-        guest.setCheckouted(true);
-        guestRepository.save(guest);
-        return new GuestDTO();
-    }
+    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public List<GuestDTO> update(GuestDTO guestDTO) throws Exception {
         List<GuestDTO> response = new ArrayList<>();
@@ -403,6 +315,63 @@ public class GuestService {
         return response;
     }
 
+    @Transactional
+    public List<GuestDTO> getAll() {
+        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
+        User user = userRepository.findByUsername(username);
+        List<GuestDTO> response = new ArrayList<>();
+        List<Guest> guests;
+        // Если роль Администратор или Работник ОСР, отдаем все записи
+        if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
+            guests = guestRepository.findAll();
+        } else {
+            // Если дежурный или работник филиала, то отдаем записи по филиалу работника/дежурного по скольку их место работы 99% совпадает с филиалом общежития
+            Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
+            guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
+        }
+        for (Guest guest : guests)
+            response.add(MyMapper.GuestToGuestDTO(guest));
+        return response;
+    }
+
+    @Transactional
+    public GuestDTO delete(Long id) {
+        Guest guest = guestRepository.getById(id);
+        Bed bed = guest.getBed();
+
+        // Если место на котором живет гость дополнительное - удаляем его тоже
+        if (bed.getIsExtra()) bedRepository.delete(bed);
+        // -----
+
+        // Если есть бронь связанная с записью о проживании - чистим связь
+        Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
+        if (reservationOptional.isPresent()) {
+            Reservation reservation = reservationOptional.get();
+            reservation.setGuest(null);
+
+            // Нет записи о проживании -> нет дат подтверждающих бронь. Переносим даты подтверждения в даты брони, без них бронь не будет выводится
+            reservation.setDateStart(reservation.getDateStartConfirmed());
+            reservation.setDateFinish(reservation.getDateFinishConfirmed());
+            // -----
+
+            reservationRepository.save(reservation);
+        }
+        // -----
+
+        guestRepository.deleteById(id);
+        return new GuestDTO();
+    }
+
+    @Transactional
+    public GuestDTO checkout(Long id) {
+        Optional<Guest> guestOpt = guestRepository.findById(id);
+        if (guestOpt.isPresent()) {
+            guestOpt.get().setCheckouted(true);
+            guestRepository.save(guestOpt.get());
+        }
+        return new GuestDTO();
+    }
+
     public GuestDTO getFioByTabnum(Integer tabnum) {
         Employee employee = employeeRepository.findByTabnum(tabnum);
         GuestDTO guestDTO = new GuestDTO();
@@ -429,77 +398,8 @@ public class GuestService {
         return guestDTO;
     }
 
-    @Transactional
-    public GuestDTO delete(Long id) {
-        Guest guest = guestRepository.getById(id);
-        Bed bed = guest.getBed();
-        if (bed.getIsExtra()) bedRepository.delete(bed);
-        GuestDTO guestDTO = new GuestDTO();
-        Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
-        if (reservationOptional.isPresent()) {
-            Reservation reservation = reservationOptional.get();
-            reservation.setGuest(null);
-            reservation.setDateStart(reservation.getDateStartConfirmed());
-            reservation.setDateFinish(reservation.getDateFinishConfirmed());
-            reservationRepository.save(reservation);
-        }
-        guestRepository.deleteById(id);
-        guestDTO.setId(id);
-        return guestDTO;
-    }
-
-    public byte[] getGuestReport() throws JRException {
-        List<GuestReportDTO> guestReportDTOS = new ArrayList<>();
-
-        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
-        User user = userRepository.findByUsername(username);
-        List<GuestDTO> response = new ArrayList<>();
-        List<Guest> guests = new ArrayList<>();
-        if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
-            guests = guestRepository.findAll();
-        } else {
-            Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
-            guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
-        }
-        for (Guest guest : guests) {
-            GuestReportDTO guestReportDTO = new GuestReportDTO();
-            guestReportDTO.setId(guest.getId().toString());
-            guestReportDTO.setSurname(guest.getLastname());
-            guestReportDTO.setSecondName(guest.getSecondName());
-            guestReportDTO.setName(guest.getFirstname());
-            guestReportDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-            guestReportDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-            guestReportDTO.setRoom(guest.getBed().getRoom().getFlat().getName());
-            guestReportDTO.setHotel(guest.getBed().getRoom().getFlat().getHotel().getName());
-            guestReportDTO.setFilial(guest.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-            if (guest.getOrganization() != null)
-                guestReportDTO.setOrg(guest.getOrganization().getName());
-            guestReportDTO.setRepPoMestu(guest.getRegPoMestu() ? "+" : "-");
-            guestReportDTO.setCz(guest.getMemo());
-            guestReportDTO.setMale(guest.getMale() ? "man" : "woman");
-            if (guest.getCheckouted() != null)
-                guestReportDTO.setCheckouted(guest.getCheckouted() ? "+" : "-");
-            else guestReportDTO.setCheckouted("");
-            if (guest.getContract() != null) {
-                guestReportDTO.setContract(guest.getContract().getDocnum());
-                guestReportDTO.setBilling(guest.getContract().getBilling());
-                guestReportDTO.setReason(guest.getContract().getReason().getName());
-            } else {
-                guestReportDTO.setContract("");
-                guestReportDTO.setBilling("");
-                guestReportDTO.setReason("");
-            }
-            guestReportDTO.setBed(guest.getBed().getRoom().getName());
-            guestReportDTOS.add(guestReportDTO);
-        }
-        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/GuestReport.jrxml"));
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(guestReportDTOS);
-        Map<String, Object> parameters = new HashMap<>();
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        return export(jasperPrint);
-    }
-
     public List<GuestDTO> getAllByOrganizationId(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
         return guestRepository.findAllByOrganization(organizationRepository.getById(id)).stream().map(guest -> modelMapper.map(guest, GuestDTO.class)).collect(Collectors.toList());
     }
 
@@ -509,6 +409,7 @@ public class GuestService {
 
     @Transactional
     public List<GuestDTO> addGuestsForEvent(AddGuestsForEventDTO data) throws Exception {
+        ModelMapper modelMapper = new ModelMapper();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         Optional<Hotel> hotelOpt = hotelRepository.findById(data.getHotelId());
         if (hotelOpt.isEmpty()) throw new Exception("Hotel with id " + data.getHotelId() + " not found");
@@ -548,7 +449,7 @@ public class GuestService {
                     guest.setDateFinish(dateFinish);
                     guest.setBed(bed);
                     guest.setCheckouted(false);
-                    guest.setMale(employee.getMale() == 1 ? true : false);
+                    guest.setMale(employee.getMale() == 1);
                     // Пока будут константами уточнить
                     guest.setContract(contractRepository.getById(865L));
                     guest.setMemo(data.getEventName());

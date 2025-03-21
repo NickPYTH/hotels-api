@@ -13,50 +13,43 @@ import ru.sgp.repository.GuestExtraRepository;
 import ru.sgp.repository.GuestRepository;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ExtraService {
-
-    ModelMapper modelMapper = new ModelMapper();
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
     @Autowired
     private ExtraRepository extraRepository;
     @Autowired
     private GuestRepository guestRepository;
     @Autowired
     private GuestExtraRepository guestExtraRepository;
-
     public List<ExtraDTO> getAll() {
+        ModelMapper modelMapper = new ModelMapper();
         return extraRepository.findAll().stream().map(e -> modelMapper.map(e, ExtraDTO.class)).collect(Collectors.toList());
     }
-
     public List<ExtraDTO> getAllByGuest(Long guestId) {
+        ModelMapper modelMapper = new ModelMapper();
         return guestExtraRepository.findAllByGuest(guestRepository.getById(guestId)).stream().map(e -> modelMapper.map(e.getExtra(), ExtraDTO.class)).collect(Collectors.toList());
     }
-
     public ExtraDTO get(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(extraRepository.getById(id), ExtraDTO.class);
     }
-
     @Transactional
     public ExtraDTO update(ExtraDTO ExtraDTO) throws ParseException {
+        ModelMapper modelMapper = new ModelMapper();
         Extra Extra = modelMapper.map(ExtraDTO, Extra.class);
         extraRepository.save(Extra);
         return ExtraDTO;
     }
-
     @Transactional
     public ExtraDTO create(ExtraDTO ExtraDTO) throws ParseException {
+        ModelMapper modelMapper = new ModelMapper();
         Extra Extra = modelMapper.map(ExtraDTO, Extra.class);
         extraRepository.save(Extra);
         return ExtraDTO;
     }
-
     public ExtraDTO createGuestExtra(Long guestId, Long extraId) {
         Guest guest = guestRepository.getById(guestId);
         Extra extra = extraRepository.getById(extraId);
@@ -66,7 +59,6 @@ public class ExtraService {
         guestExtraRepository.save(guestExtra);
         return new ExtraDTO();
     }
-
     public ExtraDTO deleteGuestExtra(Long guestId, Long extraId) {
         Guest guest = guestRepository.getById(guestId);
         Extra extra = extraRepository.getById(extraId);

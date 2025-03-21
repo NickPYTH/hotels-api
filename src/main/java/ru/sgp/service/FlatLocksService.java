@@ -24,25 +24,8 @@ public class FlatLocksService {
     StatusRepository statusRepository;
     @Autowired
     FlatLocksRepository flatLocksRepository;
-
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
-    public List<FlatLocksDTO> getAllByFlat(Long flatId) throws ParseException {
-        Flat flat = flatRepository.getById(flatId);
-        List<FlatLocksDTO> response = new ArrayList<>();
-        for (FlatLocks flatLocks : flatLocksRepository.findAllByFlat(flat)) {
-            FlatLocksDTO flatLocksDTO = new FlatLocksDTO();
-            flatLocksDTO.setId(flatLocks.getId());
-            flatLocksDTO.setDateStart(dateFormatter.format(flatLocks.getDateStart()));
-            flatLocksDTO.setDateFinish(dateFormatter.format(flatLocks.getDateFinish()));
-            flatLocksDTO.setFlatId(flatId);
-            flatLocksDTO.setStatusId(flatLocks.getStatus().getId());
-            response.add(flatLocksDTO);
-        }
-        return response;
-    }
-
     @Transactional
     public FlatLocksDTO create(FlatLocksDTO flatLocksDTO) throws ParseException {
         if (flatLocksDTO.getId() == 1L) return flatLocksDTO;
@@ -67,7 +50,6 @@ public class FlatLocksService {
         flatLocksDTO.setId(flatLocks.getId());
         return flatLocksDTO;
     }
-
     @Transactional
     public FlatLocksDTO update(FlatLocksDTO flatLocksDTO) throws ParseException {
         if (flatLocksDTO.getStatusId() == 1L) {
@@ -82,12 +64,6 @@ public class FlatLocksService {
         flatLocksRepository.save(flatLocks);
         return flatLocksDTO;
     }
-
-    public Long delete(Long flatLockId) throws ParseException {
-        flatLocksRepository.deleteById(flatLockId);
-        return flatLockId;
-    }
-
     @Transactional
     public FlatLocksDTO get(Long id) {
         FlatLocks flatLock = flatLocksRepository.getById(id);
@@ -98,5 +74,23 @@ public class FlatLocksService {
         flatLocksDTO.setFlatId(flatLock.getFlat().getId());
         flatLocksDTO.setStatusId(flatLock.getStatus().getId());
         return flatLocksDTO;
+    }
+    public List<FlatLocksDTO> getAllByFlat(Long flatId) {
+        Flat flat = flatRepository.getById(flatId);
+        List<FlatLocksDTO> response = new ArrayList<>();
+        for (FlatLocks flatLocks : flatLocksRepository.findAllByFlat(flat)) {
+            FlatLocksDTO flatLocksDTO = new FlatLocksDTO();
+            flatLocksDTO.setId(flatLocks.getId());
+            flatLocksDTO.setDateStart(dateFormatter.format(flatLocks.getDateStart()));
+            flatLocksDTO.setDateFinish(dateFormatter.format(flatLocks.getDateFinish()));
+            flatLocksDTO.setFlatId(flatId);
+            flatLocksDTO.setStatusId(flatLocks.getStatus().getId());
+            response.add(flatLocksDTO);
+        }
+        return response;
+    }
+    public Long delete(Long flatLockId) throws ParseException {
+        flatLocksRepository.deleteById(flatLockId);
+        return flatLockId;
     }
 }

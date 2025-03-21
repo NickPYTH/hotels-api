@@ -42,11 +42,9 @@ public class FlatService {
     private ReservationRepository reservationRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
-
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH");
-
     @Transactional
     public List<FlatDTO> getAllByHotelId(Long hotelId, String dateStr) throws ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
@@ -185,7 +183,6 @@ public class FlatService {
         }
         return response;
     }
-
     @Transactional
     public FlatDTO get(Long flatId, String dateStr) throws ParseException {
         Flat flat = flatRepository.getById(flatId);
@@ -345,7 +342,6 @@ public class FlatService {
 
         return flatDTO;
     }
-
     @Transactional
     public FlatDTO updateTech(Long flatId) {
         Flat flat = flatRepository.getById(flatId);
@@ -354,7 +350,6 @@ public class FlatService {
         FlatDTO flatDTO = new FlatDTO();
         return flatDTO;
     }
-
     @Transactional
     public FlatDTO updateNote(FlatDTO flatDTO) {
         Flat flat = flatRepository.getById(flatDTO.getId());
@@ -362,7 +357,6 @@ public class FlatService {
         flatRepository.save(flat);
         return flatDTO;
     }
-
     @Transactional
     public List<HashMap<String, String>> getAllByHotelIdChess(Long hotelId, String dateStartStr, String
             dateFinishStr) throws ParseException {
@@ -505,7 +499,6 @@ public class FlatService {
         });
         return result;
     }
-
     @Transactional
     public List<GuestDTO> getAllNotCheckoutedBeforeTodayByHotelId(Long hotelId, String dateStr) throws
             ParseException {
@@ -568,7 +561,6 @@ public class FlatService {
         }
         return response;
     }
-
     public List<FlatDTO> getAll(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
         Hotel hotel = hotelRepository.getById(hotelId);
         List<FlatDTO> response = new ArrayList<>();

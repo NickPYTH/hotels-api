@@ -22,73 +22,12 @@ import java.util.List;
 @RequestMapping("/flatLocks")
 public class FlatLocksController {
     @Autowired
-    FlatLocksService flatLocksService;
-    @Autowired
     LogRepository logsRepository;
-
+    @Autowired
+    FlatLocksService flatLocksService;
     Logger logger = LoggerFactory.getLogger(FlatLocksController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-    @GetMapping(path = "/getAllByFlat")
-    public ResponseEntity<List<FlatLocksDTO>> getAllByFlatAndPeriod(@RequestParam Long flatId) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            List<FlatLocksDTO> response = flatLocksService.getAllByFlat(flatId);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flatLocks/getAllByFlatAndPeriod", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flatLocks/getAllByFlatAndPeriod");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flatLocks/getAllByFlatAndPeriod", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flatLocks/getAllByFlatAndPeriod");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/get")
-    public ResponseEntity<FlatLocksDTO> get(@RequestParam Long id) {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            FlatLocksDTO response = flatLocksService.get(id);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flatLocks/get", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flatLocks/get");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flatLocks/get", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/flatLocks/get");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
     @PostMapping(path = "/create")
     public ResponseEntity<FlatLocksDTO> create(@RequestBody FlatLocksDTO FlatLocksDTO) throws ParseException {
         long startTime = System.nanoTime();
@@ -117,7 +56,6 @@ public class FlatLocksController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/update")
     public ResponseEntity<FlatLocksDTO> update(@RequestBody FlatLocksDTO FlatLocksDTO) {
         long startTime = System.nanoTime();
@@ -146,7 +84,62 @@ public class FlatLocksController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping(path = "/get")
+    public ResponseEntity<FlatLocksDTO> get(@RequestParam Long id) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            FlatLocksDTO response = flatLocksService.get(id);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flatLocks/get", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flatLocks/get");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flatLocks/get", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flatLocks/get");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(path = "/getAllByFlat")
+    public ResponseEntity<List<FlatLocksDTO>> getAllByFlatAndPeriod(@RequestParam Long flatId) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<FlatLocksDTO> response = flatLocksService.getAllByFlat(flatId);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/flatLocks/getAllByFlatAndPeriod", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flatLocks/getAllByFlatAndPeriod");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/flatLocks/getAllByFlatAndPeriod", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/flatLocks/getAllByFlatAndPeriod");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
     @DeleteMapping(path = "/delete")
     public ResponseEntity<Long> update(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -175,5 +168,4 @@ public class FlatLocksController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 }

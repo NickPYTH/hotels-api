@@ -27,11 +27,9 @@ public class LogController {
     private LogService logService;
     @Autowired
     LogRepository logsRepository;
-
     Logger logger = LoggerFactory.getLogger(LogController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<LogDTO>> getAll() {
         long startTime = System.nanoTime();

@@ -24,26 +24,10 @@ public class RoomLocksService {
     RoomRepository roomRepository;
     @Autowired
     StatusRepository statusRepository;
+    @Autowired
+    RoomLocksRepository roomLocksRepository;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    @Autowired
-    private RoomLocksRepository roomLocksRepository;
-
-    public List<RoomLocksDTO> getAllByRoom(Long roomId) throws ParseException {
-        Room room = roomRepository.getById(roomId);
-        List<RoomLocksDTO> response = new ArrayList<>();
-        for (RoomLocks roomLocks : roomLocksRepository.findAllByRoom(room)) {
-            RoomLocksDTO roomLocksDTO = new RoomLocksDTO();
-            roomLocksDTO.setId(roomLocks.getId());
-            roomLocksDTO.setDateStart(dateFormatter.format(roomLocks.getDateStart()));
-            roomLocksDTO.setDateFinish(dateFormatter.format(roomLocks.getDateFinish()));
-            roomLocksDTO.setStatusId(roomLocks.getStatus().getId());
-            roomLocksDTO.setRoomId(roomId);
-            response.add(roomLocksDTO);
-        }
-        return response;
-    }
-
     @Transactional
     public RoomLocksDTO create(RoomLocksDTO roomLocksDTO) throws ParseException {
         if (roomLocksDTO.getId() == 1L) return roomLocksDTO;
@@ -68,7 +52,6 @@ public class RoomLocksService {
         roomLocksDTO.setId(roomLocks.getId());
         return roomLocksDTO;
     }
-
     @Transactional
     public RoomLocksDTO update(RoomLocksDTO roomLocksDTO) throws ParseException {
         if (roomLocksDTO.getStatusId() == 1L) {
@@ -83,12 +66,6 @@ public class RoomLocksService {
         roomLocksRepository.save(roomLocks);
         return roomLocksDTO;
     }
-
-    public Long delete(Long roomLockId) throws ParseException {
-        roomLocksRepository.deleteById(roomLockId);
-        return roomLockId;
-    }
-
     @Transactional
     public RoomLocksDTO get(Long id) {
         RoomLocks roomLocks = roomLocksRepository.getById(id);
@@ -99,5 +76,23 @@ public class RoomLocksService {
         roomLocksDTO.setRoomId(roomLocks.getRoom().getId());
         roomLocksDTO.setStatusId(roomLocks.getStatus().getId());
         return roomLocksDTO;
+    }
+    public List<RoomLocksDTO> getAllByRoom(Long roomId) {
+        Room room = roomRepository.getById(roomId);
+        List<RoomLocksDTO> response = new ArrayList<>();
+        for (RoomLocks roomLocks : roomLocksRepository.findAllByRoom(room)) {
+            RoomLocksDTO roomLocksDTO = new RoomLocksDTO();
+            roomLocksDTO.setId(roomLocks.getId());
+            roomLocksDTO.setDateStart(dateFormatter.format(roomLocks.getDateStart()));
+            roomLocksDTO.setDateFinish(dateFormatter.format(roomLocks.getDateFinish()));
+            roomLocksDTO.setStatusId(roomLocks.getStatus().getId());
+            roomLocksDTO.setRoomId(roomId);
+            response.add(roomLocksDTO);
+        }
+        return response;
+    }
+    public Long delete(Long roomLockId) throws ParseException {
+        roomLocksRepository.deleteById(roomLockId);
+        return roomLockId;
     }
 }

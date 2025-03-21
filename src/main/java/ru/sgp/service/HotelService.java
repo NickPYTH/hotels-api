@@ -1,29 +1,23 @@
 package ru.sgp.service;
 
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.export.Exporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sgp.dto.HotelDTO;
-import ru.sgp.dto.report.FilialReportDTO;
 import ru.sgp.dto.report.HotelsStatsReportDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
-import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -48,16 +42,15 @@ public class HotelService {
     RoomLocksRepository roomLocksRepository;
     @Autowired
     FlatLocksRepository flatLocksRepository;
-
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    private final SimpleDateFormat dateTimeDotFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-    private final SimpleDateFormat dateDotFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
-    ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private BedRepository bedRepository;
-
+    @Transactional
+    public List<HotelDTO> getAllByFilialId(Long filialId) throws ParseException {
+        ModelMapper modelMapper = new ModelMapper();
+        return hotelRepository.findAllByFilial(filialRepository.getById(filialId)).stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
+    }
     @Transactional
     public List<HotelDTO> getAllByFilialIdWithStats(Long filialId, String dateStr) throws ParseException {
         Date date = dateTimeFormatter.parse(dateStr);
@@ -110,14 +103,9 @@ public class HotelService {
         }
         return response;
     }
-
-    @Transactional
-    public List<HotelDTO> getAllByFilialId(Long filialId) throws ParseException {
-        return hotelRepository.findAllByFilial(filialRepository.getById(filialId)).stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
-    }
-
     @Transactional
     public List<HotelDTO> getAllByCommendant() {
+        ModelMapper modelMapper = new ModelMapper();
         List<HotelDTO> response = new ArrayList<>();
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
@@ -125,7 +113,6 @@ public class HotelService {
             response.add(modelMapper.map(commendant.getHotel(), HotelDTO.class));
         return response;
     }
-
     public List<HotelDTO> getAllByCommendantWithStats() {
         Date date = new Date();
         List<HotelDTO> response = new ArrayList<>();
@@ -178,88 +165,6 @@ public class HotelService {
         }
         return response;
     }
-
-    public byte[] export(JasperPrint jasperPrint) throws JRException {
-        Exporter exporter;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exporter = new JRXlsxExporter();
-        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
-        exporter.exportReport();
-        return outputStream.toByteArray();
-    }
-
-    public byte[] getHotelReport(Long hotelId, boolean checkouted, String dateStartStr, String dateFinishStr) throws JRException, ParseException {
-        List<FilialReportDTO> reportData = new ArrayList<>();
-        Date dateStart = dateFormatter.parse(dateStartStr);
-        Date dateFinish = dateFormatter.parse(dateFinishStr);
-        Hotel hotel = hotelRepository.findById(hotelId).get();
-        Filial filial = hotel.getFilial();
-        for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-            for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                List<Guest> guests = new ArrayList<>();
-                if (checkouted)
-                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoom(dateFinish, dateStart, room);
-                else
-                    guests = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndBedRoom(dateFinish, dateStart, checkouted, room);
-                for (Guest guest : guests) {
-                    FilialReportDTO record = new FilialReportDTO();
-                    record.setFilial(filial.getName());
-                    record.setHotel(hotel.getName());
-                    record.setFlat(flat.getName());
-                    record.setFloor(flat.getFloor());
-                    record.setRoom(room.getId().toString());
-                    if (guest.getCheckouted() != null)
-                        record.setCheckouted(guest.getCheckouted() ? "+" : "-");
-                    else record.setCheckouted("-");
-                    record.setDateStart(dateDotFormatter.format(guest.getDateStart()));
-                    record.setDateFinish(dateDotFormatter.format(guest.getDateFinish()));
-                    if (guest.getEmployee() != null)
-                        record.setTabnum(guest.getEmployee().getTabnum());
-                    record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-                    reportData.add(record);
-                }
-            }
-        }
-
-        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/FilialReport.jrxml"));
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
-        Map<String, Object> parameters = new HashMap<>();
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        return export(jasperPrint);
-    }
-
-    public byte[] getFloorReport(Long hotelId, Integer floor, String dateStr) throws JRException, ParseException {
-        Date date = dateTimeFormatter.parse(dateStr);
-        List<FilialReportDTO> reportData = new ArrayList<>();
-        Hotel hotel = hotelRepository.findById(hotelId).get();
-        Filial filial = hotel.getFilial();
-        for (Flat flat : flatRepository.findAllByHotelAndFloorOrderById(hotel, floor)) {
-            for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
-                guestRepository.findAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(room, false, date, date).forEach(guest -> {
-                    FilialReportDTO record = new FilialReportDTO();
-                    record.setFilial(filial.getName());
-                    record.setHotel(hotel.getName());
-                    record.setFlat(flat.getName());
-                    record.setFloor(flat.getFloor());
-                    record.setRoom(room.getId().toString());
-                    record.setDateStart(dateDotFormatter.format(guest.getDateStart()));
-                    record.setDateFinish(dateDotFormatter.format(guest.getDateFinish()));
-                    if (guest.getEmployee() != null)
-                        record.setTabnum(guest.getEmployee().getTabnum());
-                    record.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-                    reportData.add(record);
-                });
-            }
-        }
-
-        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/FilialReport.jrxml"));
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
-        Map<String, Object> parameters = new HashMap<>();
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        return export(jasperPrint);
-    }
-
     public List<HotelsStatsReportDTO> getHotelsStats(Long idFilial, String dateStartStr, String dateFinishStr) throws ParseException {
         List<HotelsStatsReportDTO> response = new ArrayList<>();
         Filial filial = filialRepository.findById(idFilial).get();

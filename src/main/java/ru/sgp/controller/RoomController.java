@@ -26,11 +26,9 @@ public class RoomController {
     RoomService roomService;
     @Autowired
     LogRepository logsRepository;
-
     Logger logger = LoggerFactory.getLogger(RoomController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
     @GetMapping(path = "/getAllByFlatId")
     public ResponseEntity<List<RoomDTO>> getAllByHotelId(@RequestParam Long flatId, @RequestParam String dateStart, @RequestParam String dateFinish) {
         long startTime = System.nanoTime();

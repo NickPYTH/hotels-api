@@ -24,15 +24,12 @@ import java.util.List;
 @RequestMapping("/flat")
 public class FlatController {
     @Autowired
-    private FlatService flatService;
-
+    FlatService flatService;
     @Autowired
     LogRepository logsRepository;
-
     Logger logger = LoggerFactory.getLogger(FlatController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<FlatDTO>> getAll(@RequestParam Long hotelId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
@@ -61,7 +58,6 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/getAllByHotelId")
     public ResponseEntity<List<FlatDTO>> getAllByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
@@ -90,9 +86,8 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/getAllNotCheckotedBeforeTodayByHotelId")
-    public ResponseEntity<List<GuestDTO>> getAllNotCheckotedBeforeTodayByHotelId(@RequestParam Long id, @RequestParam String date) throws ParseException {
+    public ResponseEntity<List<GuestDTO>> getAllNotCheckotedBeforeTodayByHotelId(@RequestParam Long id, @RequestParam String date) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
@@ -119,7 +114,6 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/getAllByHotelIdChess")
     public ResponseEntity<List<HashMap<String, String>>> getAllByHotelIdChess(@RequestParam Long id, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
@@ -148,7 +142,6 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/get")
     public ResponseEntity<FlatDTO> get(@RequestParam Long id, @RequestParam String date) throws ParseException {
         long startTime = System.nanoTime();
@@ -177,7 +170,6 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/updateTech")
     public ResponseEntity<FlatDTO> updateTech(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -206,7 +198,6 @@ public class FlatController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/updateNote")
     public ResponseEntity<FlatDTO> updateStatus(@RequestBody FlatDTO flatDTO) {
         long startTime = System.nanoTime();

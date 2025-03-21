@@ -28,13 +28,12 @@ public class RoomService {
     @Autowired
     RoomLocksRepository roomLocksRepository;
     @Autowired
-    private BedRepository bedRepository;
+    BedRepository bedRepository;
+    @Autowired
+    ReservationRepository reservationRepository;
+    @Autowired
+    FlatLocksRepository flatLocksRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
-    private FlatLocksRepository flatLocksRepository;
-
     @Transactional
     public List<BedDTO> getAllBeds(Long roomId, String dateStartStr, String dateFinishStr) throws ParseException {
         Room room = roomRepository.findById(roomId).orElse(null);

@@ -16,11 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReservationService {
-
     @Autowired
     ReservationRepository reservationRepository;
     @Autowired
@@ -35,43 +33,7 @@ public class ReservationService {
     ReservationStatusRepository reservationStatusRepository;
     @Autowired
     EmployeeRepository employeeRepository;
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
-    @Transactional
-    public List<ReservationDTO> getAll() {
-        ModelMapper modelMapper = new ModelMapper();
-        List<ReservationDTO> response = new ArrayList<>();
-        for (Reservation reservation: reservationRepository.findAll()) {
-            ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
-            if (reservation.getDateStart() != null) reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
-            else reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStartConfirmed()));
-            if (reservation.getDateFinish() != null) reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
-            else reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinishConfirmed()));
-            response.add(reservationDTO);
-        }
-        return response;
-    }
-
-    @Transactional
-    public ReservationDTO get(Long id) {
-        ModelMapper modelMapper = new ModelMapper();
-        Reservation reservation = reservationRepository.getById(id);
-        ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
-        reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
-        reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
-        return reservationDTO;
-    }
-
-    @Transactional
-    public ReservationDTO delete(Long id) {
-        ModelMapper modelMapper = new ModelMapper();
-        Reservation reservation = reservationRepository.getById(id);
-        ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
-        reservationRepository.delete(reservation);
-        return reservationDTO;
-    }
-
     @Transactional
     public ReservationDTO update(ReservationDTO reservationDTO) throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
@@ -132,7 +94,37 @@ public class ReservationService {
         reservationRepository.save(reservation);
         return modelMapper.map(reservation, ReservationDTO.class);
     }
-
+    @Transactional
+    public ReservationDTO get(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
+        Reservation reservation = reservationRepository.getById(id);
+        ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
+        reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
+        reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
+        return reservationDTO;
+    }
+    @Transactional
+    public List<ReservationDTO> getAll() {
+        ModelMapper modelMapper = new ModelMapper();
+        List<ReservationDTO> response = new ArrayList<>();
+        for (Reservation reservation: reservationRepository.findAll()) {
+            ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
+            if (reservation.getDateStart() != null) reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
+            else reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStartConfirmed()));
+            if (reservation.getDateFinish() != null) reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
+            else reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinishConfirmed()));
+            response.add(reservationDTO);
+        }
+        return response;
+    }
+    @Transactional
+    public ReservationDTO delete(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
+        Reservation reservation = reservationRepository.getById(id);
+        ReservationDTO reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
+        reservationRepository.delete(reservation);
+        return reservationDTO;
+    }
     @Transactional
     public ReservationDTO confirm(Long id) {
         Reservation reservation = reservationRepository.getById(id);

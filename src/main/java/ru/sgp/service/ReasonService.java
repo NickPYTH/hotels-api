@@ -14,7 +14,31 @@ import java.util.List;
 public class ReasonService {
     @Autowired
     ReasonRepository reasonRepository;
-
+    @Transactional
+    public ReasonDTO create(ReasonDTO reasonDTO) {
+        Reason reason = new Reason();
+        reason.setName(reasonDTO.getName());
+        reason.setIsDefault(reasonDTO.getIsDefault());
+        reasonRepository.save(reason);
+        reasonDTO.setId(reason.getId());
+        return reasonDTO;
+    }
+    @Transactional
+    public ReasonDTO update(ReasonDTO reasonDTO) {
+        Reason reason = reasonRepository.getById(reasonDTO.getId());
+        reason.setName(reasonDTO.getName());
+        reason.setIsDefault(reasonDTO.getIsDefault());
+        reasonRepository.save(reason);
+        return reasonDTO;
+    }
+    public ReasonDTO get(Long id) {
+        Reason reason = reasonRepository.getById(id);
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setId(reason.getId());
+        reasonDTO.setName(reason.getName());
+        reasonDTO.setIsDefault(reason.getIsDefault());
+        return reasonDTO;
+    }
     public List<ReasonDTO> getAll() {
         List<ReasonDTO> response = new ArrayList<>();
         for (Reason reason : reasonRepository.findAll()) {
@@ -26,33 +50,4 @@ public class ReasonService {
         }
         return response;
     }
-
-    public ReasonDTO get(Long id) {
-        Reason reason = reasonRepository.getById(id);
-        ReasonDTO reasonDTO = new ReasonDTO();
-        reasonDTO.setId(reason.getId());
-        reasonDTO.setName(reason.getName());
-        reasonDTO.setIsDefault(reason.getIsDefault());
-        return reasonDTO;
-    }
-
-    @Transactional
-    public ReasonDTO update(ReasonDTO reasonDTO) {
-        Reason reason = reasonRepository.getById(reasonDTO.getId());
-        reason.setName(reasonDTO.getName());
-        reason.setIsDefault(reasonDTO.getIsDefault());
-        reasonRepository.save(reason);
-        return reasonDTO;
-    }
-
-    @Transactional
-    public ReasonDTO create(ReasonDTO reasonDTO) {
-        Reason reason = new Reason();
-        reason.setName(reasonDTO.getName());
-        reason.setIsDefault(reasonDTO.getIsDefault());
-        reasonRepository.save(reason);
-        reasonDTO.setId(reason.getId());
-        return reasonDTO;
-    }
-
 }

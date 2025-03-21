@@ -21,36 +21,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
-
     @Autowired
     LogRepository logsRepository;
     @Autowired
-    private ReservationService reservationService;
+    ReservationService reservationService;
     Logger logger = LoggerFactory.getLogger(ReservationController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-    @GetMapping(path = "/getAll")
-    public ResponseEntity<List<ReservationDTO>> getAll() {
+    @PostMapping(path = "/update")
+    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO reservationDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        ReservationDTO response = reservationService.update(reservationDTO);
         try {
-            List<ReservationDTO> response = reservationService.getAll();
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, "");
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/update", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/reservation/getAll");
+            record.setPath("/reservation/update");
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, e.getMessage());
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/reservation/update", duration, e.getMessage());
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/reservation/getAll");
+            record.setPath("/reservation/update");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());
@@ -86,7 +84,34 @@ public class ReservationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping(path = "/getAll")
+    public ResponseEntity<List<ReservationDTO>> getAll() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<ReservationDTO> response = reservationService.getAll();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/reservation/getAll");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/reservation/getAll");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
     @DeleteMapping(path = "/delete")
     public ResponseEntity<ReservationDTO> delete(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -115,35 +140,6 @@ public class ReservationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    @PostMapping(path = "/update")
-    public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO reservationDTO) throws ParseException {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        ReservationDTO response = reservationService.update(reservationDTO);
-        try {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/update", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/reservation/update");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/reservation/update", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/reservation/update");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @GetMapping(path = "/confirm")
     public ResponseEntity<ReservationDTO> confirm(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -172,5 +168,4 @@ public class ReservationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 }

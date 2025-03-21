@@ -26,7 +26,34 @@ public class ResponsibilitiesService {
     FilialRepository filialRepository;
     @Autowired
     HotelRepository hotelRepository;
-
+    @Transactional
+    public ResponsibilitiesDTO create(ResponsibilitiesDTO responsibilitiesDTO) {
+        Responsibilities responsibility = new Responsibilities();
+        Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
+        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
+        responsibility.setEmployee(employee);
+        responsibility.setHotel(hotel);
+        responsibilitiesRepository.save(responsibility);
+        return responsibilitiesDTO;
+    }
+    @Transactional
+    public ResponsibilitiesDTO update(ResponsibilitiesDTO responsibilitiesDTO) {
+        Responsibilities responsibility = responsibilitiesRepository.getById(responsibilitiesDTO.getId());
+        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
+        Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
+        responsibility.setEmployee(employee);
+        responsibility.setHotel(hotel);
+        responsibilitiesRepository.save(responsibility);
+        return responsibilitiesDTO;
+    }
+    public ResponsibilitiesDTO get(Long id) {
+        Responsibilities responsibility = responsibilitiesRepository.getById(id);
+        ResponsibilitiesDTO responsibilitiesDTO = new ResponsibilitiesDTO();
+        responsibilitiesDTO.setId(responsibility.getId());
+        responsibilitiesDTO.setEmployeeId(responsibility.getEmployee().getId());
+        responsibilitiesDTO.setTabnum(responsibility.getEmployee().getTabnum());
+        return responsibilitiesDTO;
+    }
     public List<ResponsibilitiesDTO> getAll() {
         List<ResponsibilitiesDTO> response = new ArrayList<>();
         for (Responsibilities responsibility : responsibilitiesRepository.findAll()) {
@@ -44,38 +71,6 @@ public class ResponsibilitiesService {
         }
         return response;
     }
-
-    public ResponsibilitiesDTO get(Long id) {
-        Responsibilities responsibility = responsibilitiesRepository.getById(id);
-        ResponsibilitiesDTO responsibilitiesDTO = new ResponsibilitiesDTO();
-        responsibilitiesDTO.setId(responsibility.getId());
-        responsibilitiesDTO.setEmployeeId(responsibility.getEmployee().getId());
-        responsibilitiesDTO.setTabnum(responsibility.getEmployee().getTabnum());
-        return responsibilitiesDTO;
-    }
-
-    @Transactional
-    public ResponsibilitiesDTO update(ResponsibilitiesDTO responsibilitiesDTO) {
-        Responsibilities responsibility = responsibilitiesRepository.getById(responsibilitiesDTO.getId());
-        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
-        Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
-        responsibility.setEmployee(employee);
-        responsibility.setHotel(hotel);
-        responsibilitiesRepository.save(responsibility);
-        return responsibilitiesDTO;
-    }
-
-    @Transactional
-    public ResponsibilitiesDTO create(ResponsibilitiesDTO responsibilitiesDTO) {
-        Responsibilities responsibility = new Responsibilities();
-        Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
-        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
-        responsibility.setEmployee(employee);
-        responsibility.setHotel(hotel);
-        responsibilitiesRepository.save(responsibility);
-        return responsibilitiesDTO;
-    }
-
     public List<ResponsibilitiesDTO> getAllByHotelId(Long hotelId) {
         List<ResponsibilitiesDTO> response = new ArrayList<>();
         Hotel hotel = hotelRepository.getById(hotelId);

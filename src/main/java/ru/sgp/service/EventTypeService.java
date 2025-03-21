@@ -14,20 +14,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class EventTypeService {
-
     @Autowired
     private EventTypeRepository eventTypeRepository;
-
-    public List<EventTypeDTO> getAll() {
-        ModelMapper modelMapper = new ModelMapper();
-        return eventTypeRepository.findAll().stream().map(e -> modelMapper.map(e, EventTypeDTO.class)).collect(Collectors.toList());
-    }
-
-    public EventTypeDTO get(Long id) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(eventTypeRepository.getById(id), EventTypeDTO.class);
-    }
-
     @Transactional
     public EventTypeDTO update(EventTypeDTO eventTypeDTO) throws ParseException {
         EventType eventType;
@@ -37,5 +25,12 @@ public class EventTypeService {
         eventTypeRepository.save(eventType);
         return eventTypeDTO;
     }
-
+    public EventTypeDTO get(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(eventTypeRepository.getById(id), EventTypeDTO.class);
+    }
+    public List<EventTypeDTO> getAll() {
+        ModelMapper modelMapper = new ModelMapper();
+        return eventTypeRepository.findAll().stream().map(e -> modelMapper.map(e, EventTypeDTO.class)).collect(Collectors.toList());
+    }
 }

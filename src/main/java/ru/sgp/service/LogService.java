@@ -15,7 +15,6 @@ public class LogService {
     @Autowired
     LogRepository logRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
     @Transactional
     public List<LogDTO> getAll() {
         List<LogDTO> response = new ArrayList<>();
@@ -32,5 +31,4 @@ public class LogService {
         });
         return response;
     }
-
 }

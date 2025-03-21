@@ -21,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/eventType")
 public class EventTypeController {
-
     @Autowired
     LogRepository logsRepository;
     @Autowired
@@ -29,12 +28,6 @@ public class EventTypeController {
     Logger logger = LoggerFactory.getLogger(EventTypeController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-    @GetMapping(path = "/getAll")
-    public ResponseEntity<List<EventTypeDTO>> getAll() {
-        return new ResponseEntity<>(eventTypeService.getAll(), HttpStatus.OK);
-    }
-
     @PostMapping(path = "/create")
     public ResponseEntity<EventTypeDTO> create(@RequestBody EventTypeDTO EventTypeDTO) {
         long startTime = System.nanoTime();
@@ -63,7 +56,6 @@ public class EventTypeController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/update")
     public ResponseEntity<EventTypeDTO> update(@RequestBody EventTypeDTO EventTypeDTO) throws ParseException {
         long startTime = System.nanoTime();
@@ -92,5 +84,32 @@ public class EventTypeController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping(path = "/getAll")
+    public ResponseEntity<List<EventTypeDTO>> getAll() {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<EventTypeDTO> response = eventTypeService.getAll();
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/eventType/getAll", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/eventType/getAll");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/eventType/getAll", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/eventType/getAll");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
