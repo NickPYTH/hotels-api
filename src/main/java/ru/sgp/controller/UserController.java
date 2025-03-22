@@ -1,12 +1,9 @@
 package ru.sgp.controller;
 
-import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sgp.dto.UserDTO;
@@ -26,20 +23,11 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     LogRepository logsRepository;
-
-    public MediaType getMediaType() {
-        MediaType mediaType;
-        mediaType = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        return mediaType;
-    }
-
     Logger logger = LoggerFactory.getLogger(UserController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
     @PostMapping(path = "/create")
     public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) throws ParseException {
         long startTime = System.nanoTime();
@@ -68,7 +56,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/update")
     public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO) throws ParseException {
         long startTime = System.nanoTime();
@@ -97,7 +84,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @PostMapping(path = "/updateRole")
     public ResponseEntity<UserDTO> update(@RequestParam Long roleId) throws ParseException {
         long startTime = System.nanoTime();
@@ -126,7 +112,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/getCurrent")
     public ResponseEntity<UserDTO> get() {
         long startTime = System.nanoTime();
@@ -155,7 +140,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<UserDTO>> getAll() {
         long startTime = System.nanoTime();
@@ -184,36 +168,4 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @GetMapping(path = "/getCheckoutReport")
-    public ResponseEntity<byte[]> getCheckoutReport(@RequestParam Long id, @RequestParam Integer roomNumber, @RequestParam String periodStart, @RequestParam String periodEnd) throws ParseException, JRException {
-        long startTime = System.nanoTime();
-        Log record = new Log();
-        try {
-            byte[] reportData = userService.getCheckoutReport(id, roomNumber, periodStart, periodEnd);
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/user/getCheckoutReport", duration, "");
-            record.setStatus("OK");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/user/getCheckoutReport");
-            record.setDuration(duration);
-            record.setDate(new Date());
-            logsRepository.save(record);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Checkout.xlsx");
-            return ResponseEntity.ok().headers(headers).contentType(getMediaType()).body(reportData);
-        } catch (Exception e) {
-            Double duration = (System.nanoTime() - startTime) / 1E9;
-            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/user/getCheckoutReport", duration, e.getMessage());
-            record.setStatus("ERROR");
-            record.setUser(SecurityManager.getCurrentUser());
-            record.setPath("/user/getCheckoutReport");
-            record.setDuration(duration);
-            record.setMessage(e.getMessage());
-            record.setDate(new Date());
-            logsRepository.save(record);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }

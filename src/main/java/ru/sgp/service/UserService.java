@@ -1,8 +1,8 @@
 package ru.sgp.service;
 
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
@@ -17,14 +17,11 @@ import ru.sgp.model.*;
 import ru.sgp.repository.*;
 
 import java.io.ByteArrayOutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
-
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -33,16 +30,13 @@ public class UserService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private RoleRepository roleRepository;
-    Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private GuestRepository guestRepository;
     @Autowired
     private HotelRepository hotelRepository;
     @Autowired
     private CommendantsRepository commendantsRepository;
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
+    Logger logger = LoggerFactory.getLogger(UserController.class);
     public UserDTO getCurrent() {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         UserDTO userDTO = new UserDTO();
@@ -56,7 +50,6 @@ public class UserService {
         userDTO.setFio(user.getEmployee().getLastname() + " " + user.getEmployee().getFirstname().charAt(0) + ". " + user.getEmployee().getSecondName().charAt(0) + ".");
         return userDTO;
     }
-
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -66,7 +59,6 @@ public class UserService {
         exporter.exportReport();
         return outputStream.toByteArray();
     }
-
     @Transactional
     public List<UserDTO> getAll() {
         List<UserDTO> response = new ArrayList<>();
@@ -96,7 +88,6 @@ public class UserService {
         }
         return response;
     }
-
     @Transactional
     public UserDTO create(UserDTO userDTO) {
         User user = new User();
@@ -129,7 +120,6 @@ public class UserService {
         }
         return userDTO;
     }
-
     @Transactional
     public UserDTO update(UserDTO userDTO) {
         User user = userRepository.getById(userDTO.getId());
@@ -160,81 +150,6 @@ public class UserService {
         userRepository.save(user);
         return userDTO;
     }
-
-    @Transactional
-    public byte[] getCheckoutReport(Long guestId, Integer roomNumber, String periodStartStr, String periodEndStr) throws JRException, ParseException {
-        Date dateStart = dateTimeFormatter.parse(periodStartStr);
-        Date dateFinish = dateTimeFormatter.parse(periodEndStr);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        Guest guest = guestRepository.getById(guestId);
-        Room room = guest.getBed().getRoom();
-        Flat flat = room.getFlat();
-        Hotel hotel = flat.getHotel();
-        Filial filial = hotel.getFilial();
-        JasperReport jasperReport;
-        if (filial.getId() == 930L)
-            jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/CheckoutReportUEZS.jrxml"));
-        else
-            jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/CheckoutReportGeneral.jrxml"));
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("filial", filial.getName());
-        parameters.put("hotelName", hotel.getName());
-        parameters.put("hotelLocation", hotel.getLocation());
-        parameters.put("reportNumber", filial.getCode().toString() + "/" + guest.getId().toString()); // 1930 + id guest
-        parameters.put("reportDate", dateFormat.format(new Date()));
-        parameters.put("fioFull", guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
-        parameters.put("fio", guest.getLastname() + " " + guest.getFirstname().charAt(0) + ". " + guest.getSecondName().charAt(0) + ".");
-        if (guest.getEmployee() != null) {
-            parameters.put("tabnum", guest.getEmployee().getTabnum().toString());
-        } else parameters.put("tabnum", "");
-        if (guest.getEmployee() != null) {
-            Filial guestFilial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
-            String guestJob = guestFilial.getName();
-            parameters.put("guestJob", guestJob);
-        } else {
-            if (guest.getOrganization() != null)
-            parameters.put("guestJob", guest.getOrganization().getName());
-            else parameters.put("guestJob", "");
-        }
-        String username = ru.sgp.utils.SecurityManager.getCurrentUser();
-        User user = userRepository.findByUsername(username);
-        Employee respEmp = user.getEmployee();
-        parameters.put("respName", respEmp.getLastname() + " " + respEmp.getFirstname().charAt(0) + ". " + respEmp.getSecondName().charAt(0) + ".");
-        parameters.put("roomNumber", flat.getName());
-        parameters.put("korpusNumber", "");
-        parameters.put("checkInDate", dateFormat.format(dateStart));
-        parameters.put("checkInTime", timeFormat.format(dateStart));
-        parameters.put("checkOutDate", dateFormat.format(dateFinish));
-        parameters.put("checkOutTime", timeFormat.format(dateFinish));
-        if (dateFormat.format(guest.getDateFinish()).equals(dateFormat.format(dateFinish))) {
-            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
-            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
-            String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS));
-            if (filial.getId() == 930L) {
-                Double hoursCount = (double) TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS) / 60;
-                parameters.put("daysCount", String.valueOf((int)(hoursCount /6)*0.25));
-            } else
-                parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
-        } else {
-            Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(dateStart));
-            Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
-            String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1);
-            if (filial.getId() == 930L) {
-                Long hoursCount = TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS);
-                parameters.put("daysCount", String.valueOf((int)((double)hoursCount /6)*0.25));
-            } else
-                parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
-        }
-        parameters.put("date", dateFormat.format(new Date()));
-        if (filial.getId() == 930L) {
-            parameters.put("date", dateFormat.format(dateFinish));
-            parameters.put("reportDate", dateFormat.format(dateFinish));
-        }
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
-        return export(jasperPrint);
-    }
-
     @Transactional
     public UserDTO updateRole(Long roleId) {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();

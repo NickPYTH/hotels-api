@@ -86,11 +86,12 @@ public class RoomController {
         }
     }
     @GetMapping(path = "/getAvailableBedWithRoomByFlatId")
-    public ResponseEntity<BedDTO> getAvailableBedWithRoomByFlatId(@RequestParam Long flatId, @RequestParam String dateStart, @RequestParam String dateFinish) {
+    public ResponseEntity<BedDTO> getAvailableBedWithRoomByFlatId(@RequestParam Long flatId, @RequestParam String dateStart, @RequestParam String dateFinish) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        BedDTO response = roomService.getAvailableBedWithRoomByFlatId(flatId, dateStart, dateFinish);
+
         try {
-            BedDTO response = roomService.getAvailableBedWithRoomByFlatId(flatId, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/room/getAvailableBedWithRoomByFlatId", duration, "");
             record.setStatus("OK");

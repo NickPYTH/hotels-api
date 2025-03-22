@@ -33,9 +33,9 @@ public class RoomService {
     ReservationRepository reservationRepository;
     @Autowired
     FlatLocksRepository flatLocksRepository;
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Transactional
     public List<BedDTO> getAllBeds(Long roomId, String dateStartStr, String dateFinishStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Room room = roomRepository.findById(roomId).orElse(null);
         List<BedDTO> beds = new ArrayList<>();
         Date dateStart = null;
@@ -76,6 +76,7 @@ public class RoomService {
     }
     @Transactional
     public List<RoomDTO> getAllByFlatId(Long flatId, String dateStartStr, String dateFinishStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Flat flat = flatRepository.getById(flatId);
         List<RoomDTO> response = new ArrayList<>();
         Date dateStart = null;
@@ -119,6 +120,7 @@ public class RoomService {
     }
     @Transactional
     public BedDTO getAvailableBedWithRoomByFlatId(Long flatId, String dateStartStr, String dateFinishStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Flat flat = flatRepository.getById(flatId);
         Date dateStart = dateTimeFormatter.parse(dateStartStr);
         Date dateFinish = dateTimeFormatter.parse(dateFinishStr);
