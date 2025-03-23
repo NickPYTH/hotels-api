@@ -64,8 +64,9 @@ public class GuestService {
         // Определение места в зависимости от того существует оно или это будущее доп. место (свойство isExtra=true)
         Bed bed = null;
         Boolean isExtra = false;
-        if (guestDTO.getBedId() != null) {
-            bed = bedRepository.getById(guestDTO.getBedId());
+        if (guestDTO.getBed().getId() != null) {
+            bed = bedRepository.getById(guestDTO.getBed().getId());
+            guestDTO.setBed(MyMapper.BedToBedDTO(bed));
             isExtra = bed.getIsExtra();
         }
         else {
@@ -112,6 +113,7 @@ public class GuestService {
             guest.setOrganization(org);
             guest.setEmployee(null);
         }
+        guestDTO.setOrganizationName(guest.getOrganization().getName());
         // -----
 
         // Заполняем простые поля
@@ -126,7 +128,7 @@ public class GuestService {
 
         if (bed.getRoom() == null){
             // Значит это доп. место
-            Room room = roomRepository.getById(guestDTO.getRoomId());
+            Room room = roomRepository.getById(guestDTO.getBed().getRoom().getId());
             Bed extraBed = new Bed();
             extraBed.setIsExtra(true);
             extraBed.setRoom(room);
@@ -166,11 +168,7 @@ public class GuestService {
                     tmp.setLastname(guest.getEmployee().getLastname());
                     tmp.setFirstname(guest.getEmployee().getFirstname());
                     tmp.setSecondName(guest.getEmployee().getSecondName());
-                    tmp.setFilialName(reservationTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-                    tmp.setHotelName(reservationTmp.getBed().getRoom().getFlat().getHotel().getName());
-                    tmp.setFlatName(reservationTmp.getBed().getRoom().getFlat().getName());
-                    tmp.setRoomName(reservationTmp.getBed().getRoom().getName());
-                    tmp.setBedName(reservationTmp.getBed().getName());
+                    tmp.setBed(MyMapper.BedToBedDTO(reservationTmp.getBed()));
                     tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
                     tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
                     response.add(tmp);
@@ -187,11 +185,7 @@ public class GuestService {
                 tmp.setLastname(guest.getEmployee().getLastname());
                 tmp.setFirstname(guest.getEmployee().getFirstname());
                 tmp.setSecondName(guest.getEmployee().getSecondName());
-                tmp.setFilialName(reservationTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-                tmp.setHotelName(reservationTmp.getBed().getRoom().getFlat().getHotel().getName());
-                tmp.setFlatName(reservationTmp.getBed().getRoom().getFlat().getName());
-                tmp.setRoomName(reservationTmp.getBed().getRoom().getName());
-                tmp.setBedName(reservationTmp.getBed().getName());
+                tmp.setBed(MyMapper.BedToBedDTO(reservationTmp.getBed()));
                 tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
                 tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
                 response.add(tmp);
@@ -212,11 +206,7 @@ public class GuestService {
                 tmp.setLastname(guestTmp.getLastname());
                 tmp.setFirstname(guestTmp.getFirstname());
                 tmp.setSecondName(guestTmp.getSecondName());
-                tmp.setFilialName(guestTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-                tmp.setHotelName(guestTmp.getBed().getRoom().getFlat().getHotel().getName());
-                tmp.setFlatName(guestTmp.getBed().getRoom().getFlat().getName());
-                tmp.setRoomName(guestTmp.getBed().getRoom().getName());
-                tmp.setBedName(guestTmp.getBed().getName());
+                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
                 tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
                 tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
                 response.add(tmp);
@@ -237,11 +227,7 @@ public class GuestService {
                 tmp.setLastname(guestTmp.getLastname());
                 tmp.setFirstname(guestTmp.getFirstname());
                 tmp.setSecondName(guestTmp.getSecondName());
-                tmp.setFilialName(guestTmp.getBed().getRoom().getFlat().getHotel().getFilial().getName());
-                tmp.setHotelName(guestTmp.getBed().getRoom().getFlat().getHotel().getName());
-                tmp.setFlatName(guestTmp.getBed().getRoom().getFlat().getName());
-                tmp.setRoomName(guestTmp.getBed().getRoom().getName());
-                tmp.setBedName(guestTmp.getBed().getName());
+                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
                 tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
                 tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
                 response.add(tmp);
@@ -306,11 +292,6 @@ public class GuestService {
 
         guestRepository.save(guest); // Сохраняем
         guestDTO.setId(guest.getId());
-        if (!isExtra) {
-            guestDTO.setRoomName(guest.getBed().getRoom().getName());
-            guestDTO.setFlatName(guest.getBed().getRoom().getFlat().getName());
-        }
-        guestDTO.setBedName(guest.getBed().getName());
         response.add(guestDTO); // Добавляем обновленную сущность для логов
         return response;
     }

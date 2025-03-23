@@ -1102,7 +1102,7 @@ public class ReportService {
         return export(jasperPrint);
     }
     @Transactional
-    public byte[] getCheckoutReport(Long guestId, Integer roomNumber, String periodStartStr, String periodEndStr) throws JRException, ParseException {
+    public byte[] getCheckoutReport(Long guestId, String periodStartStr, String periodEndStr) throws JRException, ParseException {
         Date dateStart = dateTimeFormatter.parse(periodStartStr);
         Date dateFinish = dateTimeFormatter.parse(periodEndStr);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");

@@ -63,7 +63,6 @@ public class FilialService {
     RoomLocksRepository roomLocksRepository;
     @Autowired
     FlatLocksRepository flatLocksRepository;
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Transactional
     public List<FilialDTO> getAll() throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
@@ -71,6 +70,7 @@ public class FilialService {
     }
     @Transactional
     public List<FilialDTO> getAllWithStats(String dateStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date date = dateTimeFormatter.parse(dateStr);
         List<FilialDTO> response = new ArrayList<>();
         for (Filial filial : filialRepository.findAll()) {

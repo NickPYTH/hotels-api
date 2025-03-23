@@ -13,14 +13,6 @@ public class GuestDTO {
     private String note;
     private String dateStart;
     private String dateFinish;
-    private Long roomId;
-    private String roomName;
-    private Long flatId;
-    private String flatName;
-    private Long hotelId;
-    private String hotelName;
-    private Long filialId;
-    private String filialName;
     private String filialEmployee;
     private Long organizationId;
     private String organizationName;
@@ -37,8 +29,6 @@ public class GuestDTO {
     private Boolean checkouted;
     private String contractNumber;
     private Long contractId;
-    private Long bedId;
-    private String bedName;
     private BedDTO bed;
     private EventDTO event;
     private FilialDTO fromFilial;

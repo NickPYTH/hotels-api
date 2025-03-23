@@ -27,10 +27,6 @@ public class Flat {
     @Column(name = "tech")
     private Boolean tech;
 
-//    @OneToOne
-//    @JoinColumn(name = "status")
-//    private Status status;
-
     @OneToOne
     @JoinColumn(name = "hotel")
     private Hotel hotel;

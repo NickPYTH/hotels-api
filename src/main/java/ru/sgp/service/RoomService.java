@@ -8,6 +8,7 @@ import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.RoomDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
+import ru.sgp.utils.MyMapper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,9 +66,7 @@ public class RoomService {
                     additionalInfo = roomLocks.get(0).getStatus().getId() == 3L ? "roomOrg" : "roomLock";
                 }
             }
-
-            BedDTO bedDTO = new BedDTO();
-            bedDTO.setId(bed.getId());
+            BedDTO bedDTO = MyMapper.BedToBedDTO(bed);
             if (isVacant == null) bedDTO.setName(bed.getName());
             else bedDTO.setName(bed.getName() + " " + isVacant + " " + additionalInfo);
             beds.add(bedDTO);

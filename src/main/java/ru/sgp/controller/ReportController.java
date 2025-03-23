@@ -467,11 +467,11 @@ public class ReportController {
         }
     }
     @GetMapping(path = "/getCheckoutReport")
-    public ResponseEntity<byte[]> getCheckoutReport(@RequestParam Long id, @RequestParam Integer roomNumber, @RequestParam String periodStart, @RequestParam String periodEnd) {
+    public ResponseEntity<byte[]> getCheckoutReport(@RequestParam Long id, @RequestParam String periodStart, @RequestParam String periodEnd) {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            byte[] reportData = reportService.getCheckoutReport(id, roomNumber, periodStart, periodEnd);
+            byte[] reportData = reportService.getCheckoutReport(id, periodStart, periodEnd);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getCheckoutReport", duration, "");
             record.setStatus("OK");

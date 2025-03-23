@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sgp.dto.*;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
+import ru.sgp.utils.MyMapper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,19 +30,19 @@ public class FlatService {
     @Autowired
     RoomRepository roomRepository;
     @Autowired
-    private PostRepository postRepository;
+    PostRepository postRepository;
     @Autowired
     StatusRepository statusRepository;
     @Autowired
-    private BedRepository bedRepository;
+    BedRepository bedRepository;
     @Autowired
-    private RoomLocksRepository roomLocksRepository;
+    RoomLocksRepository roomLocksRepository;
     @Autowired
-    private FlatLocksRepository flatLocksRepository;
+    FlatLocksRepository flatLocksRepository;
     @Autowired
-    private ReservationRepository reservationRepository;
+    ReservationRepository reservationRepository;
     @Autowired
-    private EmployeeRepository employeeRepository;
+    EmployeeRepository employeeRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH");
@@ -87,50 +88,8 @@ public class FlatService {
 
                 // Получаем записи о проживании
                 for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date)) {
-                    GuestDTO guestDTO = new GuestDTO();
-                    guestDTO.setId(guest.getId());
-                    guestDTO.setFirstname(guest.getFirstname());
-                    guestDTO.setLastname(guest.getLastname());
-                    guestDTO.setSecondName(guest.getSecondName());
-                    guestDTO.setBedName(guest.getBed().getName());
-                    guestDTO.setBedId(guest.getBed().getId());
-                    guestDTO.setRoomId(room.getId());
-                    if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
-                    guestDTO.setRoomName(room.getName());
-                    guestDTO.setFlatId(room.getFlat().getId());
-                    guestDTO.setFlatName(flat.getName());
-                    guestDTO.setFilialId(flat.getHotel().getFilial().getId());
-                    guestDTO.setFilialName(flat.getHotel().getFilial().getName());
-                    guestDTO.setHotelId(flat.getHotel().getId());
-                    guestDTO.setHotelName(flat.getHotel().getName());
-                    guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-                    guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-                    guestDTO.setNote(guest.getNote());
-                    guestDTO.setRegPoMestu(guest.getRegPoMestu());
-                    guestDTO.setMemo(guest.getMemo());
+                    GuestDTO guestDTO = MyMapper.GuestToGuestDTO(guest);
                     guestDTO.setIsReservation(false);
-                    if (guest.getContract() != null) {
-                        if (guest.getContract().getReason() != null)
-                            guestDTO.setReason(guest.getContract().getReason().getName());
-                        guestDTO.setBilling(guest.getContract().getBilling());
-                    }
-                    guestDTO.setMale(guest.getMale());
-                    guestDTO.setCheckouted(guest.getCheckouted());
-                    if (guest.getEmployee() != null) {
-                        if (guest.getEmployee().getIdPoststaff() != null) {
-                            Optional<Post> post = postRepository.findById(guest.getEmployee().getIdPoststaff().longValue());
-                            post.ifPresent(value -> guestDTO.setPost(value.getName()));
-                        }
-                        Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
-                        guestDTO.setFilialEmployee(filial.getName());
-                        guestDTO.setTabnum(guest.getEmployee().getTabnum());
-                    } else {
-                        if (guest.getOrganization() != null) {
-                            guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                            guestDTO.setOrganizationId(guest.getOrganization().getId());
-                            guestDTO.setOrganizationName(guest.getOrganization().getName());
-                        }
-                    }
                     guestDTOList.add(guestDTO);
                 }
                 // -----
@@ -143,16 +102,7 @@ public class FlatService {
                     guestDTO.setFirstname(employee!=null?employee.getFirstname():reservation.getFirstname());
                     guestDTO.setLastname(employee!=null?employee.getLastname():reservation.getLastname());
                     guestDTO.setSecondName(employee!=null?employee.getSecondName():reservation.getSecondname());
-                    guestDTO.setBedName(reservation.getBed().getName());
-                    guestDTO.setBedId(reservation.getBed().getId());
-                    guestDTO.setRoomId(room.getId());
-                    guestDTO.setRoomName(room.getName());
-                    guestDTO.setFlatId(room.getFlat().getId());
-                    guestDTO.setFlatName(flat.getName());
-                    guestDTO.setFilialId(flat.getHotel().getFilial().getId());
-                    guestDTO.setFilialName(flat.getHotel().getFilial().getName());
-                    guestDTO.setHotelId(flat.getHotel().getId());
-                    guestDTO.setHotelName(flat.getHotel().getName());
+                    guestDTO.setBed(MyMapper.BedToBedDTO(reservation.getBed()));
                     guestDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
                     guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
                     guestDTO.setNote(reservation.getNote());
@@ -232,44 +182,19 @@ public class FlatService {
 
             // Получаем записи о проживании
             for (Guest guest : guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(room, date, date)) {
-                GuestDTO guestDTO = new GuestDTO();
-                guestDTO.setId(guest.getId());
-                guestDTO.setFirstname(guest.getFirstname());
-                guestDTO.setLastname(guest.getLastname());
-                guestDTO.setSecondName(guest.getSecondName());
-                guestDTO.setRoomId(room.getId());
-                guestDTO.setRoomName(room.getName());
-                guestDTO.setFlatId(flatId);
-                guestDTO.setFlatName(flat.getName());
-                guestDTO.setFilialId(flat.getHotel().getFilial().getId());
-                guestDTO.setFilialName(flat.getHotel().getFilial().getName());
-                guestDTO.setHotelId(flat.getHotel().getId());
-                guestDTO.setHotelName(flat.getHotel().getName());
-                guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-                guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-                guestDTO.setNote(guest.getNote());
-                guestDTO.setRegPoMestu(guest.getRegPoMestu());
-                guestDTO.setMemo(guest.getMemo());
-                if (guest.getContract() != null) {
-                    guestDTO.setReason(guest.getContract().getReason().getName());
-                    guestDTO.setBilling(guest.getContract().getBilling());
-                }
-                guestDTO.setCheckouted(guest.getCheckouted());
-                guestDTO.setBedName(guest.getBed().getName());
-                guestDTO.setBedId(guest.getBed().getId());
+                GuestDTO guestDTO = MyMapper.GuestToGuestDTO(guest);
+                // Остальные поля вычисляются и не заполняются MyMapper
                 Date cuttedStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
                 Date cuttedFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
                 String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedFinishDate.getTime() - cuttedStartDate.getTime(), TimeUnit.MILLISECONDS));
                 guestDTO.setDaysCount(daysCount);
                 if (guest.getContract() != null) {
-                    guestDTO.setContractId(guest.getContract().getId());
                     guestDTO.setCostByNight(guest.getContract().getCost());
                     if (Integer.parseInt(guestDTO.getDaysCount()) > 0)
                         guestDTO.setCost(guestDTO.getCostByNight() * Integer.parseInt(guestDTO.getDaysCount()));
                     else
                         guestDTO.setCost(guestDTO.getCostByNight());
                 }
-                guestDTO.setMale(guest.getMale());
                 if (guest.getEmployee() != null) {
                     Filial filial = filialRepository.findByCode(guest.getEmployee().getIdFilial());
                     String guestPost = "";
@@ -280,17 +205,8 @@ public class FlatService {
                     }
                     guestDTO.setFilialEmployee(filial.getName());
                     guestDTO.setPost(guestPost);
-                    guestDTO.setTabnum(guest.getEmployee().getTabnum());
-                } else {
-                    if (guest.getOrganization() != null) {
-                        guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                        guestDTO.setOrganizationId(guest.getOrganization().getId());
-                        guestDTO.setOrganizationName(guest.getOrganization().getName());
-                    }
                 }
                 guestDTO.setIsReservation(false);
-                if (guest.getFamilyMemberOfEmployee() != null)
-                    guestDTO.setFamilyMemberOfEmployee(guest.getFamilyMemberOfEmployee().getTabnum());
                 guestDTOList.add(guestDTO);
             }
             // -----
@@ -307,16 +223,7 @@ public class FlatService {
                 guestDTO.setBed(modelMapper.map(reservation.getBed(), BedDTO.class));
                 guestDTO.setEvent(modelMapper.map(reservation.getEvent(), EventDTO.class));
                 guestDTO.setFromFilial(modelMapper.map(reservation.getFromFilial(), FilialDTO.class));
-                guestDTO.setBedName(reservation.getBed().getName());
-                guestDTO.setBedId(reservation.getBed().getId());
-                guestDTO.setRoomId(room.getId());
-                guestDTO.setRoomName(room.getName());
-                guestDTO.setFlatId(room.getFlat().getId());
-                guestDTO.setFlatName(flat.getName());
-                guestDTO.setFilialId(flat.getHotel().getFilial().getId());
-                guestDTO.setFilialName(flat.getHotel().getFilial().getName());
-                guestDTO.setHotelId(flat.getHotel().getId());
-                guestDTO.setHotelName(flat.getHotel().getName());
+                guestDTO.setBed(MyMapper.BedToBedDTO(reservation.getBed()));
                 guestDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
                 guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
                 guestDTO.setNote(reservation.getNote());
@@ -347,8 +254,7 @@ public class FlatService {
         Flat flat = flatRepository.getById(flatId);
         flat.setTech(!flat.getTech());
         flatRepository.save(flat);
-        FlatDTO flatDTO = new FlatDTO();
-        return flatDTO;
+        return new FlatDTO();
     }
     @Transactional
     public FlatDTO updateNote(FlatDTO flatDTO) {
@@ -508,30 +414,8 @@ public class FlatService {
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
             for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
                 for (Guest guest : guestRepository.findAllByBedRoomAndDateFinishLessThanEqualAndCheckouted(room, date, false)) {
-                    GuestDTO guestDTO = new GuestDTO();
-                    guestDTO.setId(guest.getId());
-                    guestDTO.setFirstname(guest.getFirstname());
-                    guestDTO.setLastname(guest.getLastname());
-                    guestDTO.setSecondName(guest.getSecondName());
-                    guestDTO.setRoomId(room.getId());
-                    guestDTO.setRoomName(room.getName());
-                    guestDTO.setFlatId(room.getFlat().getId());
-                    guestDTO.setFlatName(flat.getName());
-                    guestDTO.setFilialId(flat.getHotel().getFilial().getId());
-                    guestDTO.setFilialName(flat.getHotel().getFilial().getName());
-                    guestDTO.setHotelId(flat.getHotel().getId());
-                    guestDTO.setHotelName(flat.getHotel().getName());
-                    guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-                    guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
-                    guestDTO.setNote(guest.getNote());
-                    guestDTO.setRegPoMestu(guest.getRegPoMestu());
-                    guestDTO.setMemo(guest.getMemo());
-                    if (guest.getContract() != null) {
-                        guestDTO.setReason(guest.getContract().getReason().getName());
-                        guestDTO.setBilling(guest.getContract().getBilling());
-                    }
-                    guestDTO.setMale(guest.getMale());
-                    guestDTO.setCheckouted(guest.getCheckouted());
+                    GuestDTO guestDTO = MyMapper.GuestToGuestDTO(guest);
+                    // Остальные поля вычисляются и не заполняются MyMapper
                     Integer daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
                     guestDTO.setDaysCount(daysCount == 0 ? "1" : daysCount.toString());
                     if (guest.getContract() != null) {
@@ -548,12 +432,6 @@ public class FlatService {
                         guestDTO.setPost(guestPost);
                         guestDTO.setFilialEmployee(filial.getName());
                         guestDTO.setTabnum(guest.getEmployee().getTabnum());
-                    } else {
-                        if (guest.getOrganization() != null) {
-                            guestDTO.setFilialEmployee(guest.getOrganization().getName());
-                            guestDTO.setOrganizationId(guest.getOrganization().getId());
-                            guestDTO.setOrganizationName(guest.getOrganization().getName());
-                        }
                     }
                     response.add(guestDTO);
                 }
