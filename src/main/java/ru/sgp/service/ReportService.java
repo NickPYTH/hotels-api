@@ -662,8 +662,6 @@ public class ReportService {
             contractDTO.setBilling(contract.getBilling());
             if (contract.getNote() != null) contractDTO.setNote(contract.getNote());
             else contractDTO.setNote("");
-            if (contract.getRoomNumber() != null) contractDTO.setRoomName(contract.getRoomNumber().toString());
-            else contractDTO.setRoomName("");
             contractDTO.setYear(contract.getYear());
             reportData.add(contractDTO);
         }

@@ -1,14 +1,24 @@
 package ru.sgp.utils;
 
+import org.modelmapper.ModelMapper;
 import ru.sgp.dto.*;
-import ru.sgp.model.Bed;
-import ru.sgp.model.Employee;
-import ru.sgp.model.Guest;
+import ru.sgp.model.*;
 
 import java.text.SimpleDateFormat;
 
 public class MyMapper {
+    public static OrganizationDTO OrganizationToOrganizationDTO(Organization organization) {
+        if (organization == null) return null;
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(organization, OrganizationDTO.class);
+    }
+    public static ContractDTO ContractToContractDTO(Contract contract) {
+        if (contract == null) return null;
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(contract, ContractDTO.class);
+    }
     public static BedDTO BedToBedDTO(Bed bed) {
+        if (bed == null) return null;
         FilialDTO filialDTO = new FilialDTO();
         filialDTO.setId(bed.getRoom().getFlat().getHotel().getFilial().getId());
         filialDTO.setName(bed.getRoom().getFlat().getHotel().getFilial().getName());
@@ -36,6 +46,7 @@ public class MyMapper {
         return bedDTO;
     }
     public static GuestDTO GuestToGuestDTO(Guest guest) {
+        if (guest == null) return null;
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         GuestDTO guestDTO = new GuestDTO();
         if (guest.getEmployee() != null) {
@@ -43,7 +54,7 @@ public class MyMapper {
             guestDTO.setTabnum(employee.getTabnum());
             guestDTO.setFilialEmployee(employee.getIdFilial().toString());
         }
-        if (guest.getContract() != null) guestDTO.setContractId(guest.getContract().getId());
+        if (guest.getContract() != null) guestDTO.setContract(ContractToContractDTO(guest.getContract()));
         guestDTO.setId(guest.getId());
         guestDTO.setFirstname(guest.getFirstname());
         guestDTO.setLastname(guest.getLastname());
@@ -55,16 +66,7 @@ public class MyMapper {
         guestDTO.setMemo(guest.getMemo());
         guestDTO.setMale(guest.getMale());
         guestDTO.setCheckouted(guest.getCheckouted());
-        if (guest.getContract() != null) {
-            guestDTO.setContractId(guest.getContract().getId());
-            guestDTO.setBilling(guest.getContract().getBilling());
-            guestDTO.setReason(guest.getContract().getReason().getName());
-        }
-        if (guest.getOrganization() != null) {
-            guestDTO.setFilialEmployee(guest.getOrganization().getName());
-            guestDTO.setOrganizationId(guest.getOrganization().getId());
-            guestDTO.setOrganizationName(guest.getOrganization().getName());
-        }
+        guestDTO.setOrganization(MyMapper.OrganizationToOrganizationDTO(guest.getOrganization()));
         if (guest.getFamilyMemberOfEmployee() != null)
             guestDTO.setFamilyMemberOfEmployee(guest.getFamilyMemberOfEmployee().getTabnum());
         guestDTO.setRegPoMestu(guest.getRegPoMestu());

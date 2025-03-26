@@ -109,11 +109,10 @@ public class GuestService {
             Organization gts = organizationRepository.getById(11L); // Организация - ГТС
             guest.setOrganization(gts);
         } else {
-            Organization org = organizationRepository.getById(guestDTO.getOrganizationId());
+            Organization org = organizationRepository.getById(guestDTO.getOrganization().getId());
             guest.setOrganization(org);
             guest.setEmployee(null);
         }
-        guestDTO.setOrganizationName(guest.getOrganization().getName());
         // -----
 
         // Заполняем простые поля
@@ -146,8 +145,8 @@ public class GuestService {
         //
 
         // Устанавливаем договор
-        if (guestDTO.getContractId() != null) {
-            Contract contract = contractRepository.getById(guestDTO.getContractId());
+        if (guestDTO.getContract() != null) {
+            Contract contract = contractRepository.getById(guestDTO.getContract().getId());
             guest.setContract(contract);
         } else {
             guest.setContract(null);
@@ -304,7 +303,7 @@ public class GuestService {
         List<Guest> guests;
         // Если роль Администратор или Работник ОСР, отдаем все записи
         if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
-            guests = guestRepository.findAll();
+            guests = guestRepository.findTop3000By();
         } else {
             // Если дежурный или работник филиала, то отдаем записи по филиалу работника/дежурного по скольку их место работы 99% совпадает с филиалом общежития
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());

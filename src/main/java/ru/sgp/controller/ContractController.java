@@ -33,7 +33,7 @@ public class ContractController {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            ContractDTO response = contractService.create(contractDTO);
+            ContractDTO response = contractService.update(contractDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/contract/create", duration, "");
             record.setStatus("OK");

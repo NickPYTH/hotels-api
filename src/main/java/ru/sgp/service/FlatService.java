@@ -419,7 +419,7 @@ public class FlatService {
                     Integer daysCount = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(guest.getDateFinish().getTime() - guest.getDateStart().getTime(), TimeUnit.MILLISECONDS)));
                     guestDTO.setDaysCount(daysCount == 0 ? "1" : daysCount.toString());
                     if (guest.getContract() != null) {
-                        guestDTO.setContractNumber(guest.getContract().getDocnum());
+                        guestDTO.setContract(MyMapper.ContractToContractDTO(guest.getContract()));
                         guestDTO.setCostByNight(guest.getContract().getCost());
                         if (daysCount == 0)
                             guestDTO.setCost(guest.getContract().getCost());
