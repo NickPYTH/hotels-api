@@ -112,7 +112,7 @@ public class RoomService {
             if (isVacant == null) roomDTO.setName(room.getName());
             else roomDTO.setName(room.getName() + " " + isVacant + " " + additionalInfo);
             roomDTO.setBedsCount(room.getBedsCount());
-            roomDTO.setFlatId(flatId);
+            roomDTO.setFlat(MyMapper.FlatToFlatDTO(flat));
             response.add(roomDTO);
         }
         return response;

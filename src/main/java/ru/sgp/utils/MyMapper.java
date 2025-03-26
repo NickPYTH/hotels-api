@@ -1,12 +1,18 @@
 package ru.sgp.utils;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import ru.sgp.dto.*;
 import ru.sgp.model.*;
 
 import java.text.SimpleDateFormat;
 
 public class MyMapper {
+    public static StatusDTO StatusToStatusDTO(Status status) {
+        if (status == null) return null;
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(status, StatusDTO.class);
+    }
     public static OrganizationDTO OrganizationToOrganizationDTO(Organization organization) {
         if (organization == null) return null;
         ModelMapper modelMapper = new ModelMapper();
@@ -44,6 +50,30 @@ public class MyMapper {
         bedDTO.setRoom(roomDTO);
 
         return bedDTO;
+    }
+    public static RoomDTO RoomToRoomDTO(Room room) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        if (room == null) return null;
+        return modelMapper.map(room, RoomDTO.class);
+    }
+    public static FlatDTO FlatToFlatDTO(Flat flat) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        if (flat == null) return null;
+        return modelMapper.map(flat, FlatDTO.class);
+    }
+    public static HotelDTO HotelToHotelDTO(Hotel hotel) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        if (hotel == null) return null;
+        return modelMapper.map(hotel, HotelDTO.class);
+    }
+    public static FilialDTO FilialToFilialDTO(Filial filial) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        if (filial == null) return null;
+        return modelMapper.map(filial, FilialDTO.class);
     }
     public static GuestDTO GuestToGuestDTO(Guest guest) {
         if (guest == null) return null;

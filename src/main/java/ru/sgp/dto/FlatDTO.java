@@ -9,19 +9,16 @@ public class FlatDTO {
     private Long id;
     private String name;
     private Integer floor;
-    private Long statusId;
-    private String status;
-    private Long hotelId;
-    private String hotelName;
-    private Long filialId;
+    private String note;
+    private Boolean tech;
+    private HotelDTO hotel;
+    private CategoryDTO category;
+
+    // Вычисляемые поля
+    private StatusDTO status;
     private Integer roomsCount;
     private Integer bedsCount;
     private Integer emptyBedsCount;
-    private Long categoryId;
-    private String category;
-    private String note;
-    private Boolean tech;
     private Long flatLockId;
     private List<RoomDTO> rooms;
-    private HotelDTO hotel;
 }

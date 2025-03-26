@@ -8,12 +8,12 @@ import java.util.List;
 public class HotelDTO {
     private Long id;
     private String name;
-    private Long filialId;
-    private String filialName;
+    private String location;
+    private FilialDTO filial;
+
+    // Вычисляемые поля
     private Integer bedsCount;
     private Integer emptyBedsCount;
     private Integer busyBedsCount;
     private Integer flatsCount;
-    private String location;
-    private FilialDTO filial;
 }

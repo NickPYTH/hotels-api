@@ -9,9 +9,12 @@ public class FilialDTO {
     private Long id;
     private String name;
     private Integer code;
+    private String boss;
+    private Boolean excluded;
+
+    // Вычисляемые поля
     private List<HotelDTO> hotels;
     private Integer bedsCount;
     private Integer emptyBedsCount;
     private Integer emptyBedsCountWithBusy;
-    private Boolean excluded;
 }

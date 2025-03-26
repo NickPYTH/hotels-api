@@ -52,18 +52,8 @@ public class FlatService {
         Date date = dateTimeFormatter.parse(dateStr);
         List<FlatDTO> response = new ArrayList<>();
         for (Flat flat : flatRepository.findAllByHotelOrderById(hotel)) {
-            FlatDTO flatDTO = new FlatDTO();
-            flatDTO.setId(flat.getId());
-            flatDTO.setName(flat.getName());
-            flatDTO.setFloor(flat.getFloor());
-            flatDTO.setHotelName(hotel.getName());
-            flatDTO.setFilialId(hotel.getFilial().getId());
+            FlatDTO flatDTO = MyMapper.FlatToFlatDTO(flat);
             flatDTO.setRoomsCount(roomRepository.findAllByFlatOrderById(flat).size());
-            flatDTO.setTech(flat.getTech());
-            if (flat.getCategory() != null) {
-                flatDTO.setCategory(flat.getCategory().getName());
-                flatDTO.setCategoryId(flat.getCategory().getId());
-            }
             int bedsCount = 0;
             int emptyBedsCount = 0;
             List<RoomDTO> roomDTOList = new ArrayList<>();
@@ -71,17 +61,12 @@ public class FlatService {
                 List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
                 bedsCount += room.getBedsCount();
                 emptyBedsCount += room.getBedsCount() - guestRepository.findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(room, date, date).size();
-                RoomDTO roomDTO = new RoomDTO();
-                roomDTO.setId(room.getId());
-                roomDTO.setName(room.getName());
+                RoomDTO roomDTO = MyMapper.RoomToRoomDTO(room);
                 if (!roomLocksList.isEmpty()) {
-                    roomDTO.setStatusId(roomLocksList.get(0).getStatus().getId());
-                    roomDTO.setStatusName(roomLocksList.get(0).getStatus().getName());
+                    roomDTO.setStatus(MyMapper.StatusToStatusDTO(roomLocksList.get(0).getStatus()));
                     roomDTO.setRoomLockId(roomLocksList.get(0).getId());
                 } else {
-                    Status vacant = statusRepository.getById(1L);
-                    roomDTO.setStatusId(vacant.getId());
-                    roomDTO.setStatusName(vacant.getName());
+                    roomDTO.setStatus(MyMapper.StatusToStatusDTO(statusRepository.getById(1L)));
                 }
                 roomDTO.setBedsCount(room.getBedsCount());
                 List<GuestDTO> guestDTOList = new ArrayList<>();
@@ -119,16 +104,11 @@ public class FlatService {
             flatDTO.setEmptyBedsCount(emptyBedsCount);
             List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
             if (!flatLocksList.isEmpty()) {
-                flatDTO.setStatusId(flatLocksList.get(0).getStatus().getId());
-                flatDTO.setStatus(flatLocksList.get(0).getStatus().getName());
+                flatDTO.setStatus(MyMapper.StatusToStatusDTO(flatLocksList.get(0).getStatus()));
                 flatDTO.setFlatLockId(flatLocksList.get(0).getId());
             } else {
-                Status vacant = statusRepository.getById(1L);
-                flatDTO.setStatusId(vacant.getId());
-                flatDTO.setStatus(vacant.getName());
+                flatDTO.setStatus(MyMapper.StatusToStatusDTO(statusRepository.getById(1L)));
             }
-            flatDTO.setHotelId(hotelId);
-            flatDTO.setNote(flat.getNote());
             response.add(flatDTO);
         }
         return response;
@@ -136,47 +116,25 @@ public class FlatService {
     @Transactional
     public FlatDTO get(Long flatId, String dateStr) throws ParseException {
         Flat flat = flatRepository.getById(flatId);
-        FlatDTO flatDTO = new FlatDTO();
+        FlatDTO flatDTO = MyMapper.FlatToFlatDTO(flat);
         Date date = dateTimeFormatter.parse(dateStr);
         List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, flat);
         if (!flatLocksList.isEmpty()) {
-            flatDTO.setStatusId(flatLocksList.get(0).getStatus().getId());
-            flatDTO.setStatus(flatLocksList.get(0).getStatus().getName());
+            flatDTO.setStatus(MyMapper.StatusToStatusDTO(flatLocksList.get(0).getStatus()));
             flatDTO.setFlatLockId(flatLocksList.get(0).getId());
         } else {
-            Status vacant = statusRepository.getById(1L);
-            flatDTO.setStatusId(vacant.getId());
-            flatDTO.setStatus(vacant.getName());
+            flatDTO.setStatus(MyMapper.StatusToStatusDTO(statusRepository.getById(1L)));
         }
-        flatDTO.setId(flatId);
-        flatDTO.setName(flat.getName());
-        flatDTO.setFloor(flat.getFloor());
-        flatDTO.setHotelId(flat.getHotel().getId());
-        if (flat.getCategory() != null) {
-            flatDTO.setCategory(flat.getCategory().getName());
-            flatDTO.setCategoryId(flat.getCategory().getId());
-        }
-        flatDTO.setFilialId(flat.getHotel().getFilial().getId());
-        flatDTO.setNote(flat.getNote());
-        flatDTO.setTech(flat.getTech());
         List<RoomDTO> roomDTOList = new ArrayList<>();
         for (Room room : roomRepository.findAllByFlatOrderById(flat)) {
             List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, room);
-            RoomDTO roomDTO = new RoomDTO();
-            roomDTO.setId(room.getId());
-            roomDTO.setName(room.getName());
+            RoomDTO roomDTO = MyMapper.RoomToRoomDTO(room);
             if (!roomLocksList.isEmpty()) {
-                roomDTO.setStatusId(roomLocksList.get(0).getStatus().getId());
-                roomDTO.setStatusName(roomLocksList.get(0).getStatus().getName());
+                roomDTO.setStatus(MyMapper.StatusToStatusDTO(roomLocksList.get(0).getStatus()));
                 roomDTO.setRoomLockId(roomLocksList.get(0).getId());
             } else {
-                Status vacant = statusRepository.getById(1L);
-                roomDTO.setStatusId(vacant.getId());
-                roomDTO.setStatusName(vacant.getName());
+                roomDTO.setStatus(MyMapper.StatusToStatusDTO(statusRepository.getById(1L)));
             }
-            roomDTO.setFilialId(flat.getHotel().getFilial().getId());
-            roomDTO.setHotelId(flat.getHotel().getId());
-            roomDTO.setFlatId(flatId);
             roomDTO.setBedsCount(room.getBedsCount());
             List<GuestDTO> guestDTOList = new ArrayList<>();
 
