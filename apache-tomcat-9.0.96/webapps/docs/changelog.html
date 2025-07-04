@@ -400,7 +400,7 @@
         or are not currently up are now skipped. (markt)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69121">69121</a>: Ensure that the <code>onComplete()</code> event is
+        <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69121">69121</a>: Ensure that the <code>onComplete()</code> eventKind is
         triggered if <code>AsyncListener.onError()</code> dispatches to a target
         that throws an exception. (markt)
       </li>
@@ -613,7 +613,7 @@
         Deprecate and remove <code>sessionCounter</code> (replaced by the
         addition of the active session count and the expired session count,
         as a reasonable approximation) and <code>duplicates</code> (which
-        does not represent a possible event in current implementations)
+        does not represent a possible eventKind in current implementations)
         statistics from the session manager. (remm)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
@@ -667,7 +667,7 @@
         <code>socket.unlockTimeout</code>. (markt)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        Ensure that the <code>onAllDataRead()</code> event is triggered when the
+        Ensure that the <code>onAllDataRead()</code> eventKind is triggered when the
         request body uses chunked encoding and is read using non-blocking IO.
         (markt)
       </li>
@@ -1725,7 +1725,7 @@
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
         Correct a regression in the fix for <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66574">66574</a> that meant the
         WebSocket session could return false for <code>onOpen()</code> before
-        the <code>onClose()</code> event had been completed. (markt)
+        the <code>onClose()</code> eventKind had been completed. (markt)
       </li>
     </ul>
   </div></div>
@@ -4901,7 +4901,7 @@
         of use in JMX descriptors. (remm)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        Ensure that the <code>AsyncListener.onError()</code> event is triggered
+        Ensure that the <code>AsyncListener.onError()</code> eventKind is triggered
         when a I/O error occurs during non-blocking I/O. There were some cases
         discovered where this was not happening. (markt)
       </li>
@@ -4933,7 +4933,7 @@
         SSL engine was initialized. (remm)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        Ensure that the <code>ReadListener</code>'s <code>onError()</code> event
+        Ensure that the <code>ReadListener</code>'s <code>onError()</code> eventKind
         is triggered if the client closes the connection before sending the
         entire request body and the server is reading the request body using
         non-blocking I/O. (markt)
@@ -5758,7 +5758,7 @@
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
         <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64660">64660</a>: Avoid a potential NPE in the AprEndpoint if a socket
         is closed in one thread at the same time as the poller is processing an
-        event for that socket in another. (markt)
+        eventKind for that socket in another. (markt)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
         <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64671">64671</a>: Avoid several potential NPEs introduced in the changes
@@ -9166,7 +9166,7 @@
         monitors <code>tomcat-users.xml</code> for modifications. (markt)
       </li>
       <li><img alt="Update: " class="icon" src="./images/update.gif">
-        Add periodic event notification for lifecycle listeners configured on
+        Add periodic eventKind notification for lifecycle listeners configured on
         the Server. (remm)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
@@ -9586,7 +9586,7 @@
         by Maxime Beck. Contains code derived from jgroups. (remm/kfujino)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        Move the event notification <code>ThreadPoolExecutor</code> to
+        Move the eventKind notification <code>ThreadPoolExecutor</code> to
         <code>MembershipProviderBase</code>. (kfujino)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
@@ -12547,7 +12547,7 @@
         Fix HTTP/2 incorrect input unblocking on EOF. (remm)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
-        Close the connection sooner if an event occurs for a current connection
+        Close the connection sooner if an eventKind occurs for a current connection
         that is not consistent with the current state of that connection.
         (markt)
       </li>
@@ -12683,7 +12683,7 @@
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
         <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=60718">60718</a>: Improve error handling for asynchronous processing and
         correct a number of cases where the <code>requestDestroyed()</code>
-        event was not being fired and an entry wasn't being made in the access
+        eventKind was not being fired and an entry wasn't being made in the access
         logs. (markt)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
@@ -13492,7 +13492,7 @@
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">
         If an I/O error occurs during async processing on a non-container
-        thread, ensure that the <code>onError()</code> event is triggered.
+        thread, ensure that the <code>onError()</code> eventKind is triggered.
         (markt)
       </li>
       <li><img alt="Fix: " class="icon" src="./images/fix.gif">

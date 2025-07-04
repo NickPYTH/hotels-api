@@ -24,4 +24,6 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     List<Bed> findAllByRoomFlatAndIsExtra(Flat flat, Boolean isExtra);
 
     List<Bed> findAllByRoom(Room room);
+
+    Integer countByRoomFlatHotelAndIsExtra(Hotel hotel, boolean b);
 }

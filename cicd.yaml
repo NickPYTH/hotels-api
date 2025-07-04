@@ -1,0 +1,9 @@
+stages:
+  - qwe
+
+wer job:
+  stage: qwe
+  scripts:
+    - mkdir test
+    - cd test
+    - echo "Some text" > test.txt

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
+import ru.sgp.dto.integration.checkSpaces.response.CheckSpacesResponse;
 import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
 import ru.sgp.service.GuestService;
@@ -36,13 +38,15 @@ public class GuestController {
     Logger logger = LoggerFactory.getLogger(GuestController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
     @Transactional
     @PostMapping(path = "/create")
     public ResponseEntity<GuestDTO> create(@RequestBody GuestDTO guestDTO) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<GuestDTO> response = guestService.update(guestDTO);
+
         try {
-            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/create", duration, "");
             record.setStatus("OK");
@@ -66,13 +70,15 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @Transactional
     @PostMapping(path = "/update")
-    public ResponseEntity<GuestDTO> update(@RequestBody GuestDTO guestDTO) {
+    public ResponseEntity<GuestDTO> update(@RequestBody GuestDTO guestDTO) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<GuestDTO> response = guestService.update(guestDTO);
+
         try {
-            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/update", duration, "");
             record.setStatus("OK");
@@ -96,12 +102,14 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/getAll")
     public ResponseEntity<List<GuestDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<GuestDTO> response = guestService.getAll();
         try {
-            List<GuestDTO> response = guestService.getAll();
+
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getAll", duration, "");
             record.setStatus("OK");
@@ -124,6 +132,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/getAllByOrganizationId")
     public ResponseEntity<List<GuestDTO>> getAllByOrganizationId(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -152,6 +161,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @DeleteMapping(path = "/checkout")
     public ResponseEntity<GuestDTO> checkout(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -180,6 +190,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @DeleteMapping(path = "/delete")
     public ResponseEntity<GuestDTO> delete(@RequestParam Long id) {
         long startTime = System.nanoTime();
@@ -208,6 +219,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/getFioByTabnum")
     public ResponseEntity<GuestDTO> getFioByTabnum(@RequestParam Integer tabnum) {
         long startTime = System.nanoTime();
@@ -236,13 +248,15 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/getTabnumByFio")
     public ResponseEntity<GuestDTO> getTabnumByFio(@RequestParam String lastname, @RequestParam String firstname, @RequestParam String secondName) {
         long startTime = System.nanoTime();
         Log record = new Log();
+        GuestDTO response = guestService.getTabnumByFio(lastname, firstname, secondName);
+
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
-            GuestDTO response = guestService.getTabnumByFio(lastname, firstname, secondName);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/getTabnumByFio", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -264,6 +278,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/getGuestsLastnames")
     public ResponseEntity<List<String>> getGuestsLastnames() {
         long startTime = System.nanoTime();
@@ -292,6 +307,7 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping(path = "/integration/addGuestsForEvent")
     public ResponseEntity<List<GuestDTO>> addGuestsForEvent(@RequestBody AddGuestsForEventDTO body) throws Exception {
         long startTime = System.nanoTime();
@@ -320,13 +336,44 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping(path = "/integration/loadGuestsFrom1C", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public List<String> loadGuestsFrom1C(@RequestParam("file") MultipartFile file) throws IOException, ParseException {
         return guestService.loadGuestsFrom1C(file);
     }
+
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping(path = "/manyGuestUpload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public List<GuestDTO> manyGuestUpload(@RequestParam Boolean mode, @RequestParam("file") MultipartFile file) throws IOException, ParseException {
         return guestService.manyGuestUpload(file, mode);
+    }
+
+    @PostMapping(path = "/integration/checkSpaces")
+    public ResponseEntity<CheckSpacesResponse> checkSpaces(@RequestBody CheckSpacesDTO body) throws Exception {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        CheckSpacesResponse response = guestService.checkSpaces(body);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/checkSpaces", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/checkSpaces");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/integration/checkSpaces", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/checkSpaces");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

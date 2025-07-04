@@ -50,10 +50,12 @@ public class Guest {
     @Column(name = "checkouted")
     private Boolean checkouted;
 
-    //@OneToOne(fetch = FetchType.LAZY)
     @OneToOne
     @JoinColumn(name = "contract")
     private Contract contract;
+
+    @Column(name = "credit_card")
+    private Boolean creditCard;
 
     @OneToOne
     @JoinColumn(name = "employee")

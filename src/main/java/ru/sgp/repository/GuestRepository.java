@@ -13,21 +13,17 @@ import java.util.List;
 public interface GuestRepository extends JpaRepository<Guest, Long> {
     List<Guest> findAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, boolean checkouted, Date date, Date date1);
 
-    Integer countAllByBedRoomAndCheckoutedAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, boolean checkouted, Date date, Date date1);
-
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndCheckoutedAndBedRoom(Date maxDate, Date minDate, boolean checkouted, Room room);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoom(Date dateFinish, Date dateStart, Room room);
 
-    List<Guest>  findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(Date tmp, Date tmp1);
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndEmployeeNotNull(Date tmp, Date tmp1);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfter(Date tmp, Date tmp1);
 
     List<Guest> findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThan(Room room, Date date, Date date1);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBed(Date date, Date date1, Bed bed);
-
-    List<Guest> findAllByBedRoomAndDateFinishLessThanEqualAndCheckouted(Room room, Date date, Boolean checkouted);
 
     List<Guest> findAllByOrganization(Organization byId);
 
@@ -53,8 +49,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(Date date, Date date1, Hotel hotel);
 
-    List<Guest> findAllByDateStartLessThanEqualAndDateFinishGreaterThanEqualAndBedAndIdIsNot(Date dateFinish, Date dateStart, Bed bed, Long id);
-
     List<Guest> findAllByBedRoomFlatHotelFilial(Filial filial);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndOrganization(Date maxDate, Date minDate, Hotel hotel, Organization organization);
@@ -67,5 +61,15 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndFamilyMemberOfEmployee(Date maxDate, Date minDate, Hotel hotel, Employee employee);
 
-    List<Guest> findTop3000By();
+    List<Guest> findAllByBedRoomFlatHotelAndDateFinishLessThanEqual(Hotel hotel, Date date);
+
+    List<Guest> findAllByDateStartGreaterThanEqualAndDateStartLessThanEqualAndBedRoomFlatHotel(Date dayStart, Date dayFinish, Hotel hotel);
+
+    List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndContractReasonAndEmployeeIsNotNull(Date dateFinish, Date dateStart, Hotel hotel, Reason reasonAVD);
+
+    int countAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndFamilyMemberOfEmployee(Date dateFinish, Date dateStart, Hotel hotel, Employee guest);
+
+    Boolean existsByDateStartLessThanAndDateFinishGreaterThanAndBed(Date dateFinish, Date dateStart, Bed bed);
+
+    List<Guest> findAllByBedRoomFlatHotelAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Hotel hotel, Date dateFinish, Date dateStart);
 }

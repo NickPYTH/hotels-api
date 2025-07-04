@@ -90,8 +90,9 @@ public class MyMapper {
         guestDTO.setLastname(guest.getLastname());
         guestDTO.setSecondName(guest.getSecondName());
         guestDTO.setNote(guest.getNote());
-        guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
-        guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
+        guestDTO.setCreditCard(guest.getCreditCard());
+        if (guest.getDateStart() != null) guestDTO.setDateStart(dateTimeFormatter.format(guest.getDateStart()));
+        if (guest.getDateFinish() != null) guestDTO.setDateFinish(dateTimeFormatter.format(guest.getDateFinish()));
         guestDTO.setBed(BedToBedDTO(guest.getBed()));
         guestDTO.setMemo(guest.getMemo());
         guestDTO.setMale(guest.getMale());

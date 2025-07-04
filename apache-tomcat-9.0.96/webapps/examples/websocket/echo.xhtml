@@ -78,12 +78,12 @@
                 setConnected(true);
                 log('Info: WebSocket connection opened.');
             };
-            ws.onmessage = function (event) {
-                log('Received: ' + event.data);
+            ws.onmessage = function (eventKind) {
+                log('Received: ' + eventKind.data);
             };
-            ws.onclose = function (event) {
+            ws.onclose = function (eventKind) {
                 setConnected(false);
-                log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
+                log('Info: WebSocket connection closed, Code: ' + eventKind.code + (eventKind.reason == "" ? "" : ", Reason: " + eventKind.reason));
             };
         }
 

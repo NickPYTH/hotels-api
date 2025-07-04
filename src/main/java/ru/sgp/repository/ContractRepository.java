@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.sgp.model.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
@@ -21,4 +22,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     List<Contract> findAllByFilialAndHotelAndOrganization(Filial filial, Hotel hotel, Organization orgTmp);
 
     List<Contract> findAllByOrderById();
+    
+    Optional<Contract> findByHotelAndOrganizationAndReasonAndYear(Hotel hotel, Organization podryadchiki, Reason other, int i);
 }

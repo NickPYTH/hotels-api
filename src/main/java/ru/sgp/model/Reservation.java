@@ -26,7 +26,7 @@ public class Reservation {
     private String firstname;
 
     @Column(name = "secondname")
-    private String secondname;
+    private String secondName;
 
     @Column(name = "male")
     private Boolean male;
@@ -49,7 +49,7 @@ public class Reservation {
 
     @OneToOne
     @JoinColumn(name = "event")
-    private Event event;
+    private EventKind eventKind;
 
     @OneToOne
     @JoinColumn(name = "from_filial")
@@ -65,5 +65,12 @@ public class Reservation {
     @OneToOne
     @JoinColumn(name = "status")
     private ReservationStatus status;
+
+    @OneToOne
+    @JoinColumn(name = "contract")
+    private Contract contract;
+
+    @Column(name = "family_member_of_employee")
+    private Integer familyMemberOfEmployee;
 
 }

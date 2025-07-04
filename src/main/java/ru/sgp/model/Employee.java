@@ -45,4 +45,6 @@ public class Employee {
     @Column(name = "kostl")
     private String mvzId;
 
+    @Column(name = "enddate")
+    private String endDate;
 }

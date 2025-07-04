@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AVD" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="832" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" isFloatColumnFooter="true" uuid="0799521c-081d-4cac-9ce6-34bc4d219d09">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="hotel" class="java.lang.String"/>
+	<parameter name="period" class="java.lang.String"/>
+	<parameter name="responsibility" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="number" class="java.lang.Integer"/>
+	<field name="period" class="java.lang.String"/>
+	<field name="fio" class="java.lang.String"/>
+	<field name="familyMembersCount" class="java.lang.Integer"/>
+	<field name="contragent" class="java.lang.String"/>
+	<field name="countDays" class="java.lang.Float"/>
+	<variable name="summaryCountDays" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{countDays}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="65" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="410" height="20" uuid="988d0851-ae1b-46dd-aa77-14ba1ef3668e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Roboto" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Абонемент выходного дня]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="20" width="410" height="15" uuid="ef090557-feec-41aa-84b8-92800f4124f3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Наименование: " + $P{hotel}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="35" width="410" height="15" uuid="d5acbdc9-370d-4e7a-96c3-fcc403e58f87">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Период: " + $P{period}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="50" width="410" height="15" uuid="94b31ac3-cb89-4343-807b-75edb45f58ee">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ответственный: " + $P{responsibility}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="10" width="30" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="8423e135-69af-49bf-82b1-baf7951ad321">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[№]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="30" y="10" width="100" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="cbec4cb1-62f1-4a19-9b50-197473fc9e8b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[Дата]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="10" width="170" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="35592b69-86a4-4478-b222-c69076e9825a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[ФИО работника]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="300" y="10" width="80" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="35d9299f-12e3-40c6-b1d2-ea2174fbee4e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[Члены семьи]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="380" y="10" width="190" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="b4d03e5f-192b-4ac1-8e07-e2818a200b49">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[Контрагент]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="570" y="10" width="110" height="15" forecolor="#030303" backcolor="#EBEBEB" uuid="8d929204-e014-4eaa-afd8-6ce8637c6bd1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<text><![CDATA[Количество к/с]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="30" height="15" uuid="f4dddd5d-447e-4087-9580-9ec3ef2467db">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{number}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="100" height="15" uuid="bb8cee6c-36da-4400-87d7-0896fb42e460">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="170" height="15" uuid="a1c2bca4-3876-4765-a080-18110d411feb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="80" height="15" uuid="ac0f30ca-cd0f-4609-9237-dab9caa40fda">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{familyMembersCount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="190" height="15" uuid="c4d64142-a185-419f-8431-ecc8fdb1c4c0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contragent}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="0" width="110" height="15" uuid="beeda811-8412-488a-ab45-5ef753e5d088">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{countDays}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="62" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="570" y="0" width="110" height="15" backcolor="#EBEBEB" uuid="c896a483-ba5d-4eec-bd57-cf5e8e6694d7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{summaryCountDays}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="570" height="15" backcolor="#EBEBEB" uuid="182aff78-20a0-467e-846f-843a6ebca367">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Roboto" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  Общий итог"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="27" width="200" height="15" uuid="c167d08d-e751-4d30-8d2c-13987fadfa23">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Roboto" size="8" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Заведующий общежитием]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="42" width="200" height="15" uuid="1e2e0f23-47db-4336-9721-cc59e17070cc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Roboto" size="6" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[должность]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="30" width="200" height="15" uuid="c3000b49-3686-4551-851e-025eb763088b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Roboto" size="8" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[_____________________________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="45" width="200" height="15" uuid="74ecc1d4-322c-4bac-b667-3a941c73c5a2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Roboto" size="6" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[подпись]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="30" width="200" height="15" uuid="ab0fb860-ac2b-4fea-8103-05e185d4127e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Roboto" size="8" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Титунина Е.Н.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="45" width="200" height="15" uuid="4caab233-7a06-47d1-bc32-98643421035a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Roboto" size="6" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[расшифровка подписи - Ф.И.О.]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

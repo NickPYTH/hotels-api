@@ -23,4 +23,11 @@ public class GuestExtra {
     @JoinColumn(name = "extra")
     private Extra extra;
 
+    @OneToOne
+    @JoinColumn(name = "payment_type")
+    private PaymentType paymentType;
+
+    @Column(name = "is_paid")
+    private Boolean isPaid;
+
 }

@@ -12,6 +12,8 @@ public class FilialReportDTO {
     private String room;
     private Integer floor;
     private String fio;
+    private String periodStart;
+    private String periodFinish;
     private String dateStart;
     private String dateFinish;
     private Integer tabnum;
@@ -22,5 +24,6 @@ public class FilialReportDTO {
     private Float periodPrice;
     private String reason;
     private String billing;
-    private Integer nights;
+    private Float nights;
+    private String creditCard;
 }

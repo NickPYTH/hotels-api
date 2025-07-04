@@ -5,12 +5,8 @@ import lombok.Data;
 @Data
 public class EventDTO {
     private Long id;
-    private String name;
-    private String description;
-    private EventTypeDTO type;
-    private String dateStart;
-    private String dateFinish;
+    private EventKindDTO kind;
     private HotelDTO hotel;
-    private Integer manCount;
-    private Integer womenCount;
+    private Long dateStart;
+    private Long dateFinish;
 }

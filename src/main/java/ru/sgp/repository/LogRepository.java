@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface LogRepository extends JpaRepository<Log, Long> {
-
-    List<Log> findTop2000By();
+    List<Log> findTop2000ByOrderByIdDesc();
 }

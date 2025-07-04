@@ -20,4 +20,6 @@ public class Hotel {
     @OneToOne
     @JoinColumn(name = "filial")
     private Filial filial;
+    @Column(name = "mvz")
+    private String mvz;
 }

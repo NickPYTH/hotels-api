@@ -192,7 +192,7 @@
 
      description      Human-readable description of these notification events.
 
-     name             Name of this set of notification event types.
+     name             Name of this set of notification eventKind types.
 -->
 <!ELEMENT notification (descriptor?, notification-type*)>
 <!ATTLIST notification      id           ID                   #IMPLIED>
@@ -200,8 +200,8 @@
 <!ATTLIST notification      name         CDATA                #IMPLIED> <!-- %VariableName; -->
 
 
-<!-- The nested content of the "notification-type" element is the event string
-     of an event that can be emitted by this MBean.
+<!-- The nested content of the "notification-type" element is the eventKind string
+     of an eventKind that can be emitted by this MBean.
 -->
 <!ELEMENT notification-type (#PCDATA)>
 <!ATTLIST notification-type id           ID                   #IMPLIED>

@@ -61,8 +61,8 @@
 
             Chat.socket.onopen = function () {
                 Console.log('Info: WebSocket connection opened.');
-                document.getElementById('chat').onkeydown = function(event) {
-                    if (event.keyCode == 13) {
+                document.getElementById('chat').onkeydown = function(eventKind) {
+                    if (eventKind.keyCode == 13) {
                         Chat.sendMessage();
                     }
                 };

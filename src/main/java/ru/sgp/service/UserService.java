@@ -37,6 +37,7 @@ public class UserService {
     @Autowired
     private CommendantsRepository commendantsRepository;
     Logger logger = LoggerFactory.getLogger(UserController.class);
+
     public UserDTO getCurrent() {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         UserDTO userDTO = new UserDTO();
@@ -48,8 +49,10 @@ public class UserService {
             userDTO.setFilialId(filialRepository.findByCode(user.getEmployee().getIdFilial()).getId());
         }
         userDTO.setFio(user.getEmployee().getLastname() + " " + user.getEmployee().getFirstname().charAt(0) + ". " + user.getEmployee().getSecondName().charAt(0) + ".");
+        userDTO.setCustomPost(user.getCustomPost());
         return userDTO;
     }
+
     public byte[] export(JasperPrint jasperPrint) throws JRException {
         Exporter exporter;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -59,6 +62,7 @@ public class UserService {
         exporter.exportReport();
         return outputStream.toByteArray();
     }
+
     @Transactional
     public List<UserDTO> getAll() {
         List<UserDTO> response = new ArrayList<>();
@@ -72,6 +76,7 @@ public class UserService {
             userDTO.setRoleName(user.getRole().getUsername());
             userDTO.setTabnum(employee.getTabnum());
             userDTO.setFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+            userDTO.setCustomPost(user.getCustomPost());
             if (user.getRole().getId() == 2L) {
                 List<Long> hotelsIds = new ArrayList<>();
                 for (Commendant commendant : commendantsRepository.findAllByUser(user)) {
@@ -88,15 +93,17 @@ public class UserService {
         }
         return response;
     }
+
     @Transactional
     public UserDTO create(UserDTO userDTO) {
         User user = new User();
-        Employee employee = employeeRepository.findByTabnum(userDTO.getTabnum());
+        Employee employee = employeeRepository.findByTabnumAndEndDate(userDTO.getTabnum(),null);
         if (userRepository.findByEmployee(employee) == null) {
             Role role = roleRepository.getById(userDTO.getRoleId());
             user.setEmployee(employee);
             user.setUsername(userDTO.getUsername());
             user.setRole(role);
+            user.setCustomPost(userDTO.getCustomPost());
             if (role.getId() == 2L) {
                 userDTO.getHotels().forEach(id -> {
                     Commendant commendant = new Commendant();
@@ -120,15 +127,17 @@ public class UserService {
         }
         return userDTO;
     }
+
     @Transactional
     public UserDTO update(UserDTO userDTO) {
         User user = userRepository.getById(userDTO.getId());
         commendantsRepository.deleteAllByUser(user);
-        Employee employee = employeeRepository.findByTabnum(userDTO.getTabnum());
+        Employee employee = employeeRepository.findByTabnumAndEndDate(userDTO.getTabnum(), null);
         Role role = roleRepository.getById(userDTO.getRoleId());
         user.setEmployee(employee);
         user.setUsername(userDTO.getUsername());
         user.setRole(role);
+        user.setCustomPost(userDTO.getCustomPost());
         if (role.getId() == 2L) {
             userDTO.getHotels().forEach(id -> {
                 Commendant commendant = new Commendant();
@@ -150,6 +159,7 @@ public class UserService {
         userRepository.save(user);
         return userDTO;
     }
+
     @Transactional
     public UserDTO updateRole(Long roleId) {
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();

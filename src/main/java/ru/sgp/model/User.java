@@ -26,4 +26,7 @@ public class User {
     @JoinColumn(name = "employee")
     private Employee employee;
 
+    @Column(name = "custom_post")
+    private String customPost;
+
 }

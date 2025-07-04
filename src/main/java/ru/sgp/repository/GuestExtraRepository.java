@@ -3,10 +3,12 @@ package ru.sgp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.sgp.model.Bed;
 import ru.sgp.model.Extra;
 import ru.sgp.model.Guest;
 import ru.sgp.model.GuestExtra;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

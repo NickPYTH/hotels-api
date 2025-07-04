@@ -15,4 +15,5 @@ public class UserDTO {
     private Long roleId;
     private String roleName;
     private List<Long> hotels;
+    private String customPost;
 }

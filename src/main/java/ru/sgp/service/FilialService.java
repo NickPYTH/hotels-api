@@ -64,11 +64,13 @@ public class FilialService {
     RoomLocksRepository roomLocksRepository;
     @Autowired
     FlatLocksRepository flatLocksRepository;
+
     @Transactional
     public List<FilialDTO> getAll() throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
         return filialRepository.findAllByOrderByNameAsc().stream().map(filial -> modelMapper.map(filial, FilialDTO.class)).collect(Collectors.toList());
     }
+
     @Transactional
     public List<FilialDTO> getAllWithStats(String dateStr) throws ParseException {
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -102,6 +104,7 @@ public class FilialService {
         }
         return response;
     }
+
     @Transactional
     public List<String> dataLoad(MultipartFile file) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -187,6 +190,7 @@ public class FilialService {
         List<String> response = new ArrayList<>();
         return response;
     }
+
     @Transactional
     public List<String> dataLoadContracts(MultipartFile file) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -253,6 +257,7 @@ public class FilialService {
         List<String> response = new ArrayList<>();
         return response;
     }
+
     @Transactional
     public List<String> loadResponsibilities(MultipartFile file) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -279,7 +284,7 @@ public class FilialService {
             }
             Filial filial = filialRepository.findByCode(filialCode);
             Hotel hotel = hotelRepository.findByNameAndFilial(hotelName, filial);
-            Employee employee = employeeRepository.findByTabnum(tabnum);
+            Employee employee = employeeRepository.findByTabnumAndEndDate(tabnum, null);
             Responsibilities responsibility = new Responsibilities();
             responsibility.setEmployee(employee);
             responsibility.setHotel(hotel);
@@ -288,6 +293,7 @@ public class FilialService {
         List<String> response = new ArrayList<>();
         return response;
     }
+
     @Transactional
     public List<String> loadUsers(MultipartFile file) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -318,7 +324,7 @@ public class FilialService {
 
             Filial filial = filialRepository.findByCode(filialCode);
             Hotel hotel = hotelRepository.findByNameAndFilial(hotelName, filial);
-            Employee employee = employeeRepository.findByTabnum(tabnum);
+            Employee employee = employeeRepository.findByTabnumAndEndDate(tabnum, null);
             if (employee != null) {
                 if (userRepository.findByEmployee(employee) == null) {
                     if (roleName.length() == 6) {
@@ -361,6 +367,7 @@ public class FilialService {
         List<String> response = new ArrayList<>();
         return response;
     }
+
     @Transactional
     public FilialDTO getWithStats(String dateStr, Long filialId) throws ParseException {
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");

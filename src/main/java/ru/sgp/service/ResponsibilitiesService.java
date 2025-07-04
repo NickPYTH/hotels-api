@@ -30,7 +30,7 @@ public class ResponsibilitiesService {
     public ResponsibilitiesDTO create(ResponsibilitiesDTO responsibilitiesDTO) {
         Responsibilities responsibility = new Responsibilities();
         Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
-        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
+        Employee employee = employeeRepository.findByTabnumAndEndDate(responsibilitiesDTO.getTabnum(), null);
         responsibility.setEmployee(employee);
         responsibility.setHotel(hotel);
         responsibilitiesRepository.save(responsibility);
@@ -39,7 +39,7 @@ public class ResponsibilitiesService {
     @Transactional
     public ResponsibilitiesDTO update(ResponsibilitiesDTO responsibilitiesDTO) {
         Responsibilities responsibility = responsibilitiesRepository.getById(responsibilitiesDTO.getId());
-        Employee employee = employeeRepository.findByTabnum(responsibilitiesDTO.getTabnum());
+        Employee employee = employeeRepository.findByTabnumAndEndDate(responsibilitiesDTO.getTabnum(), null);
         Hotel hotel = hotelRepository.getById(responsibilitiesDTO.getHotelId());
         responsibility.setEmployee(employee);
         responsibility.setHotel(hotel);

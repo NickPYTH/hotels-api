@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HotelsFilialReport" pageWidth="2640" pageHeight="750595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2640" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b6ee77c1-9198-4dcb-b559-6f268c0fb86b">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="filial" class="java.lang.String"/>
+	<field name="hotel" class="java.lang.String"/>
+	<field name="flat" class="java.lang.String"/>
+	<field name="room" class="java.lang.String"/>
+	<field name="fio" class="java.lang.String"/>
+	<field name="floor" class="java.lang.Integer"/>
+	<field name="dateStart" class="java.lang.String"/>
+	<field name="dateFinish" class="java.lang.String"/>
+	<field name="tabnum" class="java.lang.Integer"/>
+	<field name="checkouted" class="java.lang.String"/>
+	<field name="guestFilial" class="java.lang.String"/>
+	<field name="contract" class="java.lang.String"/>
+	<field name="contractPrice" class="java.lang.Float"/>
+	<field name="periodPrice" class="java.lang.Float"/>
+	<field name="reason" class="java.lang.String"/>
+	<field name="billing" class="java.lang.String"/>
+	<field name="nights" class="java.lang.Float"/>
+	<field name="periodStart" class="java.lang.String"/>
+	<field name="periodFinish" class="java.lang.String"/>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="30" uuid="6f99d097-8476-4c08-aa1b-39b18a6e1b06">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Филиал]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="300" height="30" uuid="87c40135-7c11-4dcc-90d2-5eeaf57a3f1e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Общежитие]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="140" height="30" uuid="13b38fd9-6337-42dc-8c39-09245cccd690">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Секция\Квартира]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="710" y="0" width="110" height="30" uuid="9ff62118-89d3-41a9-bc79-c793ea28f138">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Комната]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="940" y="0" width="190" height="30" uuid="90a96a20-346c-4458-9381-1add61b7ac93">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ФИО]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="0" width="70" height="30" uuid="2f2fd82d-52dd-41f3-8461-ee65676073ec">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Этаж]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1520" y="0" width="110" height="30" uuid="064cf9b5-606f-4c05-86d3-8de4bbf5df10">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Дата заезда]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1630" y="0" width="110" height="30" uuid="681b84d3-7210-4471-b7ac-83c6c85204de">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Дата выезда]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="820" y="0" width="120" height="30" uuid="a7844fc3-a91a-46a7-a272-4b7d9f24e5df">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Табельный номер]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1740" y="0" width="120" height="30" uuid="2f3d3fa8-980c-4433-af64-710ae3830000">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Выселен]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1130" y="0" width="170" height="30" uuid="a70de200-99f1-48ef-b034-6aed23607920">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Филиал/Организация]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1860" y="0" width="120" height="30" uuid="4bb5f17b-6c5a-433f-ae59-cf947a50cb20">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Договор]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1980" y="0" width="120" height="30" uuid="f5c21052-8a19-4243-9f4a-6c87ea071512">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Цена за ночь]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2220" y="0" width="140" height="30" uuid="38b1d9d3-b761-49ba-b37b-7eae310def80">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Цена за выбранный период]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2360" y="0" width="140" height="30" uuid="4703c109-ba75-41dd-9592-81efbe4f4f51">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Основание]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2500" y="0" width="140" height="30" uuid="b05ca92a-1c8f-47c4-818e-20794a98083b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Вид оплаты]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2100" y="0" width="120" height="30" uuid="8593a40b-811f-4aa7-91ca-a321f5a1f016">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Кол-во ночей за выбранный период]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1300" y="0" width="110" height="30" uuid="6eb82a32-e271-4939-8b7b-65f11c732ff4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Начало периода]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1410" y="0" width="110" height="30" uuid="0ce75ea3-245e-49c9-b6e6-a28786157b20">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Конец периода]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="200" height="20" uuid="fc8ce759-bd5b-4fbf-afb8-ea797dbf5601">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{filial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="300" height="20" uuid="cb4605f9-8d51-4f60-a600-6baafe57d9c2"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hotel}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="140" height="20" uuid="3d2c03c6-f449-4025-b7e5-942dc0a36073"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{flat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="710" y="0" width="110" height="20" uuid="0aafd243-7529-4732-8a84-760de70abb62"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="940" y="0" width="190" height="20" uuid="c39d2d07-d96b-4afd-b43e-07d32f022cbd"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="0" width="70" height="20" uuid="40203cfc-3575-405d-8204-2a500fc3ad8b"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{floor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1520" y="0" width="110" height="20" uuid="0d442097-730e-4200-ae43-cb0323574cea"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateStart}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1630" y="0" width="110" height="20" uuid="cc78a7c2-23fa-44a3-a844-31b26981abe3"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateFinish}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="820" y="0" width="120" height="20" uuid="fe1287a9-cf8c-41e4-a69e-067663bfdf8c"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tabnum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1740" y="0" width="120" height="20" uuid="303a4100-777b-4dea-a910-493b99566997"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{checkouted}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1130" y="0" width="170" height="20" uuid="3f505f35-2cfa-418b-822d-aeb1dc1c5f20"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{guestFilial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1860" y="0" width="120" height="20" uuid="ef3b274f-5c46-4433-92f9-fac340cda3be"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contract}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1980" y="0" width="120" height="20" uuid="b6437899-961f-474a-ab7e-ec9239585559"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contractPrice}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2220" y="0" width="140" height="20" uuid="2bb1e943-3fa9-4339-8002-4b3021a53515"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periodPrice}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2360" y="0" width="140" height="20" uuid="8d4d3c32-e5f0-4292-9c4c-dd3cfabefaf8"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reason}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2500" y="0" width="140" height="20" uuid="ba0489f7-6a92-4085-8956-aae77e5e2fe4"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{billing}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2100" y="0" width="120" height="20" uuid="444f4b1f-5f5e-4432-8b66-84f1466eab99"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nights}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1300" y="0" width="110" height="20" uuid="acc0ca84-383a-4223-b5d7-330aea8d5058"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periodStart}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1410" y="0" width="110" height="20" uuid="cce3a6ac-07c2-4f2a-a8de-e6e68ae7b589"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periodFinish}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

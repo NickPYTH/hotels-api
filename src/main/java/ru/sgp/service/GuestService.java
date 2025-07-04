@@ -11,6 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
+import ru.sgp.dto.integration.checkSpaces.DatePair;
+import ru.sgp.dto.integration.checkSpaces.TabWithItr;
+import ru.sgp.dto.integration.checkSpaces.response.CheckSpacesReservation;
+import ru.sgp.dto.integration.checkSpaces.response.CheckSpacesResponse;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
 import ru.sgp.utils.MyMapper;
@@ -18,6 +23,9 @@ import ru.sgp.utils.MyMapper;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +62,8 @@ public class GuestService {
     @Autowired
     private FlatLocksRepository flatLocksRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    @Autowired
+    private GuestExtraRepository guestExtraRepository;
 
     public List<GuestDTO> update(GuestDTO guestDTO) throws Exception {
         List<GuestDTO> response = new ArrayList<>();
@@ -68,8 +78,7 @@ public class GuestService {
             bed = bedRepository.getById(guestDTO.getBed().getId());
             guestDTO.setBed(MyMapper.BedToBedDTO(bed));
             isExtra = bed.getIsExtra();
-        }
-        else {
+        } else {
             bed = new Bed();
             isExtra = true;
         }
@@ -97,14 +106,15 @@ public class GuestService {
         if (!isExtra) {
             GuestDTO guestBeforeState;
             if (createRequest) guestBeforeState = new GuestDTO();
-            else guestBeforeState = modelMapper.map(guest, GuestDTO.class);
+                //else guestBeforeState = modelMapper.map(guest, GuestDTO.class); // TODO
+            else guestBeforeState = new GuestDTO();
             response.add(guestBeforeState);
         } else response.add(new GuestDTO()); // TODO
         // -----
 
         // Определяем кто перед нами работник Газпрома или сторонник
         if (guestDTO.getTabnum() != null) {
-            Employee employee = employeeRepository.findByTabnum(guestDTO.getTabnum());
+            Employee employee = employeeRepository.findByTabnumAndEndDate(guestDTO.getTabnum(), null);
             guest.setEmployee(employee);
             Organization gts = organizationRepository.getById(11L); // Организация - ГТС
             guest.setOrganization(gts);
@@ -123,9 +133,10 @@ public class GuestService {
         guest.setMale(guestDTO.getMale());
         guest.setMemo(guestDTO.getMemo());
         guest.setNote(guestDTO.getNote());
+        guest.setCreditCard(guestDTO.getCreditCard());
         // -----
 
-        if (bed.getRoom() == null){
+        if (bed.getRoom() == null) {
             // Значит это доп. место
             Room room = roomRepository.getById(guestDTO.getBed().getRoom().getId());
             Bed extraBed = new Bed();
@@ -139,10 +150,10 @@ public class GuestService {
 
         // Если член семьи
         if (guestDTO.getFamilyMemberOfEmployee() != null) {
-            Employee employee = employeeRepository.findByTabnum(guestDTO.getFamilyMemberOfEmployee());
+            Employee employee = employeeRepository.findByTabnumAndEndDate(guestDTO.getFamilyMemberOfEmployee(), null);
             guest.setFamilyMemberOfEmployee(employee);
         } else guest.setFamilyMemberOfEmployee(null);
-        //
+        // -----
 
         // Устанавливаем договор
         if (guestDTO.getContract() != null) {
@@ -196,46 +207,52 @@ public class GuestService {
             // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте ЗАПИСИ О ПРОЖИВАНИИ
             List<Guest> guests = new ArrayList<>();
 
+            // Разрешаю селить несколько раз в один и тот же филиал
             // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
-            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getFirstname(), guest.getLastname(), guest.getSecondName(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
-            if (!guests.isEmpty()) {
-                Guest guestTmp = guests.get(0);
-                GuestDTO tmp = new GuestDTO();
-                tmp.setError("datesError");
-                tmp.setLastname(guestTmp.getLastname());
-                tmp.setFirstname(guestTmp.getFirstname());
-                tmp.setSecondName(guestTmp.getSecondName());
-                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
-                tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-                tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-                response.add(tmp);
-                guest.setBed(oldBed);
-                return response;
-            }
+//            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getFirstname(), guest.getLastname(), guest.getSecondName(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
+//            if (!guests.isEmpty()) {
+//                Guest guestTmp = guests.get(0);
+//                GuestDTO tmp = new GuestDTO();
+//                tmp.setError("datesError");
+//                tmp.setLastname(guestTmp.getLastname());
+//                tmp.setFirstname(guestTmp.getFirstname());
+//                tmp.setSecondName(guestTmp.getSecondName());
+//                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
+//                tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
+//                tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
+//                response.add(tmp);
+//                guest.setBed(oldBed);
+//                return response;
+//            }
             // -----
 
+// Разрешаю селить несколько раз в один и тот же филиал
+//            if (createRequest)
+//                guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
+//            else
+//                guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
+//
+//            if (!guests.isEmpty()) {
+//                Guest guestTmp = guests.get(0);
+//                GuestDTO tmp = new GuestDTO();
+//                tmp.setError("datesError");
+//                tmp.setLastname(guestTmp.getLastname());
+//                tmp.setFirstname(guestTmp.getFirstname());
+//                tmp.setSecondName(guestTmp.getSecondName());
+//                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
+//                tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
+//                tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
+//                response.add(tmp);
+//                guest.setBed(oldBed);
+//                return response;
+//            } else {
+//                guest.setDateStart(dateStart);
+//                guest.setDateFinish(dateFinish);
+//            }
 
-            if (createRequest)
-                guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
-            else
-                guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(dateFinish, dateStart, guest.getBed(), guest.getId());
-            if (!guests.isEmpty()) {
-                Guest guestTmp = guests.get(0);
-                GuestDTO tmp = new GuestDTO();
-                tmp.setError("datesError");
-                tmp.setLastname(guestTmp.getLastname());
-                tmp.setFirstname(guestTmp.getFirstname());
-                tmp.setSecondName(guestTmp.getSecondName());
-                tmp.setBed(MyMapper.BedToBedDTO(guestTmp.getBed()));
-                tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
-                tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-                response.add(tmp);
-                guest.setBed(oldBed);
-                return response;
-            } else {
-                guest.setDateStart(dateStart);
-                guest.setDateFinish(dateFinish);
-            }
+            guest.setDateStart(dateStart);
+            guest.setDateFinish(dateFinish);
+
             // -----
 
 
@@ -303,7 +320,7 @@ public class GuestService {
         List<Guest> guests;
         // Если роль Администратор или Работник ОСР, отдаем все записи
         if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
-            guests = guestRepository.findTop3000By();
+            guests = guestRepository.findAll();
         } else {
             // Если дежурный или работник филиала, то отдаем записи по филиалу работника/дежурного по скольку их место работы 99% совпадает с филиалом общежития
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
@@ -318,10 +335,6 @@ public class GuestService {
     public GuestDTO delete(Long id) {
         Guest guest = guestRepository.getById(id);
         Bed bed = guest.getBed();
-
-        // Если место на котором живет гость дополнительное - удаляем его тоже
-        if (bed.getIsExtra()) bedRepository.delete(bed);
-        // -----
 
         // Если есть бронь связанная с записью о проживании - чистим связь
         Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
@@ -339,6 +352,13 @@ public class GuestService {
         // -----
 
         guestRepository.deleteById(id);
+
+        // Если место на котором живет гость дополнительное - удаляем его тоже
+        if (bed.getIsExtra()) {
+            //bedRepository.deleteById(bed.getId());
+        }
+        // -----
+
         return new GuestDTO();
     }
 
@@ -353,7 +373,7 @@ public class GuestService {
     }
 
     public GuestDTO getFioByTabnum(Integer tabnum) {
-        Employee employee = employeeRepository.findByTabnum(tabnum);
+        Employee employee = employeeRepository.findByTabnumAndEndDate(tabnum, null);
         GuestDTO guestDTO = new GuestDTO();
         if (employee != null) {
             guestDTO.setFirstname(employee.getFirstname());
@@ -366,7 +386,7 @@ public class GuestService {
     }
 
     public GuestDTO getTabnumByFio(String lastname, String firstname, String secondName) {
-        List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
+        List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondNameAndEndDate(lastname, firstname, secondName, null);
         GuestDTO guestDTO = new GuestDTO();
         if (!employees.isEmpty()) {
             guestDTO.setFirstname(employees.get(0).getFirstname());
@@ -399,7 +419,7 @@ public class GuestService {
         List<GuestDTO> response = new ArrayList<>();
         List<Employee> empListOrderBySex = new ArrayList<>();
         for (Integer tabNumber : data.getTabNumbers()) {
-            Employee employee = employeeRepository.findByTabnum(tabNumber);
+            Employee employee = employeeRepository.findByTabnumAndEndDate(tabNumber, null);
             if (employee == null)
                 throw new Exception("Employee with " + tabNumber + " not found");
             empListOrderBySex.add(employee);
@@ -524,10 +544,10 @@ public class GuestService {
                 Employee employee = null;
                 if (row.getCell(0).getCellType() == CellType.STRING) {
                     Integer tabnum = Integer.valueOf(row.getCell(0).getStringCellValue());
-                    employee = employeeRepository.findByTabnum(tabnum);
+                    employee = employeeRepository.findByTabnumAndEndDate(tabnum, null);
                 } else {
                     Integer tabnum = (int) row.getCell(0).getNumericCellValue();
-                    employee = employeeRepository.findByTabnum(tabnum);
+                    employee = employeeRepository.findByTabnumAndEndDate(tabnum, null);
                 }
                 if (employee != null) {
                     GuestDTO guestDTO = new GuestDTO();
@@ -541,7 +561,7 @@ public class GuestService {
                 String lastname = row.getCell(0).getStringCellValue().trim();
                 String firstname = row.getCell(1).getStringCellValue().trim();
                 String secondName = row.getCell(2).getStringCellValue().trim();
-                List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondName(lastname, firstname, secondName);
+                List<Employee> employees = employeeRepository.findAllByLastnameAndFirstnameAndSecondNameAndEndDate(lastname, firstname, secondName, null);
                 if (!employees.isEmpty()) {
                     GuestDTO guestDTO = new GuestDTO();
                     guestDTO.setLastname(lastname);
@@ -553,5 +573,157 @@ public class GuestService {
             }
         }
         return guests;
+    }
+
+    @Transactional
+    public CheckSpacesResponse checkSpaces(CheckSpacesDTO data) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        CheckSpacesResponse response = new CheckSpacesResponse();
+        response.setGuests(new ArrayList<>());
+
+        Hotel ermak = hotelRepository.getById(327L);
+        Hotel proizvodstvennaya = hotelRepository.getById(182L);
+
+        // Разбиваем гостей по признаку ИТР
+        List<TabWithItr> employeeItr = new ArrayList<>();
+        List<TabWithItr> employeeNoItr = new ArrayList<>();
+        for (TabWithItr tabWithItr : data.getGuests()) {
+            if (tabWithItr.getIsItr()) employeeItr.add(tabWithItr);
+            else employeeNoItr.add(tabWithItr);
+        }
+        // -----
+
+        // Сортируем оба списка гостей по полу, сначала женщины
+        employeeItr.sort((e1, e2) -> e2.getMale().compareTo(e1.getMale()));
+        employeeNoItr.sort((e1, e2) -> e2.getMale().compareTo(e1.getMale()));
+        // -----
+
+        List<Bed> ermakBeds = bedRepository.findAllByRoomFlatHotelAndIsExtra(ermak, false);
+        List<Bed> proizvodstvennayaBeds = bedRepository.findAllByRoomFlatHotelAndIsExtra(proizvodstvennaya, false);
+        List<Reservation> tmpReservationsErmak = new ArrayList<>();
+        List<Reservation> tmpReservationsProizvod = new ArrayList<>();
+
+        // Проверка возможности расселения гостей со статусом ИТР в гостинницу Ермак
+        for (TabWithItr employee : employeeItr) {
+            for (DatePair datePair : employee.getDates()) {
+                // Определяем дату начала и дату окончания
+                Date dateStart = dateFormat.parse(datePair.getDate());
+                LocalDateTime dateStartLD = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime dateFinishLD = dateStartLD.plusDays(datePair.getDaysCount() - 1);
+                Date dateFinish = dateFormat.parse(dateFinishLD.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                String df = dateFormat.format(dateFinish) + " 23:59";
+                dateFinish = dateTimeFormatter.parse(df);
+                // -----
+                if (!tryCheckIn(dateStart, dateFinish, employee, ermakBeds, tmpReservationsErmak)) {
+                    CheckSpacesReservation record = new CheckSpacesReservation();
+                    record.setTabNumber(employee.getTabNumber());
+                    record.setDateStart(dateFormat.format(dateStart));
+                    record.setDateFinish(dateFormat.format(dateFinish));
+                    record.setRange(dateFormat.format(dateStart) + " - " + dateFormat.format(dateFinish));
+                    record.setStatus("error");
+                    record.setErrorCode(0);
+                    record.setHotel("ermak");
+                    response.getGuests().add(record);
+                } else {
+                    CheckSpacesReservation record = new CheckSpacesReservation();
+                    record.setTabNumber(employee.getTabNumber());
+                    record.setDateStart(dateFormat.format(dateStart));
+                    record.setDateFinish(dateFormat.format(dateFinish));
+                    record.setDaysCount(datePair.getDaysCount());
+                    record.setRange(dateFormat.format(dateStart) + " - " + dateFormat.format(dateFinish));
+                    record.setStatus("ok");
+                    record.setErrorCode(null);
+                    record.setHotel("ermak");
+                    response.getGuests().add(record);
+                }
+            }
+        }
+        // -----
+
+        // Проверка возможности расселения гостей без статуса ИТР в Общежитие на Производственной
+        for (TabWithItr employee : employeeNoItr) {
+            for (DatePair datePair : employee.getDates()) {
+                // Определяем дату начала и дату окончания
+                Date dateStart = dateFormat.parse(datePair.getDate());
+                LocalDateTime dateStartLD = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime dateFinishLD = dateStartLD.plusDays(datePair.getDaysCount() - 1);
+                Date dateFinish = dateFormat.parse(dateFinishLD.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                String df = dateFormat.format(dateFinish) + " 23:59";
+                dateFinish = dateTimeFormatter.parse(df);
+                // -----
+                if (!tryCheckIn(dateStart, dateFinish, employee, proizvodstvennayaBeds, tmpReservationsProizvod)) {
+                    CheckSpacesReservation record = new CheckSpacesReservation();
+                    record.setTabNumber(employee.getTabNumber());
+                    record.setDateStart(dateFormat.format(dateStart));
+                    record.setDateFinish(dateFormat.format(dateFinish));
+                    record.setRange(dateFormat.format(dateStart) + " - " + dateFormat.format(dateFinish));
+                    record.setStatus("error");
+                    record.setErrorCode(0);
+                    record.setHotel("proizvod");
+                    response.getGuests().add(record);
+                } else {
+                    CheckSpacesReservation record = new CheckSpacesReservation();
+                    record.setTabNumber(employee.getTabNumber());
+                    record.setDateStart(dateFormat.format(dateStart));
+                    record.setDateFinish(dateFormat.format(dateFinish));
+                    record.setDaysCount(datePair.getDaysCount());
+                    record.setRange(dateFormat.format(dateStart) + " - " + dateFormat.format(dateFinish));
+                    record.setStatus("ok");
+                    record.setErrorCode(null);
+                    record.setHotel("proizvod");
+                    response.getGuests().add(record);
+                }
+            }
+        }
+        // -----
+
+        // Очистка временных записей
+        for (Reservation r : tmpReservationsErmak) reservationRepository.delete(r);
+        for (Reservation r : tmpReservationsProizvod) reservationRepository.delete(r);
+        // -----
+
+        return response;
+    }
+
+    // Метод для проверки возможности заселения гостя в перечень переданных мест
+    boolean tryCheckIn(Date dateStart, Date dateFinish, TabWithItr employee, List<Bed> beds, List<Reservation> tmpReservations) {
+        for (Bed bed : beds) {
+            // Проверяем свободно ли место от броней или гостей на эти даты
+            boolean bedBusyReservation = reservationRepository.existsByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
+            boolean bedBusyGuest = guestRepository.existsByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
+            if (bedBusyReservation || bedBusyGuest) continue;
+            // -----
+
+            // Если селим женщину то, ищем соседа мужчину, если есть скипаем место
+            if (employee.getMale() == 0) {
+                boolean maleNeighborhoodExist = false;
+                Room room = bed.getRoom();
+                for (Bed bedRoom : bedRepository.findAllByRoom(room)) {
+                    List<Guest> neighborhoods = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                    if (!neighborhoods.isEmpty()) {
+                        if (neighborhoods.get(0).getMale()) maleNeighborhoodExist = true;
+                    }
+                }
+                if (maleNeighborhoodExist) continue;
+            }
+            // -----
+
+            // Создаем временную бронь и добавляем в список веремнных броней, после они будут удалены
+            Reservation reservation = new Reservation();
+            reservation.setDateStart(dateStart);
+            reservation.setDateFinish(dateFinish);
+            reservation.setBed(bed);
+            reservation.setMale(employee.getMale() == 1);
+            reservation.setNote("RESERVATION CHECK! NEED TO DELETE if U SEE THIS RECORD!");
+            reservationRepository.save(reservation);
+            reservation.setFirstname(reservation.getId().toString());
+            reservation.setLastname(reservation.getId().toString());
+            reservation.setSecondName(reservation.getId().toString());
+            reservationRepository.save(reservation);
+            tmpReservations.add(reservation);
+            return true;
+            // -----
+        }
+        return false;
     }
 }

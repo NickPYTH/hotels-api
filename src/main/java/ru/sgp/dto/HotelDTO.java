@@ -10,6 +10,7 @@ public class HotelDTO {
     private String name;
     private String location;
     private FilialDTO filial;
+    private String mvz;
 
     // Вычисляемые поля
     private Integer bedsCount;

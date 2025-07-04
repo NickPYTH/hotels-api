@@ -93,7 +93,7 @@ public class TableBean {
             table.put(date, entries);
         }
 
-        // If time is provided add the event.
+        // If time is provided add the eventKind.
         String time = request.getParameter("time");
         if (time != null) {
             entries.processRequest(request, time);

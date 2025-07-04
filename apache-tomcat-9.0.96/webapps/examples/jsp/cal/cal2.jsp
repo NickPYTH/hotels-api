@@ -28,7 +28,7 @@
     String time = request.getParameter ("time");
 %>
 
-<FONT SIZE=5> Please add the following event:
+<FONT SIZE=5> Please add the following eventKind:
 <BR> <h3> Date <%= table.getDate() %>
 <BR> Time <%= util.HTMLFilter.filter(time) %> </h3>
 </FONT>
@@ -36,7 +36,7 @@
 <BR>
 <BR> <INPUT NAME="date" TYPE=HIDDEN VALUE="current">
 <BR> <INPUT NAME="time" TYPE=HIDDEN VALUE="<%= util.HTMLFilter.filter(time) %>">
-<BR> <h2> Description of the event <INPUT NAME="description" TYPE=TEXT SIZE=20> </h2>
+<BR> <h2> Description of the eventKind <INPUT NAME="description" TYPE=TEXT SIZE=20> </h2>
 <BR> <INPUT TYPE=SUBMIT VALUE="submit">
 </FORM>
 

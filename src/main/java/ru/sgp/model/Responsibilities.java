@@ -22,4 +22,5 @@ public class Responsibilities {
     @OneToOne
     @JoinColumn(name = "hotel")
     private Hotel hotel;
+
 }

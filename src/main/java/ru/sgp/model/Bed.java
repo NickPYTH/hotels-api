@@ -25,5 +25,4 @@ public class Bed {
     @Column(name = "is_extra")
     private Boolean isExtra;
 
-
 }

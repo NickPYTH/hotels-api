@@ -38,8 +38,8 @@ public class FilialController {
     public ResponseEntity<List<FilialDTO>> getAll() throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<FilialDTO> response = filialService.getAll();
         try {
-            List<FilialDTO> response = filialService.getAll();
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/filial/getAll", duration, "");
             record.setStatus("OK");

@@ -13,4 +13,6 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAllByFlatOrderById(Flat flat);
     void deleteAllByFlatHotel(Hotel hotel);
+
+    int countByFlatHotel(Hotel hotel);
 }

@@ -634,13 +634,13 @@ import javax.servlet.SessionTrackingMode;
 public class SessionTrackingModeListener implements ServletContextListener {
 
     @Override
-    public void contextDestroyed(ServletContextEvent event) {
+    public void contextDestroyed(ServletContextEvent eventKind) {
         // Do nothing
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent event) {
-        ServletContext context = event.getServletContext();
+    public void contextInitialized(ServletContextEvent eventKind) {
+        ServletContext context = eventKind.getServletContext();
         EnumSet&lt;SessionTrackingMode&gt; modes =
             EnumSet.of(SessionTrackingMode.SSL);
 

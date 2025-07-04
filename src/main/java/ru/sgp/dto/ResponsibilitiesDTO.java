@@ -12,4 +12,5 @@ public class ResponsibilitiesDTO {
     private Long filialId;
     private Long hotelId;
     private String hotel;
+    private String customPost;
 }

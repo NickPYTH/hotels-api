@@ -19,6 +19,7 @@ public class GuestDTO {
     private String memo;
     private Boolean checkouted;
     private ContractDTO contract;
+    private Boolean creditCard;
     private Integer tabnum;
     private BedDTO bed;
     private Integer familyMemberOfEmployee;
@@ -34,7 +35,7 @@ public class GuestDTO {
     // -----
 
     // Дополнительные поля для бронирования
-    private EventDTO event;
+    private EventKindDTO event;
     private FilialDTO fromFilial;
     private Boolean isReservation;
     // -----

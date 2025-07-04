@@ -14,4 +14,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findAllByFilial(Filial filial);
 
     Hotel findByNameAndFilial(String hotel, Filial filialModel);
+
+    List<Hotel> findAllByMvz(String mvz);
 }

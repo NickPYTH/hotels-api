@@ -18,7 +18,7 @@ public class LogService {
     @Transactional
     public List<LogDTO> getAll() {
         List<LogDTO> response = new ArrayList<>();
-        logRepository.findTop2000By().forEach(log -> {
+        logRepository.findTop2000ByOrderByIdDesc().forEach(log -> {
             LogDTO dto = new LogDTO();
             dto.setId(log.getId());
             dto.setStatus(log.getStatus());
