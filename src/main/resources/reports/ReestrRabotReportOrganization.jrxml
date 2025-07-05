@@ -2,7 +2,6 @@
 <!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FlightPlanReport" pageWidth="700" pageHeight="3595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="670" leftMargin="25" rightMargin="5" topMargin="5" bottomMargin="5" isFloatColumnFooter="true" uuid="175b14fc-005c-4e7b-b2bc-2d356670e441">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -21,6 +20,7 @@
 	<parameter name="bossPost" class="java.lang.String"/>
 	<parameter name="ukgBoss" class="java.lang.String"/>
 	<parameter name="commendant" class="java.lang.String"/>
+	<parameter name="costSum" class="java.lang.Float"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -30,10 +30,6 @@
 	<field name="cost" class="java.lang.Float"/>
 	<variable name="workSizeSum" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{workSize}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
-	</variable>
-	<variable name="costSum" class="java.lang.Float" calculation="Sum">
-		<variableExpression><![CDATA[$F{cost}]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<group name="Group1">
@@ -511,7 +507,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{costSum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{costSum}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>

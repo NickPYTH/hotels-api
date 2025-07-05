@@ -369,9 +369,12 @@ public class ReportService {
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         Filial filial = hotelM.getFilial();
+        AtomicReference<Float> summaryCost = new AtomicReference<>(0f);
         List<ReestrRabotReportDTO> data = new ArrayList<>();
         for (Hotel hotel : hotelRepository.findAllByMvz(hotelM.getMvz())) {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
+                if (guest.getContract() == null) continue;
+                if (guest.getContract().getReason().getId() != 4L && !isOrganization) continue; // Пропускаем если не командировка
                 if ((guest.getEmployee() == null && guest.getFamilyMemberOfEmployee() == null) && !isOrganization)
                     continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)
@@ -408,6 +411,7 @@ public class ReportService {
                         record.setFilial(guestFilial.getName());
                     }
                     record.setCost(daysCount * guest.getContract().getCost());
+                    summaryCost.updateAndGet(v -> v + record.getCost());
                     data.add(record);
                 } else {
                     Filial finalGuestFilial1 = guestFilial;
@@ -425,6 +429,7 @@ public class ReportService {
                             }
                             item.setWorkSize(item.getWorkSize() + daysCount);
                             item.setCost(item.getCost() + (daysCount * guest.getContract().getCost()));
+                            summaryCost.updateAndGet(v -> v + item.getCost());
                         }
                         return item;
                     }).collect(Collectors.toList());
@@ -445,6 +450,7 @@ public class ReportService {
         parameters.put("mvzSender", hotelM.getMvz());
         parameters.put("month", minDate.getMonth());
         parameters.put("workType", "733000");
+        parameters.put("costSum", summaryCost.get());
         String bossF = hotelM.getFilial().getBoss().split(" ")[0];
         String bossN = hotelM.getFilial().getBoss().split(" ")[1];
         String bossS = hotelM.getFilial().getBoss().split(" ")[2];
@@ -1405,6 +1411,8 @@ public class ReportService {
         List<ReestrRabotReportDTO> data = new ArrayList<>();
         for (Hotel hotel : hotelRepository.findAllByMvz(hotelM.getMvz())) {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
+                if (guest.getContract() == null) continue;
+                if (guest.getContract().getReason().getId() != 4L && !isOrganization) continue; // Пропускаем если не командировка
                 if (guest.getEmployee() == null && !isOrganization)
                     continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)
@@ -1886,8 +1894,8 @@ public class ReportService {
 
         long overlap_days = earliestEnd - latestStart;
 
-        if (overlap_days > 0){
-            return  (int) TimeUnit.DAYS.convert(overlap_days, TimeUnit.MILLISECONDS);
+        if (overlap_days > 0) {
+            return (int) TimeUnit.DAYS.convert(overlap_days, TimeUnit.MILLISECONDS);
         }
         return 0;
     }
@@ -1901,31 +1909,31 @@ public class ReportService {
 
         List<YearReservationReportDTO> reportData = new ArrayList<>();
         int count = 1;
-        Date januaryStart = dateFormatter.parse("01-01-"+yearInt);
-        Date januaryEnd = dateFormatter.parse("31-01-"+yearInt);
-        Date februaryStart = dateFormatter.parse("01-02-"+yearInt);
-        Date februaryEnd = dateFormatter.parse("28-02-"+yearInt);
-        Date marchStart = dateFormatter.parse("01-03-"+yearInt);
-        Date marchEnd = dateFormatter.parse("31-03-"+yearInt);
-        Date aprilStart = dateFormatter.parse("01-04-"+yearInt);
-        Date aprilEnd = dateFormatter.parse("30-04-"+yearInt);
-        Date mayStart = dateFormatter.parse("01-05-"+yearInt);
-        Date mayEnd = dateFormatter.parse("31-05-"+yearInt);
-        Date juneStart = dateFormatter.parse("01-06-"+yearInt);
-        Date juneEnd = dateFormatter.parse("30-06-"+yearInt);
-        Date julyStart = dateFormatter.parse("01-07-"+yearInt);
-        Date julyEnd = dateFormatter.parse("31-07-"+yearInt);
-        Date augustStart = dateFormatter.parse("01-08-"+yearInt);
-        Date augustEnd = dateFormatter.parse("31-08-"+yearInt);
-        Date septemberStart = dateFormatter.parse("01-09-"+yearInt);
-        Date septemberEnd = dateFormatter.parse("30-09-"+yearInt);
-        Date octoberStart = dateFormatter.parse("01-10-"+yearInt);
-        Date octoberEnd = dateFormatter.parse("31-10-"+yearInt);
-        Date novemberStart = dateFormatter.parse("01-11-"+yearInt);
-        Date novemberEnd = dateFormatter.parse("30-11-"+yearInt);
-        Date decemberStart = dateFormatter.parse("01-12-"+yearInt);
-        Date decemberEnd = dateFormatter.parse("31-12-"+yearInt);
-        for (Reservation reservation: reservationRepository.findAllByDateStartAfterAndDateStartBeforeAndBedRoomFlatHotel(year, nextYear, hotel)){
+        Date januaryStart = dateFormatter.parse("01-01-" + yearInt);
+        Date januaryEnd = dateFormatter.parse("31-01-" + yearInt);
+        Date februaryStart = dateFormatter.parse("01-02-" + yearInt);
+        Date februaryEnd = dateFormatter.parse("28-02-" + yearInt);
+        Date marchStart = dateFormatter.parse("01-03-" + yearInt);
+        Date marchEnd = dateFormatter.parse("31-03-" + yearInt);
+        Date aprilStart = dateFormatter.parse("01-04-" + yearInt);
+        Date aprilEnd = dateFormatter.parse("30-04-" + yearInt);
+        Date mayStart = dateFormatter.parse("01-05-" + yearInt);
+        Date mayEnd = dateFormatter.parse("31-05-" + yearInt);
+        Date juneStart = dateFormatter.parse("01-06-" + yearInt);
+        Date juneEnd = dateFormatter.parse("30-06-" + yearInt);
+        Date julyStart = dateFormatter.parse("01-07-" + yearInt);
+        Date julyEnd = dateFormatter.parse("31-07-" + yearInt);
+        Date augustStart = dateFormatter.parse("01-08-" + yearInt);
+        Date augustEnd = dateFormatter.parse("31-08-" + yearInt);
+        Date septemberStart = dateFormatter.parse("01-09-" + yearInt);
+        Date septemberEnd = dateFormatter.parse("30-09-" + yearInt);
+        Date octoberStart = dateFormatter.parse("01-10-" + yearInt);
+        Date octoberEnd = dateFormatter.parse("31-10-" + yearInt);
+        Date novemberStart = dateFormatter.parse("01-11-" + yearInt);
+        Date novemberEnd = dateFormatter.parse("30-11-" + yearInt);
+        Date decemberStart = dateFormatter.parse("01-12-" + yearInt);
+        Date decemberEnd = dateFormatter.parse("31-12-" + yearInt);
+        for (Reservation reservation : reservationRepository.findAllByDateStartAfterAndDateStartBeforeAndBedRoomFlatHotel(year, nextYear, hotel)) {
             YearReservationReportDTO record = null;
             int daysCount = (int) TimeUnit.DAYS.convert(reservation.getDateFinish().getTime() - reservation.getDateStart().getTime(), TimeUnit.MILLISECONDS);
             if (reportData.stream().anyMatch(r -> Objects.equals(r.getFilialNumber(), reservation.getFromFilial().getCode()))) { // Если нет такого филила создаем иначе работаем с существующим
@@ -1968,8 +1976,8 @@ public class ReportService {
             count++;
         }
 
-        for (YearReservationReportDTO record: reportData)
-            record.setPercent(((float) (record.getCount() / (float) hotelRooms))*100);
+        for (YearReservationReportDTO record : reportData)
+            record.setPercent(((float) (record.getCount() / (float) hotelRooms)) * 100);
 
         JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/YearReservationReport.jrxml"));
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);

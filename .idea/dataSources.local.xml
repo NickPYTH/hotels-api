@@ -46,6 +46,9 @@
             <node kind="database" qname="@">
               <node kind="schema" qname="@" />
             </node>
+            <node kind="database" qname="hotel">
+              <node kind="schema" qname="public" />
+            </node>
             <node kind="database" qname="hotels">
               <node kind="schema" qname="hotel" />
             </node>

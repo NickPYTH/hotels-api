@@ -46,12 +46,10 @@ public class FlatService {
     ReservationRepository reservationRepository;
     @Autowired
     EmployeeRepository employeeRepository;
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-    private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH");
 
     @Transactional
     public List<FlatDTO> getAllByHotelId(Long hotelId, String dateStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Hotel hotel = hotelRepository.getById(hotelId);
         Date date = dateTimeFormatter.parse(dateStr);
         List<FlatDTO> response = new ArrayList<>();
@@ -120,6 +118,8 @@ public class FlatService {
 
     @Transactional
     public FlatDTO get(Long flatId, String dateStr) throws ParseException {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Flat flat = flatRepository.getById(flatId);
         FlatDTO flatDTO = MyMapper.FlatToFlatDTO(flat);
         Date date = dateTimeFormatter.parse(dateStr);
@@ -234,6 +234,9 @@ public class FlatService {
 
     @Transactional
     public List<HashMap<String, String>> getAllByHotelIdChess(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         List<HashMap<String, String>> result = new ArrayList<>();
         Hotel hotel = hotelRepository.getById(hotelId);
         Date dateStart = dateFormatter.parse(dateStartStr);
@@ -398,6 +401,7 @@ public class FlatService {
 
     @Transactional
     public List<GuestDTO> getAllNotCheckoutedBeforeTodayByHotelId(Long hotelId, String dateStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Hotel hotel = hotelRepository.getById(hotelId);
         Date date = dateTimeFormatter.parse(dateStr);
         List<GuestDTO> response = new ArrayList<>();
@@ -427,6 +431,7 @@ public class FlatService {
     }
 
     public List<FlatDTO> getAll(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Hotel hotel = hotelRepository.getById(hotelId);
         List<FlatDTO> response = new ArrayList<>();
         Date dateStart = null;
@@ -467,6 +472,7 @@ public class FlatService {
 
     public List<FlatDTO> getNewChess(Long hotelId, Long dateStartTS, Long dateFinishTS) throws ParseException {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Hotel hotel = hotelRepository.getById(hotelId);
         Date dateStart = new Date(dateStartTS * 1000);
         Date dateFinish = new Date(dateFinishTS * 1000);
