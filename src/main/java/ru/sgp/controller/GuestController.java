@@ -348,6 +348,7 @@ public class GuestController {
         return guestService.manyGuestUpload(file, mode);
     }
 
+    // Запрос для Елагина
     @PostMapping(path = "/integration/checkSpaces")
     public ResponseEntity<CheckSpacesResponse> checkSpaces(@RequestBody CheckSpacesDTO body) throws Exception {
         long startTime = System.nanoTime();

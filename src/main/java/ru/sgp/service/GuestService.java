@@ -63,7 +63,7 @@ public class GuestService {
     private FlatLocksRepository flatLocksRepository;
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
-    private GuestExtraRepository guestExtraRepository;
+    private PostRepository postRepository;
 
     public List<GuestDTO> update(GuestDTO guestDTO) throws Exception {
         List<GuestDTO> response = new ArrayList<>();
@@ -71,7 +71,7 @@ public class GuestService {
         Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
 
-        // РћРїСЂРµРґРµР»РµРЅРёРµ РјРµСЃС‚Р° РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РѕРіРѕ СЃСѓС‰РµСЃС‚РІСѓРµС‚ РѕРЅРѕ РёР»Рё СЌС‚Рѕ Р±СѓРґСѓС‰РµРµ РґРѕРї. РјРµСЃС‚Рѕ (СЃРІРѕР№СЃС‚РІРѕ isExtra=true)
+        // Определение места в зависимости от того существует оно или это будущее доп. место (свойство isExtra=true)
         Bed bed = null;
         Boolean isExtra = false;
         if (guestDTO.getBed().getId() != null) {
@@ -86,14 +86,14 @@ public class GuestService {
 
         Bed oldBed = null;
 
-        // РџСЂРѕРІРµСЂРєР° РЅР° СЃРѕР·РґР°РЅРёРµ РёР»Рё РѕР±РЅРѕРІР»РµРЅРёРµ РєР°СЂС‚РѕС‡РєРё Р¶РёР»СЊС†Р°
+        // Проверка на создание или обновление карточки жильца
         boolean createRequest = guestDTO.getId() == null;
         Guest guest;
         if (createRequest) guest = new Guest();
         else {
             guest = guestRepository.getById(guestDTO.getId());
             oldBed = guest.getBed();
-            // РџСЂРѕРІРµСЂРєР° РµСЃР»Рё Р¶РёР»СЊС†Р° РїРµСЂРµСЃРµР»РёР»Рё РЅР° СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРµ РґРѕРї. РјРµСЃС‚Рѕ С‡РµРіРѕ РЅРµР»СЊР·СЏ РґРѕРїСѓСЃРєР°С‚СЊ, РєРёРґР°С‚СЊ РёСЃРєР»СЋС‡РµРЅРёРµ СЃР°РїРѕСЂС‚С‹ РїСѓСЃС‚СЊ СЂРµС€Р°СЋС‚
+            // Проверка если жильца переселили на существующее доп. место чего нельзя допускать, кидать исключение сапорты пусть решают
             if (bed.getIsExtra()) {
                 if (!Objects.equals(guest.getBed(), bed)) {
                     return response;
@@ -102,7 +102,7 @@ public class GuestService {
         }
         // -----
 
-        // Р—Р°РїРѕРјРёРЅР°РµРј РїСЂРµРґС‹РґСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ, РґР»СЏ РґРѕРї РјРµСЃС‚ РїРѕС„РёРі РїРѕС‚РѕРј СЃРґРµР»Р°СЋ
+        // Запоминаем предыдущее состояние, для доп мест пофиг потом сделаю
         if (!isExtra) {
             GuestDTO guestBeforeState;
             if (createRequest) guestBeforeState = new GuestDTO();
@@ -112,11 +112,11 @@ public class GuestService {
         } else response.add(new GuestDTO()); // TODO
         // -----
 
-        // РћРїСЂРµРґРµР»СЏРµРј РєС‚Рѕ РїРµСЂРµРґ РЅР°РјРё СЂР°Р±РѕС‚РЅРёРє Р“Р°Р·РїСЂРѕРјР° РёР»Рё СЃС‚РѕСЂРѕРЅРЅРёРє
+        // Определяем кто перед нами работник Газпрома или сторонник
         if (guestDTO.getTabnum() != null) {
             Employee employee = employeeRepository.findByTabnumAndEndDate(guestDTO.getTabnum(), null);
             guest.setEmployee(employee);
-            Organization gts = organizationRepository.getById(11L); // РћСЂРіР°РЅРёР·Р°С†РёСЏ - Р“РўРЎ
+            Organization gts = organizationRepository.getById(11L); // Организация - ГТС
             guest.setOrganization(gts);
         } else {
             Organization org = organizationRepository.getById(guestDTO.getOrganization().getId());
@@ -125,7 +125,7 @@ public class GuestService {
         }
         // -----
 
-        // Р—Р°РїРѕР»РЅСЏРµРј РїСЂРѕСЃС‚С‹Рµ РїРѕР»СЏ
+        // Заполняем простые поля
         guest.setRegPoMestu(guestDTO.getRegPoMestu());
         guest.setFirstname(guestDTO.getFirstname());
         guest.setLastname(guestDTO.getLastname());
@@ -137,7 +137,7 @@ public class GuestService {
         // -----
 
         if (bed.getRoom() == null) {
-            // Р—РЅР°С‡РёС‚ СЌС‚Рѕ РґРѕРї. РјРµСЃС‚Рѕ
+            // Значит это доп. место
             Room room = roomRepository.getById(guestDTO.getBed().getRoom().getId());
             Bed extraBed = new Bed();
             extraBed.setIsExtra(true);
@@ -148,14 +148,14 @@ public class GuestService {
             bed = extraBed;
         } else guest.setBed(bed);
 
-        // Р•СЃР»Рё С‡Р»РµРЅ СЃРµРјСЊРё
+        // Если член семьи
         if (guestDTO.getFamilyMemberOfEmployee() != null) {
             Employee employee = employeeRepository.findByTabnumAndEndDate(guestDTO.getFamilyMemberOfEmployee(), null);
             guest.setFamilyMemberOfEmployee(employee);
         } else guest.setFamilyMemberOfEmployee(null);
         // -----
 
-        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґРѕРіРѕРІРѕСЂ
+        // Устанавливаем договор
         if (guestDTO.getContract() != null) {
             Contract contract = contractRepository.getById(guestDTO.getContract().getId());
             guest.setContract(contract);
@@ -163,13 +163,13 @@ public class GuestService {
             guest.setContract(null);
         }
 
-        // Р•СЃР»Рё СЌС‚Рѕ РґРѕРї. РјРµСЃС‚Рѕ, С‚Рѕ РЅРµС‚ СЃРјС‹СЃР»Р° РїСЂРѕРІРѕРґРёС‚СЊ РїСЂРѕРІРµСЂРєРё
+        // Если это доп. место, то нет смысла проводить проверки
         if (!isExtra) {
-            // РџСЂРѕРІРµСЂСЏРµРј РЅРµ РїРµСЂРµСЃРµРєР°РµС‚СЃСЏ Р»Рё РґР°С‚Р° РїСЂРѕР¶РёРІР°РЅРёСЏ СЃ РєРµРј-С‚Рѕ РЅР° РІС‹Р±СЂР°РЅРЅРѕРј РјРµСЃС‚Рµ Р‘Р РћРќР
+            // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте БРОНИ
             List<Reservation> reservations = new ArrayList<>();
 
-            // РџСЂРѕРІРµСЂСЏРµРј РїРµСЂРµСЃРµС‡РµРЅРёСЏ РїРµСЂРёРѕРґРѕРІ РїСЂРѕР¶РёРІР°РЅРёСЏ СЃ СЃР°РјРёРјРё СЃРѕР±РѕР№ РІ РґСЂСѓРіРёС… С„РёР»РёР°Р»Р°С…, РїСЂРѕРІРµСЂСЏСЋ РїРѕ Р¤РРћ, С‡С‚РѕР±С‹ Р·Р°РґРµС‚СЊ Рё СЂР°Р±РѕС‚РЅРёРєРѕРІ Рё СЃС‚РѕСЂРѕРЅРЅРёРєРѕРІ, Р° С‚Р°РєР¶Рµ С‡С‚РѕР±С‹ Р±С‹Р»Рѕ СѓРєР°Р·Р°РЅРѕ РґСЂСѓРіРѕРµ РјРµСЃС‚Рѕ
-            if (guest.getEmployee() != null) { // Р•СЃР»Рё С‚С‹ РЅРµ СЂР°Р±РѕС‚РЅРёРє, С‚Рѕ РЅРµС‚ СЃРјС‹СЃР»Р° РїСЂРѕРІРµСЂСЏС‚СЊ СЃ Р±СЂРѕРЅСЏРјРё - Р±СЂРѕРЅРёСЂСѓСЋС‚СЃСЏ С‚РѕР»СЊРєРѕ СЂР°Р±РѕС‚РЅРёРєРё !!! TODO
+            // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО, чтобы задеть и работников и сторонников, а также чтобы было указано другое место
+            if (guest.getEmployee() != null) { // Если ты не работник, то нет смысла проверять с бронями - бронируются только работники !!! TODO
                 reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndTabnumAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getEmployee().getTabnum(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
                 if (!reservations.isEmpty()) {
                     Reservation reservationTmp = reservations.get(0);
@@ -204,11 +204,11 @@ public class GuestService {
             }
             // -----
 
-            // РџСЂРѕРІРµСЂСЏРµРј РЅРµ РїРµСЂРµСЃРµРєР°РµС‚СЃСЏ Р»Рё РґР°С‚Р° РїСЂРѕР¶РёРІР°РЅРёСЏ СЃ РєРµРј-С‚Рѕ РЅР° РІС‹Р±СЂР°РЅРЅРѕРј РјРµСЃС‚Рµ Р—РђРџРРЎР Рћ РџР РћР–РР’РђРќРР
+            // Проверяем не пересекается ли дата проживания с кем-то на выбранном месте ЗАПИСИ О ПРОЖИВАНИИ
             List<Guest> guests = new ArrayList<>();
 
-            // Р Р°Р·СЂРµС€Р°СЋ СЃРµР»РёС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ СЂР°Р· РІ РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ С„РёР»РёР°Р»
-            // РџСЂРѕРІРµСЂСЏРµРј РїРµСЂРµСЃРµС‡РµРЅРёСЏ РїРµСЂРёРѕРґРѕРІ РїСЂРѕР¶РёРІР°РЅРёСЏ СЃ СЃР°РјРёРјРё СЃРѕР±РѕР№ РІ РґСЂСѓРіРёС… С„РёР»РёР°Р»Р°С…, РїСЂРѕРІРµСЂСЏСЋ РїРѕ Р¤РРћ С‡С‚РѕР±С‹ Р·Р°РґРµС‚СЊ Рё СЂР°Р±РѕС‚РЅРёРєРѕРІ Рё СЃС‚РѕСЂРѕРЅРЅРёРєРѕРІ, Р° С‚Р°РєР¶Рµ С‡С‚РѕР±С‹ Р±С‹Р»Рѕ СѓРєР°Р·Р°РЅРѕ РґСЂСѓРіРѕРµ РјРµСЃС‚Рѕ
+            // Разрешаю селить несколько раз в один и тот же филиал
+            // Проверяем пересечения периодов проживания с самими собой в других филиалах, проверяю по ФИО чтобы задеть и работников и сторонников, а также чтобы было указано другое место
 //            guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(dateFinish, dateStart, guest.getFirstname(), guest.getLastname(), guest.getSecondName(), guest.getBed(), guest.getBed().getRoom().getFlat().getHotel().getFilial());
 //            if (!guests.isEmpty()) {
 //                Guest guestTmp = guests.get(0);
@@ -226,7 +226,7 @@ public class GuestService {
 //            }
             // -----
 
-// Р Р°Р·СЂРµС€Р°СЋ СЃРµР»РёС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ СЂР°Р· РІ РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ С„РёР»РёР°Р»
+// Разрешаю селить несколько раз в один и тот же филиал
 //            if (createRequest)
 //                guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, guest.getBed());
 //            else
@@ -256,7 +256,7 @@ public class GuestService {
             // -----
 
 
-            // РџСЂРѕРІРµСЂСЏРµРј РЅРµ РїС‹С‚Р°РµРјСЃСЏ Р»Рё Р·Р°СЃРµР»РёС‚СЊ РІ СЃРµРєС†РёСЋ/РєРѕРјРЅР°С‚Сѓ СЃРѕ СЃС‚Р°С‚СѓСЃРѕРј Р·Р°РєСЂС‹С‚Рѕ/РІС‹РєСѓРїР»РµРЅРѕ РѕСЂРіР°РЅРёР·Р°С†РёРµР№
+            // Проверяем не пытаемся ли заселить в секцию/комнату со статусом закрыто/выкуплено организацией
             if (oldBed != null && !bed.getRoom().equals(oldBed.getRoom())) {
                 List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(dateFinish, dateStart, bed.getRoom());
                 if (!roomLocksList.isEmpty()) {
@@ -306,9 +306,9 @@ public class GuestService {
         }
         // -----
 
-        guestRepository.save(guest); // РЎРѕС…СЂР°РЅСЏРµРј
+        guestRepository.save(guest); // Сохраняем
         guestDTO.setId(guest.getId());
-        response.add(guestDTO); // Р”РѕР±Р°РІР»СЏРµРј РѕР±РЅРѕРІР»РµРЅРЅСѓСЋ СЃСѓС‰РЅРѕСЃС‚СЊ РґР»СЏ Р»РѕРіРѕРІ
+        response.add(guestDTO); // Добавляем обновленную сущность для логов
         return response;
     }
 
@@ -318,11 +318,11 @@ public class GuestService {
         User user = userRepository.findByUsername(username);
         List<GuestDTO> response = new ArrayList<>();
         List<Guest> guests;
-        // Р•СЃР»Рё СЂРѕР»СЊ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РёР»Рё Р Р°Р±РѕС‚РЅРёРє РћРЎР , РѕС‚РґР°РµРј РІСЃРµ Р·Р°РїРёСЃРё
+        // Если роль Администратор или Работник ОСР, отдаем все записи
         if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
             guests = guestRepository.findAll();
         } else {
-            // Р•СЃР»Рё РґРµР¶СѓСЂРЅС‹Р№ РёР»Рё СЂР°Р±РѕС‚РЅРёРє С„РёР»РёР°Р»Р°, С‚Рѕ РѕС‚РґР°РµРј Р·Р°РїРёСЃРё РїРѕ С„РёР»РёР°Р»Сѓ СЂР°Р±РѕС‚РЅРёРєР°/РґРµР¶СѓСЂРЅРѕРіРѕ РїРѕ СЃРєРѕР»СЊРєСѓ РёС… РјРµСЃС‚Рѕ СЂР°Р±РѕС‚С‹ 99% СЃРѕРІРїР°РґР°РµС‚ СЃ С„РёР»РёР°Р»РѕРј РѕР±С‰РµР¶РёС‚РёСЏ
+            // Если дежурный или работник филиала, то отдаем записи по филиалу работника/дежурного по скольку их место работы 99% совпадает с филиалом общежития
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
             guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
         }
@@ -336,13 +336,13 @@ public class GuestService {
         Guest guest = guestRepository.getById(id);
         Bed bed = guest.getBed();
 
-        // Р•СЃР»Рё РµСЃС‚СЊ Р±СЂРѕРЅСЊ СЃРІСЏР·Р°РЅРЅР°СЏ СЃ Р·Р°РїРёСЃСЊСЋ Рѕ РїСЂРѕР¶РёРІР°РЅРёРё - С‡РёСЃС‚РёРј СЃРІСЏР·СЊ
+        // Если есть бронь связанная с записью о проживании - чистим связь
         Optional<Reservation> reservationOptional = reservationRepository.findByGuest(guest);
         if (reservationOptional.isPresent()) {
             Reservation reservation = reservationOptional.get();
             reservation.setGuest(null);
 
-            // РќРµС‚ Р·Р°РїРёСЃРё Рѕ РїСЂРѕР¶РёРІР°РЅРёРё -> РЅРµС‚ РґР°С‚ РїРѕРґС‚РІРµСЂР¶РґР°СЋС‰РёС… Р±СЂРѕРЅСЊ. РџРµСЂРµРЅРѕСЃРёРј РґР°С‚С‹ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РІ РґР°С‚С‹ Р±СЂРѕРЅРё, Р±РµР· РЅРёС… Р±СЂРѕРЅСЊ РЅРµ Р±СѓРґРµС‚ РІС‹РІРѕРґРёС‚СЃСЏ
+            // Нет записи о проживании -> нет дат подтверждающих бронь. Переносим даты подтверждения в даты брони, без них бронь не будет выводится
             reservation.setDateStart(reservation.getDateStartConfirmed());
             reservation.setDateFinish(reservation.getDateFinishConfirmed());
             // -----
@@ -353,7 +353,7 @@ public class GuestService {
 
         guestRepository.deleteById(id);
 
-        // Р•СЃР»Рё РјРµСЃС‚Рѕ РЅР° РєРѕС‚РѕСЂРѕРј Р¶РёРІРµС‚ РіРѕСЃС‚СЊ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ - СѓРґР°Р»СЏРµРј РµРіРѕ С‚РѕР¶Рµ
+        // Если место на котором живет гость дополнительное - удаляем его тоже
         if (bed.getIsExtra()) {
             //bedRepository.deleteById(bed.getId());
         }
@@ -430,14 +430,14 @@ public class GuestService {
             for (Bed bed : bedRepository.findAllByRoomFlatHotelAndIsExtra(hotel, false)) {
                 Flat flat = bed.getRoom().getFlat();
                 if (guests.stream().anyMatch((guest) -> guest.getBed().equals(bed))) continue;
-                if (employee.getMale() == 1 && guests.stream().anyMatch((guest) -> guest.getBed().getRoom().getFlat().getId() == flat.getId() && !guest.getMale())) // Р•СЃР»Рё СЂР°Р±РѕС‚РЅРёРє РјСѓР¶С‡РёРЅР°, С‚Рѕ РїСЂРѕРІРµСЂСЏРµРј С‡С‚РѕР±С‹ РІ РєРѕРјРЅР°С‚Рµ РЅРµ Р±С‹Р»Рѕ Р¶РµРЅС‰РёРЅ
+                if (employee.getMale() == 1 && guests.stream().anyMatch((guest) -> guest.getBed().getRoom().getFlat().getId() == flat.getId() && !guest.getMale())) // Если работник мужчина, то проверяем чтобы в комнате не было женщин
                     continue;
                 List<Guest> livingGuestsFlat = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlat(dateFinish, dateStart, bed.getRoom().getFlat());
                 if (employee.getMale() == 2 && livingGuestsFlat.stream().anyMatch((guest) -> guest.getMale()))
                     continue;
                 List<Guest> livingGuestsBed = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBed(dateFinish, dateStart, bed);
-                if (livingGuestsBed.isEmpty()) { // РџСЂРѕРІРµСЂСЏРµРј С‡С‚Рѕ Р±С‹ С‚СѓС‚ РЅРёРєС‚Рѕ РЅРµ Р¶РёР»
-                    // РџСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ РјСѓР¶С‡РёРЅ РІ РєРѕРјРЅР°С‚Рµ РµСЃР»Рё СЃРµР»РёРј Р¶РµРЅС‰РёРЅСѓ
+                if (livingGuestsBed.isEmpty()) { // Проверяем что бы тут никто не жил
+                    // Проверяем наличие мужчин в комнате если селим женщину
                     Guest guest = new Guest();
                     guest.setEmployee(employee);
                     guest.setOrganization(organizationRepository.getById(11L));
@@ -450,7 +450,7 @@ public class GuestService {
                     guest.setBed(bed);
                     guest.setCheckouted(false);
                     guest.setMale(employee.getMale() == 1);
-                    // РџРѕРєР° Р±СѓРґСѓС‚ РєРѕРЅСЃС‚Р°РЅС‚Р°РјРё СѓС‚РѕС‡РЅРёС‚СЊ
+                    // Пока будут константами уточнить
                     guest.setContract(contractRepository.getById(865L));
                     guest.setMemo(data.getEventName());
                     if (guest.getContract() != null) {
@@ -497,15 +497,15 @@ public class GuestService {
                 List<Guest> guests = guestRepository.findAllByBed(bed);
                 boolean guestExists = false;
                 for (Guest guest : guests) {
-                    if ((dateStart.before(guest.getDateStart()) && dateFinish.before(guest.getDateStart())) || // Р›РµРІС‹Р№ РґРёР°РїР°Р·РѕРЅ
-                            dateStart.after(guest.getDateFinish()) && dateFinish.after(guest.getDateFinish())) { // РџСЂР°РІС‹Р№ РґРёР°РїР°Р·РѕРЅ
+                    if ((dateStart.before(guest.getDateStart()) && dateFinish.before(guest.getDateStart())) || // Левый диапазон
+                            dateStart.after(guest.getDateFinish()) && dateFinish.after(guest.getDateFinish())) { // Правый диапазон
 
                     } else {
                         guestExists = true;
                         break;
                     }
                 }
-                if (!guestExists) { // РўРѕРіРґР° СЃРµР»РёРј Рё break
+                if (!guestExists) { // Тогда селим и break
                     Guest guest = new Guest();
                     guest.setFirstname("");
                     guest.setLastname(guestStr);
@@ -584,7 +584,7 @@ public class GuestService {
         Hotel ermak = hotelRepository.getById(327L);
         Hotel proizvodstvennaya = hotelRepository.getById(182L);
 
-        // Р Р°Р·Р±РёРІР°РµРј РіРѕСЃС‚РµР№ РїРѕ РїСЂРёР·РЅР°РєСѓ РРўР 
+        // Разбиваем гостей по признаку ИТР
         List<TabWithItr> employeeItr = new ArrayList<>();
         List<TabWithItr> employeeNoItr = new ArrayList<>();
         for (TabWithItr tabWithItr : data.getGuests()) {
@@ -593,8 +593,22 @@ public class GuestService {
         }
         // -----
 
-        // РЎРѕСЂС‚РёСЂСѓРµРј РѕР±Р° СЃРїРёСЃРєР° РіРѕСЃС‚РµР№ РїРѕ РїРѕР»Сѓ, СЃРЅР°С‡Р°Р»Р° Р¶РµРЅС‰РёРЅС‹
-        employeeItr.sort((e1, e2) -> e2.getMale().compareTo(e1.getMale()));
+        // Сортируем оба списка гостей по полу, сначла руководитель, потом Ж
+        employeeItr.sort((o1, o2) -> {
+            boolean o1isBoss = isLeadershipPosition(o1.getTabNumber());
+            boolean o2isBoss = isLeadershipPosition(o2.getTabNumber());
+            int leadershipCompare = Boolean.compare(o2isBoss, o1isBoss);
+            if (leadershipCompare != 0) {
+                return leadershipCompare;
+            }
+            if (!o1isBoss && !o2isBoss) {
+                return Integer.compare(
+                        o1.getMale() == 1 ? 1 : 0,
+                        o2.getMale() == 1 ? 1 : 0
+                );
+            }
+            return 0;
+        });
         employeeNoItr.sort((e1, e2) -> e2.getMale().compareTo(e1.getMale()));
         // -----
 
@@ -603,10 +617,10 @@ public class GuestService {
         List<Reservation> tmpReservationsErmak = new ArrayList<>();
         List<Reservation> tmpReservationsProizvod = new ArrayList<>();
 
-        // РџСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЂР°СЃСЃРµР»РµРЅРёСЏ РіРѕСЃС‚РµР№ СЃРѕ СЃС‚Р°С‚СѓСЃРѕРј РРўР  РІ РіРѕСЃС‚РёРЅРЅРёС†Сѓ Р•СЂРјР°Рє
+        // Проверка возможности расселения гостей со статусом ИТР в гостинницу Ермак
         for (TabWithItr employee : employeeItr) {
             for (DatePair datePair : employee.getDates()) {
-                // РћРїСЂРµРґРµР»СЏРµРј РґР°С‚Сѓ РЅР°С‡Р°Р»Р° Рё РґР°С‚Сѓ РѕРєРѕРЅС‡Р°РЅРёСЏ
+                // Определяем дату начала и дату окончания
                 Date dateStart = dateFormat.parse(datePair.getDate());
                 LocalDateTime dateStartLD = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 LocalDateTime dateFinishLD = dateStartLD.plusDays(datePair.getDaysCount() - 1);
@@ -640,10 +654,10 @@ public class GuestService {
         }
         // -----
 
-        // РџСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЂР°СЃСЃРµР»РµРЅРёСЏ РіРѕСЃС‚РµР№ Р±РµР· СЃС‚Р°С‚СѓСЃР° РРўР  РІ РћР±С‰РµР¶РёС‚РёРµ РЅР° РџСЂРѕРёР·РІРѕРґСЃС‚РІРµРЅРЅРѕР№
+        // Проверка возможности расселения гостей без статуса ИТР в Общежитие на Производственной
         for (TabWithItr employee : employeeNoItr) {
             for (DatePair datePair : employee.getDates()) {
-                // РћРїСЂРµРґРµР»СЏРµРј РґР°С‚Сѓ РЅР°С‡Р°Р»Р° Рё РґР°С‚Сѓ РѕРєРѕРЅС‡Р°РЅРёСЏ
+                // Определяем дату начала и дату окончания
                 Date dateStart = dateFormat.parse(datePair.getDate());
                 LocalDateTime dateStartLD = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 LocalDateTime dateFinishLD = dateStartLD.plusDays(datePair.getDaysCount() - 1);
@@ -677,39 +691,91 @@ public class GuestService {
         }
         // -----
 
-        // РћС‡РёСЃС‚РєР° РІСЂРµРјРµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
-        for (Reservation r : tmpReservationsErmak) reservationRepository.delete(r);
+        // Очистка временных записей
+        //for (Reservation r : tmpReservationsErmak) reservationRepository.delete(r);
         for (Reservation r : tmpReservationsProizvod) reservationRepository.delete(r);
         // -----
 
         return response;
     }
 
-    // РњРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё Р·Р°СЃРµР»РµРЅРёСЏ РіРѕСЃС‚СЏ РІ РїРµСЂРµС‡РµРЅСЊ РїРµСЂРµРґР°РЅРЅС‹С… РјРµСЃС‚
+    public boolean isLeadershipPosition(Integer tabNumber) {
+        if (tabNumber == null) return false;
+        Employee employee = employeeRepository.findByTabnumAndEndDate(tabNumber, null);
+        Post post = postRepository.getById(Long.valueOf(employee.getIdPoststaff()));
+        if (Objects.equals(post.getPersk(), "10")) return true;
+        if (Objects.equals(post.getPersk(), "11")) return true;
+        if (Objects.equals(post.getPersk(), "12")) return true;
+        if (Objects.equals(post.getPersk(), "13")) return true;
+        if (Objects.equals(post.getPersk(), "14")) return true;
+        return false;
+    }
+
+    // Метод для проверки возможности заселения гостя в перечень переданных мест
     boolean tryCheckIn(Date dateStart, Date dateFinish, TabWithItr employee, List<Bed> beds, List<Reservation> tmpReservations) {
         for (Bed bed : beds) {
-            // РџСЂРѕРІРµСЂСЏРµРј СЃРІРѕР±РѕРґРЅРѕ Р»Рё РјРµСЃС‚Рѕ РѕС‚ Р±СЂРѕРЅРµР№ РёР»Рё РіРѕСЃС‚РµР№ РЅР° СЌС‚Рё РґР°С‚С‹
+            // Проверяем свободно ли место от броней или гостей на эти даты
             boolean bedBusyReservation = reservationRepository.existsByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
             boolean bedBusyGuest = guestRepository.existsByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
             if (bedBusyReservation || bedBusyGuest) continue;
             // -----
 
-            // Р•СЃР»Рё СЃРµР»РёРј Р¶РµРЅС‰РёРЅСѓ С‚Рѕ, РёС‰РµРј СЃРѕСЃРµРґР° РјСѓР¶С‡РёРЅСѓ, РµСЃР»Рё РµСЃС‚СЊ СЃРєРёРїР°РµРј РјРµСЃС‚Рѕ
+            // Если селим руководителя, то смотрим, чтобы в секции никто не жил
+            if (isLeadershipPosition(employee.getTabNumber())) {
+                boolean neighborhoodExist = false;
+                Flat flat = bed.getRoom().getFlat();
+                for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
+                    for (Bed bedRoom : bedRepository.findAllByRoom(room)) {
+                        List<Reservation> reservationNeighborhoods = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                        List<Guest> guestNeighborhoods = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                        if (!reservationNeighborhoods.isEmpty() || !guestNeighborhoods.isEmpty()) neighborhoodExist = true;
+                    }
+                }
+                if (neighborhoodExist) continue;
+            } else { // Иначе смотрим, чтобы не было соседа руководителя
+                boolean bossNeighborhoodExist = false;
+                Flat flat = bed.getRoom().getFlat();
+                for (Room room: roomRepository.findAllByFlatOrderById(flat)) {
+                    for (Bed bedRoom : bedRepository.findAllByRoom(room)) {
+                        List<Reservation> reservationNeighborhoods = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                        List<Guest> guestNeighborhoods = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                        if (!reservationNeighborhoods.isEmpty()) {
+                            if (isLeadershipPosition(reservationNeighborhoods.get(0).getTabnum()))
+                                bossNeighborhoodExist = true;
+                        }
+                        if (!guestNeighborhoods.isEmpty()) {
+                            if (guestNeighborhoods.get(0).getEmployee() != null) { // Если наш работник, то есть смысл провреки на руководителя
+                                if (isLeadershipPosition(guestNeighborhoods.get(0).getEmployee().getTabnum()))
+                                    bossNeighborhoodExist = true;
+                            }
+                        }
+                    }
+                }
+                if (bossNeighborhoodExist) continue;
+            }
+            // -----
+
+            // Если селим женщину то, ищем соседа мужчину, если есть скипаем место
             if (employee.getMale() == 0) {
                 boolean maleNeighborhoodExist = false;
                 Room room = bed.getRoom();
                 for (Bed bedRoom : bedRepository.findAllByRoom(room)) {
-                    List<Guest> neighborhoods = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
-                    if (!neighborhoods.isEmpty()) {
-                        if (neighborhoods.get(0).getMale()) maleNeighborhoodExist = true;
+                    List<Reservation> reservationNeighborhoods = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                    List<Guest> guestNeighborhoods = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bedRoom);
+                    if (!guestNeighborhoods.isEmpty()) {
+                        if (guestNeighborhoods.get(0).getMale()) maleNeighborhoodExist = true;
+                    }
+                    if (!reservationNeighborhoods.isEmpty()) {
+                        if (reservationNeighborhoods.get(0).getMale()) maleNeighborhoodExist = true;
                     }
                 }
                 if (maleNeighborhoodExist) continue;
             }
             // -----
 
-            // РЎРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ Р±СЂРѕРЅСЊ Рё РґРѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє РІРµСЂРµРјРЅРЅС‹С… Р±СЂРѕРЅРµР№, РїРѕСЃР»Рµ РѕРЅРё Р±СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹
+            // Создаем временную бронь и добавляем в список веремнных броней, после они будут удалены
             Reservation reservation = new Reservation();
+            reservation.setTabnum(employee.getTabNumber());
             reservation.setDateStart(dateStart);
             reservation.setDateFinish(dateFinish);
             reservation.setBed(bed);
@@ -726,4 +792,5 @@ public class GuestService {
         }
         return false;
     }
+
 }

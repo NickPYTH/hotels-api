@@ -27,4 +27,7 @@ public class Post {
     @Column(name = "longname")
     private String longname;
 
+    @Column(name = "persk")
+    private String persk;
+
 }
