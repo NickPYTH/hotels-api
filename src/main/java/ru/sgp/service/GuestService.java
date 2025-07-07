@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.checkEmployee.CheckEmployeeRequest;
+import ru.sgp.dto.integration.checkEmployee.CheckEmployeeResponse;
 import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
 import ru.sgp.dto.integration.checkSpaces.DatePair;
 import ru.sgp.dto.integration.checkSpaces.TabWithItr;
@@ -793,4 +795,16 @@ public class GuestService {
         return false;
     }
 
+    public List<CheckEmployeeResponse> checkEmployee(CheckEmployeeRequest body) throws ParseException {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        List<CheckEmployeeResponse> response = new ArrayList<>();
+        for (Reservation reservation: reservationRepository.findAllByTabnumAndDateStartLessThanAndDateFinishGreaterThan(body.getTabNumber(), dateFormatter.parse(body.getDateFinish()), dateFormatter.parse(body.getDateStart()))) {
+            CheckEmployeeResponse record = new CheckEmployeeResponse();
+            record.setBed(MyMapper.BedToBedDTO(reservation.getBed()));
+            record.setDateStart(dateFormatter.format(reservation.getDateStart()));
+            record.setDateFinish(dateFormatter.format(reservation.getDateFinish()));
+            response.add(record);
+        }
+        return response;
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.checkEmployee.CheckEmployeeRequest;
+import ru.sgp.dto.integration.checkEmployee.CheckEmployeeResponse;
 import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
 import ru.sgp.dto.integration.checkSpaces.response.CheckSpacesResponse;
 import ru.sgp.model.Log;
@@ -348,13 +350,13 @@ public class GuestController {
         return guestService.manyGuestUpload(file, mode);
     }
 
-    // Запрос для Елагина
+    // Запрос для проверки возможности расселения
     @PostMapping(path = "/integration/checkSpaces")
     public ResponseEntity<CheckSpacesResponse> checkSpaces(@RequestBody CheckSpacesDTO body) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        CheckSpacesResponse response = guestService.checkSpaces(body);
         try {
+            CheckSpacesResponse response = guestService.checkSpaces(body);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/checkSpaces", duration, "");
             record.setStatus("OK");
@@ -377,4 +379,35 @@ public class GuestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    // Запрос для поиска места проживания работника
+    @PostMapping(path = "/integration/checkEmployee")
+    public ResponseEntity<List<CheckEmployeeResponse>> checkEmployee(@RequestBody CheckEmployeeRequest body) throws Exception {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            List<CheckEmployeeResponse> response = guestService.checkEmployee(body);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/checkEmployee", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/checkEmployee");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/integration/checkEmployee", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/checkEmployee");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
