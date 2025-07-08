@@ -694,7 +694,7 @@ public class GuestService {
         // -----
 
         // Очистка временных записей
-        //for (Reservation r : tmpReservationsErmak) reservationRepository.delete(r);
+        for (Reservation r : tmpReservationsErmak) reservationRepository.delete(r);
         for (Reservation r : tmpReservationsProizvod) reservationRepository.delete(r);
         // -----
 

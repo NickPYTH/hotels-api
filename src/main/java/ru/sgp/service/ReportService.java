@@ -363,7 +363,7 @@ public class ReportService {
     }
 
     @Transactional
-    public byte[] getReestrRabotReport(Long hotelId, Long responsibilityId, String dateStart, String dateFinish, String ukgBoss, String workType, Boolean isOrganization) throws JRException, ParseException {
+    public byte[] getReestrRabotReport(Long hotelId, Long responsibilityId, String dateStart, String dateFinish, String ukgBoss, String workType, Boolean isOrganization, List<Long> reasonList) throws JRException, ParseException {
         Responsibilities responsibility = responsibilitiesRepository.getById(responsibilityId);
         Hotel hotelM = hotelRepository.getById(hotelId);
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
@@ -374,7 +374,8 @@ public class ReportService {
         for (Hotel hotel : hotelRepository.findAllByMvz(hotelM.getMvz())) {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
                 if (guest.getContract() == null) continue;
-                if (guest.getContract().getReason().getId() != 4L && !isOrganization) continue; // Пропускаем если не командировка
+                if (reasonList.stream().noneMatch(r -> Objects.equals(r, guest.getContract().getReason().getId())))
+                    continue; // Пропускаем если нет такого основания
                 if ((guest.getEmployee() == null && guest.getFamilyMemberOfEmployee() == null) && !isOrganization)
                     continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)
@@ -1402,7 +1403,7 @@ public class ReportService {
 
     // Отчеты для Ермака
     @Transactional
-    public byte[] getReestrRabotErmakReport(Long hotelId, Long responsibilityId, String dateStart, String dateFinish, String ukgBoss, String workType, Boolean isOrganization) throws JRException, ParseException {
+    public byte[] getReestrRabotErmakReport(Long hotelId, Long responsibilityId, String dateStart, String dateFinish, String ukgBoss, String workType, Boolean isOrganization, List<Long> reasonList) throws JRException, ParseException {
         Responsibilities responsibility = responsibilitiesRepository.getById(responsibilityId);
         Hotel hotelM = hotelRepository.getById(hotelId);
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
@@ -1412,7 +1413,8 @@ public class ReportService {
         for (Hotel hotel : hotelRepository.findAllByMvz(hotelM.getMvz())) {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
                 if (guest.getContract() == null) continue;
-                if (guest.getContract().getReason().getId() != 4L && !isOrganization) continue; // Пропускаем если не командировка
+                if (reasonList.stream().noneMatch(r -> Objects.equals(r, guest.getContract().getReason().getId())))
+                    continue; // Пропускаем если нет такого основания
                 if (guest.getEmployee() == null && !isOrganization)
                     continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)

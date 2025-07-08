@@ -9,16 +9,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="апдейт">
+    <list default="true" id="3a566905-86a7-4aca-aef5-4f487506c436" name="Changes" comment="Поиск броней по табельному номеру и заданному периоду">
       <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-07-04.0.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-07-06.0.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" beforeDir="false" afterPath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-23.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-24.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-25.0.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-26.0.gz" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-27.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache-tomcat-9.0.96/temp/spring.log.2025-06-30.0.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flight-api.iml" beforeDir="false" afterPath="$PROJECT_DIR$/flight-api.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
     </list>
@@ -105,7 +104,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.26271895&quot;,
     &quot;rest.client.default.execution.environment&quot;: &quot;dev&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;database.data.views&quot;,
     &quot;settings.editor.splitter.proportion&quot;: &quot;0.26133144&quot;,
     &quot;spring.configuration.checksum&quot;: &quot;0cfc9cbfc40276f3acbd602803cbc54e&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
@@ -136,11 +135,11 @@
       <recent name="$PROJECT_DIR$/apache-tomcat-9.0.96/webapps" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="ru.sgp.dto.integration.checkEmployee" />
       <recent name="ru.sgp.dto.report" />
       <recent name="ru.sgp.dto" />
       <recent name="ru.sgp.repository" />
       <recent name="ru.sgp.model" />
-      <recent name="ru.sgp.controller" />
     </key>
   </component>
   <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.96">
@@ -466,22 +465,8 @@
       <workItem from="1741420898428" duration="4517000" />
       <workItem from="1751654201802" duration="746000" />
       <workItem from="1751655032068" duration="2166000" />
-    </task>
-    <task id="LOCAL-00009" summary="Порция багфиксов">
-      <option name="closed" value="true" />
-      <created>1723013284825</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1723013284825</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Порция багфиксов">
-      <option name="closed" value="true" />
-      <created>1723023704678</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1723023704678</updated>
+      <workItem from="1751821264094" duration="11596000" />
+      <workItem from="1751953916735" duration="1796000" />
     </task>
     <task id="LOCAL-00011" summary="createTextField">
       <option name="closed" value="true" />
@@ -859,7 +844,21 @@
       <option name="project" value="LOCAL" />
       <updated>1739373495426</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="Проверка мест для интеграции с учетом должности">
+      <created>1751827785954</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1751827785956</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Поиск броней по табельному номеру и заданному периоду">
+      <created>1751905391204</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1751905391204</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -893,8 +892,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="В отчете о проживании добавлен период в качестве входных параметров." />
-    <MESSAGE value="Изменено обновление статусов у секций и комнат" />
     <MESSAGE value="Добавлен отчет реестр по организациям жильцов" />
     <MESSAGE value="Доработан реестр для сторонников исправлены ошибки;&#10;Отчет по МВЗ;&#10;Ускорен отчет по загруженности;&#10;Возможно что то еще что я забыл ы)" />
     <MESSAGE value="Добавлен краткий отчет о загруженности" />
@@ -918,7 +915,9 @@
     <MESSAGE value="Массовая загрузка" />
     <MESSAGE value="Багфиксы + массовая загрузка по таб. номерам" />
     <MESSAGE value="Доступ к записям о проживании для дежурных" />
-    <option name="LAST_COMMIT_MESSAGE" value="Доступ к записям о проживании для дежурных" />
+    <MESSAGE value="Проверка мест для интеграции с учетом должности" />
+    <MESSAGE value="Поиск броней по табельному номеру и заданному периоду" />
+    <option name="LAST_COMMIT_MESSAGE" value="Поиск броней по табельному номеру и заданному периоду" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

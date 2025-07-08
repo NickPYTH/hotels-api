@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -94,11 +95,11 @@ public class ReportController {
     }
 
     @GetMapping(path = "/getReestrRabotReport")
-    public ResponseEntity<byte[]> getReestrRabotReport(@RequestParam Long hotelId, @RequestParam Long responsibilityId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String ukgBoss, @RequestParam String workType, @RequestParam Boolean isOrganization) throws JRException, ParseException {
+    public ResponseEntity<byte[]> getReestrRabotReport(@RequestParam List<Long> reasonList, @RequestParam Long hotelId, @RequestParam Long responsibilityId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String ukgBoss, @RequestParam String workType, @RequestParam Boolean isOrganization) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = reportService.getReestrRabotReport(hotelId, responsibilityId, dateStart, dateFinish, ukgBoss, workType, isOrganization);
         try {
+            byte[] reportData = reportService.getReestrRabotReport(hotelId, responsibilityId, dateStart, dateFinish, ukgBoss, workType, isOrganization, reasonList);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getReestrRabotReport", duration, "");
             record.setStatus("OK");
@@ -126,11 +127,11 @@ public class ReportController {
     }
 
     @GetMapping(path = "/getReestrRabotErmakReport")
-    public ResponseEntity<byte[]> getReestrRabotErmakReport(@RequestParam Long hotelId, @RequestParam Long responsibilityId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String ukgBoss, @RequestParam String workType, @RequestParam Boolean isOrganization) throws JRException, ParseException {
+    public ResponseEntity<byte[]> getReestrRabotErmakReport(@RequestParam List<Long> reasonList, @RequestParam Long hotelId, @RequestParam Long responsibilityId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String ukgBoss, @RequestParam String workType, @RequestParam Boolean isOrganization) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            byte[] reportData = reportService.getReestrRabotErmakReport(hotelId, responsibilityId, dateStart, dateFinish, ukgBoss, workType, isOrganization);
+            byte[] reportData = reportService.getReestrRabotErmakReport(hotelId, responsibilityId, dateStart, dateFinish, ukgBoss, workType, isOrganization, reasonList);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getReestrRabotErmakReport", duration, "");
             record.setStatus("OK");
