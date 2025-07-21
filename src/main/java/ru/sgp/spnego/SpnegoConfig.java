@@ -32,13 +32,13 @@ import javax.servlet.ServletException;
 public class SpnegoConfig extends WebSecurityConfigurerAdapter {
 
     // путь к файлу KEYTAB
-    //@Value("${keytab-location:/etc/tomcat/SRV_LinuxWorkTime_test-vapp-03.keytab}")
-    @Value("${keytab-location:/etc/tomcat/SRV_LinuxJavaTomcat.keytab}")
+    @Value("${keytab-location:/etc/tomcat/SRV_LinuxWorkTime_test-vapp-03.keytab}")
+    //@Value("${keytab-location:/etc/tomcat/SRV_LinuxJavaTomcat.keytab}")
     private String keytabLocation;
 
     // Principal
-    //@Value("${service-principal:HTTP/test-vapp-03.sgp.ru@SGP.RU}")
-    @Value("${service-principal:HTTP/sco1-vapp-04.sgp.ru@SGP.RU}")
+    @Value("${service-principal:HTTP/test-vapp-03.sgp.ru@SGP.RU}")
+    //@Value("${service-principal:HTTP/sco1-vapp-04.sgp.ru@SGP.RU}")
     private String servicePrincipal;
 
     // признак отладки авторизации

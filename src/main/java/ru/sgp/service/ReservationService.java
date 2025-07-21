@@ -49,11 +49,20 @@ public class ReservationService {
     private HotelRepository hotelRepository;
 
     @Transactional
-    public ReservationDTO update(ReservationDTO reservationDTO) throws ParseException {
+    public List<ReservationDTO> update(ReservationDTO reservationDTO) throws ParseException {
         ModelMapper modelMapper = new ModelMapper();
+        List<ReservationDTO> response = new ArrayList<>();
+        ReservationDTO reservationBeforeState;
         Reservation reservation;
-        if (reservationDTO.getId() != null) reservation = reservationRepository.getById(reservationDTO.getId());
-        else reservation = new Reservation();
+        if (reservationDTO.getId() != null) {
+            reservation = reservationRepository.getById(reservationDTO.getId());
+            reservationBeforeState = modelMapper.map(reservation, ReservationDTO.class);
+        } else {
+            reservation = new Reservation();
+            reservationBeforeState = new ReservationDTO();
+        }
+        response.add(reservationBeforeState);
+
         Date dateStart = dateTimeFormatter.parse(reservationDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(reservationDTO.getDateFinish());
         reservation.setTabnum(reservationDTO.getTabnum());
@@ -110,7 +119,8 @@ public class ReservationService {
             tmp.setBed(modelMapper.map(reservationTmp.getBed(), BedDTO.class));
             tmp.setDateStart(dateTimeFormatter.format(reservationTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(reservationTmp.getDateFinish()));
-            return tmp;
+            response.add(tmp);
+            return response;
         }
         // -----
 
@@ -126,11 +136,13 @@ public class ReservationService {
             tmp.setBed(modelMapper.map(guestTmp.getBed(), BedDTO.class));
             tmp.setDateStart(dateTimeFormatter.format(guestTmp.getDateStart()));
             tmp.setDateFinish(dateTimeFormatter.format(guestTmp.getDateFinish()));
-            return tmp;
+            response.add(tmp);
+            return response;
         }
         // -----
         reservationRepository.save(reservation);
-        return modelMapper.map(reservation, ReservationDTO.class);
+        response.add(modelMapper.map(reservation, ReservationDTO.class));
+        return response;
     }
 
     @Transactional

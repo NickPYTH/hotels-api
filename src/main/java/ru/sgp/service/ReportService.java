@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sgp.dto.integration.BookReportDTO;
 import ru.sgp.dto.report.*;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
@@ -69,11 +70,25 @@ public class ReportService {
     EmployeeRepository employeeRepository;
     @Autowired
     private GuestExtraRepository guestExtraRepository;
+    @Autowired
+    private BookReportRepository bookReportRepository;
+    @Autowired
+    private RecordBookReportRepository recordBookReportRepository;
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat dateFormatterDot = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     private final SimpleDateFormat dateTimeDotFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+    public Float simpleCalculateDaysCount(Guest guest) throws ParseException {
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+        Long daysCount = 0L;
+        Date cuttedGuestStartDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateStart()));
+        Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
+        daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+        if (daysCount == 0) daysCount = 1L;
+        return daysCount.floatValue();
+    }
 
     public Float calculateDaysCount(Date minDate, Date maxDate, Guest guest) throws ParseException {
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
@@ -1885,6 +1900,45 @@ public class ReportService {
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint, format);
     }
+
+    public byte[] getReservationConfirmReport(Long reservationId, String format) throws ParseException, JRException {
+        ModelMapper modelMapper = new ModelMapper();
+        Reservation reservation = reservationRepository.findById(reservationId).get();
+        List<ReservationConfirmReportDTO> reportData = new ArrayList<>();
+        ReservationConfirmReportDTO record = new ReservationConfirmReportDTO();
+        Employee employee = employeeRepository.findByTabnumAndEndDate(reservation.getTabnum(), null);
+
+        record.setN(1);
+        record.setNumber(reservation.getId().intValue());
+        if (employee != null) {
+            record.setFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+        } else {
+            record.setFio(reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName());
+        }
+        record.setPeriod(dateFormatterDot.format(reservation.getDateStart()) + " - " + dateFormatterDot.format(reservation.getDateFinish()));
+        record.setFlat(reservation.getBed().getRoom().getFlat().getName());
+        record.setDays(simpleCalculateDaysCount(modelMapper.map(reservation, Guest.class)));
+        if (reservation.getContract() != null) {
+            record.setCost(reservation.getContract().getCost());
+            record.setSummary(record.getDays() * record.getCost());
+            record.setType(reservation.getContract().getNote());
+        } else {
+            record.setCost(0f);
+            record.setSummary(0f);
+            record.setType("");
+        }
+        reportData.add(record);
+
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/ReservationConfirm.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("hotel", reservation.getBed().getRoom().getFlat().getHotel().getName());
+        parameters.put("location", reservation.getBed().getRoom().getFlat().getHotel().getLocation());
+        parameters.put("filial", reservation.getBed().getRoom().getFlat().getHotel().getFilial().getName());
+        parameters.put("period", dateFormatterDot.format(reservation.getDateStart()) + "-" + dateFormatterDot.format(reservation.getDateFinish()));
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint, format);
+    }
     // -----
 
     int calculateDays(long monthStart, long monthEnd, long rangeStart, long rangeEnd) {
@@ -1986,6 +2040,36 @@ public class ReportService {
         Map<String, Object> parameters = new HashMap<>();
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint, format);
+    }
+
+    @Transactional
+    public byte[] bookReport(Long bookReportId) throws ParseException, JRException {
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+        List<BookReportDTO> reportData = new ArrayList<>();
+        BookReport bookReport = bookReportRepository.getById(bookReportId);
+        for (RecordBookReport recordBookReport : recordBookReportRepository.findAllByBookReport(bookReport)) {
+            BookReportDTO bookReportDTO = new BookReportDTO();
+            bookReportDTO.setBookId(bookReport.getId().toString());
+            bookReportDTO.setDate(dateTimeFormatter.format(bookReport.getDate()));
+            bookReportDTO.setUsername(bookReport.getUsername());
+            bookReportDTO.setDuration(bookReport.getDuration().toString());
+            bookReportDTO.setBookStatus(bookReport.getStatus());
+            bookReportDTO.setTabnumber(recordBookReport.getTabnumber().toString());
+            Employee employee = employeeRepository.findByTabnumAndEndDate(recordBookReport.getTabnumber(), null);
+            if (employee != null)
+                bookReportDTO.setFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+            else bookReportDTO.setFio(recordBookReport.getFio());
+            bookReportDTO.setDateStart(dateFormatter.format(recordBookReport.getDateStart()));
+            bookReportDTO.setDateFinish(dateFormatter.format(recordBookReport.getDateFinish()));
+            bookReportDTO.setStatus(recordBookReport.getStatus());
+            reportData.add(bookReportDTO);
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/BookReport.jrxml"));
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return export(jasperPrint, "xlsx");
     }
 
 }

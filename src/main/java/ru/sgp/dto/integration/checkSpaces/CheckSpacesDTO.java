@@ -6,7 +6,5 @@ import java.util.List;
 
 @Data
 public class CheckSpacesDTO {
-    private String date;
-    private Integer daysCount;
     private List<TabWithItr> guests;
 }

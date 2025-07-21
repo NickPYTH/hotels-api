@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.ReservationDTO;
 import ru.sgp.model.Log;
 import ru.sgp.repository.LogRepository;
+import ru.sgp.service.HistoryService;
 import ru.sgp.service.ReservationService;
 import ru.sgp.utils.SecurityManager;
 
@@ -29,6 +30,8 @@ public class ReservationController {
     LogRepository logsRepository;
     @Autowired
     ReservationService reservationService;
+    @Autowired
+    HistoryService historyService;
     Logger logger = LoggerFactory.getLogger(ReservationController.class);
     String loggerString = "DATE: {} | Status: {} | User: {} | PATH: {} | DURATION: {} | MESSAGE: {}";
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -37,8 +40,8 @@ public class ReservationController {
     public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO reservationDTO) throws ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        ReservationDTO response = reservationService.update(reservationDTO);
         try {
+            List<ReservationDTO> response = reservationService.update(reservationDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/update", duration, "");
             record.setStatus("OK");
@@ -47,7 +50,8 @@ public class ReservationController {
             record.setDuration(duration);
             record.setDate(new Date());
             logsRepository.save(record);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            historyService.updateReservation(record, response.get(0), response.get(1));
+            return new ResponseEntity<>(response.get(1), HttpStatus.OK);
         } catch (Exception e) {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/reservation/update", duration, e.getMessage());

@@ -2,8 +2,8 @@
 <configuration debug="false" scan="true" scanPeriod="60 seconds">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-<!--        <property name="LOG_DIR" value="/var/log/tomcat/app/hotel"/>-->
-    <property name="LOG_DIR" value="/Users/nick/IdeaProjects/hotel_api/logs"/>
+        <property name="LOG_DIR" value="/var/log/tomcat/app/hotel"/>
+<!--    <property name="LOG_DIR" value="/Users/nick/IdeaProjects/hotel_api/logs"/>-->
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/hotel.log</file>

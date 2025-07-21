@@ -41,11 +41,8 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(Date date, Date date1, Bed bed); // Для поиска пересечения дат проживания по месту при создании
 
-    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(Date date, Date date1, Bed bed, Long id); // Для поиска пересечения дат проживания по месту при обновлении
 
     List<Guest> findAllByBedRoomAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Room room, Date date, Date date1);
-
-    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndFirstnameAndLastnameAndSecondNameAndBedIsNotAndBedRoomFlatHotelFilial(Date dateFinish, Date dateStart, String firstname, String lastname, String secondName, Bed bed, Filial filial);
 
     List<Guest> findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(Date date, Date date1, Hotel hotel);
 
@@ -72,4 +69,8 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     Boolean existsByDateStartLessThanAndDateFinishGreaterThanAndBed(Date dateFinish, Date dateStart, Bed bed);
 
     List<Guest> findAllByBedRoomFlatHotelAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Hotel hotel, Date dateFinish, Date dateStart);
+
+    List<Guest> findAllByDateStartGreaterThanEqual(Date dateStart);
+
+    List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(Date dateFinish, Date dateStart, Bed bed, Long id);
 }

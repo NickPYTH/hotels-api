@@ -78,9 +78,8 @@ public class GuestController {
     public ResponseEntity<GuestDTO> update(@RequestBody GuestDTO guestDTO) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<GuestDTO> response = guestService.update(guestDTO);
-
         try {
+            List<GuestDTO> response = guestService.update(guestDTO);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guest/update", duration, "");
             record.setStatus("OK");
@@ -356,7 +355,7 @@ public class GuestController {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            CheckSpacesResponse response = guestService.checkSpaces(body);
+            CheckSpacesResponse response = guestService.checkSpaces(body, false);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/checkSpaces", duration, "");
             record.setStatus("OK");
@@ -372,6 +371,35 @@ public class GuestController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/guests/integration/checkSpaces");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/integration/bookGroup")
+    public ResponseEntity<CheckSpacesResponse> bookGroup(@RequestBody CheckSpacesDTO body) throws Exception {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            CheckSpacesResponse response = guestService.checkSpaces(body, true);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/bookGroup", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/bookGroup");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/integration/bookGroup", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/bookGroup");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

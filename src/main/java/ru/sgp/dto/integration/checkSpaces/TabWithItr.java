@@ -9,5 +9,7 @@ public class TabWithItr {
     private Integer tabNumber;
     private Boolean isItr;
     private Integer male;
+    private String groupNumber;
+    private String eventName;
     private List<DatePair> dates;
 }

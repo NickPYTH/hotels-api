@@ -15,8 +15,8 @@ import java.util.List;
 public class HistoryController {
     @Autowired
     private HistoryService historyService;
-    @GetMapping(path = "/getGuestHistory")
-    public ResponseEntity<List<HistoryDTO>> getGuestHistory(@RequestParam Long guestId) {
-        return new ResponseEntity<>(historyService.getGuestHistory(guestId), HttpStatus.OK);
+    @GetMapping(path = "/getEntityHistory")
+    public ResponseEntity<List<HistoryDTO>> getGuestHistory(@RequestParam Long entityId, @RequestParam String entityType) {
+        return new ResponseEntity<>(historyService.getGuestHistory(entityId, entityType), HttpStatus.OK);
     }
 }

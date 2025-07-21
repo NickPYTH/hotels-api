@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface HistoryRepository extends JpaRepository<History, Long> {
 
-    List<History> findAllByEntityId(Long id);
+    List<History> findAllByEntityIdAndEntityType(Long id, String type);
 }
 

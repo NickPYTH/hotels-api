@@ -777,6 +777,38 @@ public class ReportController {
         }
     }
 
+    @GetMapping(path = "/getReservationConfirmReportSingle")
+    public ResponseEntity<byte[]> getReservationConfirmReportSingle(@RequestParam Long reservationId, @RequestParam String format) throws JRException, ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        byte[] reportData = reportService.getReservationConfirmReport(reservationId, format);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getReservationConfirmReportSingle", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/report/getReservationConfirmReportSingle");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            String reportName = reportNamesRepository.findByEnName("AVD").getRuName();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(reportName));
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType(format)).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/report/getReservationConfirmReportSingle", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/report/getReservationConfirmReportSingle");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "/getYearReservationReport")
     public ResponseEntity<byte[]> getYearReservationReport(@RequestParam Long hotelId, @RequestParam Integer year, @RequestParam String format) throws JRException, ParseException {
         long startTime = System.nanoTime();
@@ -801,6 +833,38 @@ public class ReportController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/report/getYearReservationReport");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/getBookReport")
+    public ResponseEntity<byte[]> getBookReport(@RequestParam Long bookReportId) throws JRException, ParseException {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        byte[] reportData = reportService.bookReport(bookReportId);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getBookReport", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/report/getBookReport");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            HttpHeaders headers = new HttpHeaders();
+            String reportName = reportNamesRepository.findByEnName("YEAR_RESERVATION").getRuName();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(reportName));
+            return ResponseEntity.ok().headers(headers).contentType(getMediaType("xlsx")).body(reportData);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/report/getBookReport", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/report/getBookReport");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

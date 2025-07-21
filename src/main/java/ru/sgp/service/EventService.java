@@ -82,4 +82,12 @@ public class EventService {
         }
         return response;
     }
+
+    @Transactional
+    public EventDTO delete(Long id) {
+        ModelMapper modelMapper = new ModelMapper();
+        EventDTO response = modelMapper.map(eventRepository.getById(id), EventDTO.class);
+        eventRepository.deleteById(id);
+        return response;
+    }
 }

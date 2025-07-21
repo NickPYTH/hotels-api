@@ -146,6 +146,35 @@ public class EventController {
         }
     }
 
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<EventDTO> delete(@RequestParam Long id) {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        try {
+            EventDTO response = eventService.delete(id);
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/event/delete", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/event/delete");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/event/delete", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/event/delete");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "/getAllByDateRange")
     public ResponseEntity<List<ChessEvent>> getAllByDateRange(@RequestParam Long dateStart, @RequestParam Long dateFinish, @RequestParam Long hotelId) throws ParseException {
         long startTime = System.nanoTime();

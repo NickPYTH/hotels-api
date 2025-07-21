@@ -128,7 +128,8 @@ public class RoomService {
         for (Room room: roomRepository.findAllByFlatOrderById(flat)){
             for (Bed bed: bedRepository.findAllByRoomAndIsExtra(room, false)){
                 List<Guest> guests = guestRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
-                if (guests.isEmpty()){
+                List<Reservation> reservations = reservationRepository.findAllByDateStartLessThanAndDateFinishGreaterThanAndBed(dateFinish, dateStart, bed);
+                if (guests.isEmpty() && reservations.isEmpty()){
                     ModelMapper modelMapper = new ModelMapper();
                     return modelMapper.map(bed, BedDTO.class);
                 }
