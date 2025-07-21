@@ -71,6 +71,9 @@ public class GuestService {
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private EventKindRepository eventKindRepository;
+
 
     public List<GuestDTO> update(GuestDTO guestDTO) throws Exception {
         List<GuestDTO> response = new ArrayList<>();
@@ -649,7 +652,7 @@ public class GuestService {
 
         // Если передан параметр о бронировании
         if (!isError && needBook) {
-            for (Reservation reservation: needToBook) {
+            for (Reservation reservation : needToBook) {
                 reservationRepository.save(reservation);
             }
         }
@@ -700,6 +703,17 @@ public class GuestService {
                         Contract contract = contractRepository.getById(1901L);
                         tmp.setContract(contract);
                     }
+                    tmp.setTabnum(employee.getTabNumber());
+                    Employee emp = employeeRepository.findByTabnumAndEndDate(employee.getTabNumber(), null);
+                    if (emp != null) {
+                        tmp.setFirstname(emp.getFirstname());
+                        tmp.setLastname(emp.getLastname());
+                        tmp.setSecondName(emp.getSecondName());
+                        tmp.setFromFilial(filialRepository.findByCode(emp.getIdFilial()));
+                    }
+                    EventKind eventKind = eventKindRepository.getById(2L); // Обучение
+                    tmp.setEventKind(eventKind);
+                    tmp.setMale(employee.getMale() == 1);
                     tmp.setBed(isSuccess);
                     tmp.setDateStart(dateStart);
                     tmp.setDateFinish(dateFinish);
@@ -899,5 +913,14 @@ public class GuestService {
             response.add(record);
         }
         return response;
+    }
+
+    @Transactional
+    public List<Long> reservationCancel(List<Long> reservationIds) {
+        for (Long id : reservationIds) {
+            Reservation reservation = reservationRepository.getById(id);
+            reservationRepository.delete(reservation);
+        }
+        return reservationIds;
     }
 }

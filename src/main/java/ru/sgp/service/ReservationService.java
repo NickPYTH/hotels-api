@@ -13,6 +13,7 @@ import ru.sgp.dto.BedDTO;
 import ru.sgp.dto.ReservationDTO;
 import ru.sgp.model.*;
 import ru.sgp.repository.*;
+import ru.sgp.utils.MyMapper;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -157,29 +158,9 @@ public class ReservationService {
 
     @Transactional
     public List<ReservationDTO> getAll() {
-        ModelMapper modelMapper = new ModelMapper();
         List<ReservationDTO> response = new ArrayList<>();
-        for (Reservation reservation : reservationRepository.findAll()) {
-            ReservationDTO reservationDTO;
-            try {
-                reservationDTO = modelMapper.map(reservation, ReservationDTO.class);
-                if (reservation.getDateStart() != null)
-                    reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
-                else {
-                    if (reservation.getDateStartConfirmed() != null)
-                        reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStartConfirmed()));
-                }
-                if (reservation.getDateFinish() != null)
-                    reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
-                else {
-                    if (reservation.getDateFinishConfirmed() != null)
-                        reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinishConfirmed()));
-                }
-                response.add(reservationDTO);
-            } catch (Exception e) {
-                reservationDTO = new ReservationDTO();
-            }
-        }
+        for (Reservation reservation : reservationRepository.findAll())
+            response.add(MyMapper.ReservationToReservationDTO(reservation));
         return response;
     }
 

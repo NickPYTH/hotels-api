@@ -383,8 +383,8 @@ public class GuestController {
     public ResponseEntity<CheckSpacesResponse> bookGroup(@RequestBody CheckSpacesDTO body) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
+        CheckSpacesResponse response = guestService.checkSpaces(body, true);
         try {
-            CheckSpacesResponse response = guestService.checkSpaces(body, true);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/bookGroup", duration, "");
             record.setStatus("OK");
@@ -400,6 +400,35 @@ public class GuestController {
             record.setStatus("ERROR");
             record.setUser(SecurityManager.getCurrentUser());
             record.setPath("/guests/integration/bookGroup");
+            record.setDuration(duration);
+            record.setMessage(e.getMessage());
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping(path = "/integration/bookCancel")
+    public ResponseEntity<List<Long>> reservationCancel(@RequestBody List<Long> reservationIds) throws Exception {
+        long startTime = System.nanoTime();
+        Log record = new Log();
+        List<Long> response = guestService.reservationCancel(reservationIds);
+        try {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/bookCancel", duration, "");
+            record.setStatus("OK");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/bookCancel");
+            record.setDuration(duration);
+            record.setDate(new Date());
+            logsRepository.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            Double duration = (System.nanoTime() - startTime) / 1E9;
+            logger.info(loggerString, dateTimeFormatter.format(new Date()), "ERROR", SecurityManager.getCurrentUser(), "/guests/integration/bookCancel", duration, e.getMessage());
+            record.setStatus("ERROR");
+            record.setUser(SecurityManager.getCurrentUser());
+            record.setPath("/guests/integration/bookCancel");
             record.setDuration(duration);
             record.setMessage(e.getMessage());
             record.setDate(new Date());

@@ -75,6 +75,28 @@ public class MyMapper {
         if (filial == null) return null;
         return modelMapper.map(filial, FilialDTO.class);
     }
+    public static ReservationDTO ReservationToReservationDTO(Reservation reservation) {
+        ModelMapper modelMapper = new ModelMapper();
+        if (reservation == null) return null;
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        ReservationDTO reservationDTO = new ReservationDTO();
+        reservationDTO.setId(reservation.getId());
+        reservationDTO.setFirstname(reservation.getFirstname());
+        reservationDTO.setLastname(reservation.getLastname());
+        reservationDTO.setSecondName(reservation.getSecondName());
+        reservationDTO.setFio(reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName());
+        reservationDTO.setTabnum(reservation.getTabnum());
+        reservationDTO.setNote(reservation.getNote());
+        reservationDTO.setBed(BedToBedDTO(reservation.getBed()));
+        if (reservation.getDateStart() != null) reservationDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
+        if (reservation.getDateFinish() != null) reservationDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
+        if (reservation.getContract() != null) reservationDTO.setContract(ContractToContractDTO(reservation.getContract()));
+        if (reservation.getEventKind() != null) reservationDTO.setEvent(modelMapper.map(reservation.getEventKind(), EventKindDTO.class));
+        if (reservation.getFromFilial() != null) reservationDTO.setFromFilial(FilialToFilialDTO(reservation.getFromFilial()));
+        reservationDTO.setFamilyMemberOfEmployee(reservation.getFamilyMemberOfEmployee());
+        reservationDTO.setMale(reservation.getMale());
+        return reservationDTO;
+    }
     public static GuestDTO GuestToGuestDTO(Guest guest) {
         if (guest == null) return null;
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");

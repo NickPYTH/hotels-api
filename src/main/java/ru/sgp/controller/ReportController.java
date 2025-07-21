@@ -618,11 +618,11 @@ public class ReportController {
     }
 
     @GetMapping(path = "/getPlanZaezdReport")
-    public ResponseEntity<byte[]> getPlanZaezdReport(@RequestParam Long hotelId, @RequestParam String date) throws JRException, ParseException {
+    public ResponseEntity<byte[]> getPlanZaezdReport(@RequestParam Long hotelId, @RequestParam String dateStart, @RequestParam String dateFinish) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            byte[] reportData = reportService.getPlanZaezdReport(hotelId, date);
+            byte[] reportData = reportService.getPlanZaezdReport(hotelId, dateStart, dateFinish);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getPlanZaezdReport", duration, "");
             record.setStatus("OK");

@@ -100,6 +100,7 @@ public class ReservationController {
         long startTime = System.nanoTime();
         Log record = new Log();
         List<ReservationDTO> response = reservationService.getAll();
+
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/reservation/getAll", duration, "");

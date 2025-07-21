@@ -1545,9 +1545,9 @@ public class ReportService {
         return export(jasperPrint, "xlsx");
     }
 
-    public byte[] getPlanZaezdReport(Long hotelId, String dateStr) throws ParseException, JRException {
-        Date dayStart = dateTimeFormatter.parse(dateStr + " 00:01");
-        Date dayFinish = dateTimeFormatter.parse(dateStr + " 23:59");
+    public byte[] getPlanZaezdReport(Long hotelId, String dateStartStr, String dateFinishStr) throws ParseException, JRException {
+        Date dayStart = dateTimeFormatter.parse(dateStartStr + " 00:01");
+        Date dayFinish = dateTimeFormatter.parse(dateFinishStr + " 23:59");
         Hotel hotel = hotelRepository.getById(hotelId);
         JasperReport jasperReport;
         jasperReport = JasperCompileManager.compileReport(JRLoader.getResourceInputStream("reports/PlanZaezd.jrxml"));
@@ -1582,7 +1582,7 @@ public class ReportService {
             data.add(record);
         }
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("date", dateStr);
+        parameters.put("date", dateStartStr + " - " + dateFinishStr);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         return export(jasperPrint, "xlsx");
