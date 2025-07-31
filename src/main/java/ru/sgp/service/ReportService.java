@@ -99,46 +99,46 @@ public class ReportService {
         Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
         Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
         Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
-        // Р’СЃРµ РґРЅРё Р·Р°РґР°РЅРЅРѕРіРѕ РїРµСЂРёРѕРґР°
+        // Все дни заданного периода
         if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {
             daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
-            // Р•СЃР»Рё СЂР°РЅРЅРёР№ Р·Р°РµР·Рґ
+            // Если ранний заезд
             if (timeFormatter.parse(timeFormatter.format(minDate)).before(midday))
                 added += 0.5f;
-            // Р•СЃР»Рё РїРѕР·РґРЅРёР№ РІС‹РµР·Рґ
+            // Если поздний выезд
             if (timeFormatter.parse(timeFormatter.format(maxDate)).after(midday))
                 added += 0.5f;
-        } // Р’СЃРµ РґРЅРё РІРЅСѓС‚СЂРё РїРµСЂРёРѕРґР°
+        } // Все дни внутри периода
         else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {
             daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
-            // Р•СЃР»Рё СЂР°РЅРЅРёР№ Р·Р°РµР·Рґ
+            // Если ранний заезд
             if (timeFormatter.parse(timeFormatter.format(guest.getDateStart())).before(midday))
                 added += 0.5f;
-            // Р•СЃР»Рё РїРѕР·РґРЅРёР№ РІС‹РµР·Рґ
+            // Если поздний выезд
             if (timeFormatter.parse(timeFormatter.format(guest.getDateFinish())).after(midday))
                 added += 0.5f;
-        } // Р•СЃР»Рё Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃС‡РёС‚Р°РµС‚ СЃ РЅР°С‡Р°Р»Р° РїРµСЂРёРѕРґР° РїРѕ РґР°С‚Сѓ РІС‹РµР·РґР°
+        } // Если Дата начала не входит в период то считает с начала периода по дату выезда
         else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) {
             daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
-            // Р•СЃР»Рё СЂР°РЅРЅРёР№ Р·Р°РµР·Рґ
+            // Если ранний заезд
             if (timeFormatter.parse(timeFormatter.format(minDate.getTime())).before(midday))
                 added += 0.5f;
-            // Р•СЃР»Рё РїРѕР·РґРЅРёР№ РІС‹РµР·Рґ
+            // Если поздний выезд
             if (timeFormatter.parse(timeFormatter.format(guest.getDateFinish())).after(midday))
                 added += 0.5f;
-        } // Р•СЃР»Рё Р”Р°С‚Р° РІС‹СЃРµР»РµРЅРёСЏ РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ Р·Р°СЃРµР»РµРЅРёСЏ РїРѕ РєРѕРЅС†Р° РїРµСЂРёРѕРґР°
+        } // Если Дата выселения не входит в период то сичтает с заселения по конца периода
         else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) {
             daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
-            // Р•СЃР»Рё СЂР°РЅРЅРёР№ Р·Р°РµР·Рґ
+            // Если ранний заезд
             if (timeFormatter.parse(timeFormatter.format(guest.getDateStart())).before(midday))
                 added += 0.5f;
-            // Р•СЃР»Рё РїРѕР·РґРЅРёР№ РІС‹РµР·Рґ
+            // Если поздний выезд
             if (timeFormatter.parse(timeFormatter.format(maxDate.getTime())).after(midday))
                 added += 0.5f;
         }
         if (daysCount == 0) daysCount = 1L;
 //        if (guest.getOrganization() != null && guest.getContract() != null)
-//            if (guest.getOrganization().getId() == 11L && guest.getContract().getReason().getId() == 4L) // Р Р°СЃС‡РµС‚ С‚РѕР»СЊРєРѕ РґР»СЏ РђРґРј Рё РѕСЃРЅРѕРІР°РЅРёСЏ РљРѕРјР°РЅРґРёСЂРѕРІРєР°
+//            if (guest.getOrganization().getId() == 11L && guest.getContract().getReason().getId() == 4L) // Расчет только для Адм и основания Командировка
 //                return daysCount.floatValue() + added;
         return daysCount.floatValue();
     }
@@ -176,11 +176,11 @@ public class ReportService {
         User user = userRepository.findByUsername(username);
         List<Guest> guests;
 
-        // Р•СЃР»Рё СЂРѕР»СЊ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РёР»Рё Р Р°Р±РѕС‚РЅРёРє РћРЎР , РѕС‚РґР°РµРј РІСЃРµ Р·Р°РїРёСЃРё
+        // Если роль Администратор или Работник ОСР, отдаем все записи
         if (user.getRole().getId() == 1L || user.getRole().getId() == 5L) {
             guests = guestRepository.findAll();
         } else {
-            // Р•СЃР»Рё РґРµР¶СѓСЂРЅС‹Р№ РёР»Рё СЂР°Р±РѕС‚РЅРёРє С„РёР»РёР°Р»Р°, С‚Рѕ РѕС‚РґР°РµРј Р·Р°РїРёСЃРё РїРѕ С„РёР»РёР°Р»Сѓ СЂР°Р±РѕС‚РЅРёРєР°/РґРµР¶СѓСЂРЅРѕРіРѕ РїРѕ СЃРєРѕР»СЊРєСѓ РёС… РјРµСЃС‚Рѕ СЂР°Р±РѕС‚С‹ 99% СЃРѕРІРїР°РґР°РµС‚ СЃ С„РёР»РёР°Р»РѕРј РѕР±С‰РµР¶РёС‚РёСЏ
+            // Если дежурный или работник филиала, то отдаем записи по филиалу работника/дежурного по скольку их место работы 99% совпадает с филиалом общежития
             Filial filial = filialRepository.findByCode(user.getEmployee().getIdFilial());
             guests = guestRepository.findAllByBedRoomFlatHotelFilial(filial);
         }
@@ -247,7 +247,7 @@ public class ReportService {
                     if (!Objects.equals(guestFilial.getId(), empFilial.getId())) continue;
                 } else continue;
             } else {
-                if (guest.getEmployee() != null) continue; // Р•СЃР»Рё СЂР°Р±РѕС‚РЅРёРє, С‚Рѕ СЃРєРёРїР°РµРј СЌС‚Рѕ С‚РѕР»СЊРєРѕ РґР»СЏ СЃС‚РѕСЂРѕРЅРЅРёРєРѕРІ
+                if (guest.getEmployee() != null) continue; // Если работник, то скипаем это только для сторонников
             }
             if (guest.getContract() != null) {
                 if (!guest.getContract().getBilling().equals(billing)) continue;
@@ -277,7 +277,7 @@ public class ReportService {
                 else
                     monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
 
-                // РЈСЃС‚Р°РЅРѕРІРєР° С†РµРЅС‹ РІ РїСЂР°РІРёР»СЊРЅРѕРј С„РѕСЂРјР°С‚Рµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РґРІР° Р·РЅР°РєР° РїРѕСЃР»Рµ Р·РїС‚
+                // Установка цены в правильном формате обязательное два знака после зпт
                 String cost = String.valueOf(daysCount * contracts.get(0).getCost());
                 if (cost.split("\\.").length > 1) {
                     String intPart = cost.split("\\.")[0];
@@ -300,7 +300,7 @@ public class ReportService {
             monthReportDTO.setMemo(guest.getMemo());
             reportData.add(monthReportDTO);
 
-            // Р”РѕР±Р°РІР»СЏРµРј С‡Р»РµРЅРѕРІ СЃРµРјСЊРё, РµСЃР»Рё РµСЃС‚СЊ
+            // Добавляем членов семьи, если есть
             List<Guest> family = guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelAndFamilyMemberOfEmployee(maxDate, minDate, responsibilities.getHotel(), guest.getEmployee());
             for (Guest member : family) {
                 List<Contract> contractsMember = contractRepository.findAllByFilialAndHotelAndReasonAndYear(filial, member.getBed().getRoom().getFlat().getHotel(), member.getContract().getReason(), calendar.get(Calendar.YEAR));
@@ -367,7 +367,7 @@ public class ReportService {
             String bossN = empFilial.getBoss().split(" ")[1];
             String bossS = empFilial.getBoss().split(" ")[2];
             String bossPost = empFilial.getBoss().split(" ")[3] + " " + empFilial.getBoss().split(" ")[4];
-            parameters.put("filialBossPost", bossPost);
+            parameters.put("filialBossPost", empFilial.getId() == 925L ? "Начальник центра" : bossPost);
             parameters.put("filialBossName", bossF + " " + bossN.charAt(0) + ". " + bossS.charAt(0) + ".");
         } else {
             parameters.put("filialBossPost", "");
@@ -390,18 +390,18 @@ public class ReportService {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
                 if (guest.getContract() == null) continue;
                 if (reasonList.stream().noneMatch(r -> Objects.equals(r, guest.getContract().getReason().getId())))
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё РЅРµС‚ С‚Р°РєРѕРіРѕ РѕСЃРЅРѕРІР°РЅРёСЏ
+                    continue; // Пропускаем если нет такого основания
                 if ((guest.getEmployee() == null && guest.getFamilyMemberOfEmployee() == null) && !isOrganization)
-                    continue;  // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє РѕСЂРіР°РЅРёР·Р°С†РёРё РІ СЂРµР¶РёРјРµ СЂР°Р±РѕС‚РЅРёРєРѕРІ Р“РўРЎ
+                    continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє РІ СЂРµР¶РёРјРµ РѕСЂРіР°РЅРёР·Р°С†РёР№
+                    continue; // Пропускаем если работник в режиме организаций
                 if (guest.getOrganization() == null && isOrganization)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё РєР°РєРѕРіРѕ-С‚Рѕ С…СѓСЏ РѕСЂРіР°РЅРёР·Р°С†РёСЏ РЅРµ СѓРєР°Р·Р°РЅР° Рё РЅРµ СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ
+                    continue; // Пропускаем если какого-то хуя организация не указана и не работник ГТС
                 if (guest.getOrganization() != null && isOrganization && guest.getOrganization().getId() == 11L)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј СЌС‚Рѕ СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ Сѓ РєРѕС‚РѕСЂРѕРіРѕ РЅРµ Р·Р°РїРѕР»РЅРµРЅРѕ РїРѕР»Рµ isEmployee, РЅРѕ РѕСЂРіР°РЅРёР·Р°С†РёСЏ СЃС‚РѕРёС‚ Р“РўРЎ
+                    continue; // Пропускаем это работник ГТС у которого не заполнено поле isEmployee, но организация стоит ГТС
                 if (guest.getEmployee() != null)
                     if (Objects.equals(guest.getEmployee().getIdFilial(), filial.getCode()))
-                        continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ РёР· С‚РѕРіРѕ Р¶Рµ С„РёР»РёР°Р»Р° С‡С‚Рѕ Рё С„РёР»РёР°Р» РѕС‚РїСЂР°РІРёС‚РµР»СЊ
+                        continue; // Пропускаем если работник ГТС из того же филиала что и филиал отправитель
                 if (guest.getContract() == null) continue;
                 if (isOrganization && guest.getOrganization().getId() == 21L && guest.getContract().getBilling().length() > 15)
                     continue;
@@ -554,7 +554,7 @@ public class ReportService {
                     if (!Objects.equals(guestFilial.getId(), empFilial.getId())) continue;
                 } else continue;
             } else {
-                if (guest.getEmployee() != null) continue; // Р•СЃР»Рё СЂР°Р±РѕС‚РЅРёРє С‚Рѕ СЃРєРёРїР°РµРј СЌС‚Рѕ С‚РѕР»СЊРєРѕ РґР»СЏ СЃС‚РѕСЂРѕРЅРЅРёРєРѕРІ
+                if (guest.getEmployee() != null) continue; // Если работник то скипаем это только для сторонников
             }
             if (guest.getContract() != null) {
                 if (!guest.getContract().getBilling().equals(billing)) continue;
@@ -562,7 +562,7 @@ public class ReportService {
             } else continue;
             if (responsibilities.getHotel() != guestHotel) continue;
             if (guest.getEmployee() == null) continue;
-            if (mvzRepository.findByIdAndNameIsContainingIgnoreCase(guest.getEmployee().getMvzId(), ceh).isEmpty())  // РџСЂРѕРІРµСЂРєР° С†РµС…Р°
+            if (mvzRepository.findByIdAndNameIsContainingIgnoreCase(guest.getEmployee().getMvzId(), ceh).isEmpty())  // Проверка цеха
                 continue;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(minDate);
@@ -657,7 +657,7 @@ public class ReportService {
             if (guest.getContract() == null) continue;
             if (!Objects.equals(guest.getContract().getReason().getId(), reason.getId())) continue;
             if (!guest.getContract().getBilling().equals(billing)) continue;
-            List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), guest.getOrganization());
+            //List<Contract> contracts = contractRepository.findAllByFilialAndHotelAndReasonAndOrganization(filial, guest.getBed().getRoom().getFlat().getHotel(), guest.getContract().getReason(), guest.getOrganization());
             MonthReportDTO monthReportDTO = new MonthReportDTO();
             monthReportDTO.setId(String.valueOf(count));
             monthReportDTO.setFio(guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName());
@@ -672,30 +672,41 @@ public class ReportService {
             Float daysCount = calculateDaysCount(minDate, maxDate, guest);
             daysCountSummary += daysCount;
             monthReportDTO.setDaysCount(daysCount);
-            if (!contracts.isEmpty()) {
-                Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
-                if (contracts.get(0).getCost() % 1 == 0)
-                    monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost().intValue()));
+//            if (!contracts.isEmpty()) {
+//                Float cost = Float.valueOf(df.format(contracts.get(0).getCost()).replace(',', '.'));
+//                if (contracts.get(0).getCost() % 1 == 0)
+//                    monthReportDTO.setCostFromContract(String.valueOf(contracts.get(0).getCost().intValue()));
+//                else
+//                    monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
+//                monthReportDTO.setCost(String.valueOf(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.'))));
+//                costSummary += daysCount * cost;
+//            } else {
+//                // Тут если нету договора с организацией ставим ее как сторонюю и ищем договор с ней (только налик)
+//                Reason other = reasonRepository.getById(5L);
+//                Organization podryadchiki = organizationRepository.getById(2L);
+//                Optional<Contract> contractOptional = contractRepository.findByHotelAndOrganizationAndReasonAndYear(guest.getBed().getRoom().getFlat().getHotel(), podryadchiki, other, 2025); // TODO get current year
+//                if (contractOptional.isPresent()) {
+//                    Contract contract = contractOptional.get();
+//                    Float cost = Float.valueOf(df.format(contract.getCost()).replace(',', '.'));
+//                    if (contract.getCost() % 1 == 0)
+//                        monthReportDTO.setCostFromContract(String.valueOf(contract.getCost().intValue()));
+//                    else
+//                        monthReportDTO.setCostFromContract(contract.getCost().toString().replace('.', ','));
+//                    monthReportDTO.setCost(String.valueOf(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.'))));
+//                    costSummary += daysCount * cost;
+//                }
+//            }
+
+            if (guest.getContract() != null) {
+                Float cost = guest.getContract().getCost();
+                if (cost % 1 == 0)
+                    monthReportDTO.setCostFromContract(String.valueOf(cost.intValue()));
                 else
-                    monthReportDTO.setCostFromContract(contracts.get(0).getCost().toString().replace('.', ','));
+                    monthReportDTO.setCostFromContract(cost.toString().replace('.', ','));
                 monthReportDTO.setCost(String.valueOf(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.'))));
                 costSummary += daysCount * cost;
-            } else {
-                // РўСѓС‚ РµСЃР»Рё РЅРµС‚Сѓ РґРѕРіРѕРІРѕСЂР° СЃ РѕСЂРіР°РЅРёР·Р°С†РёРµР№ СЃС‚Р°РІРёРј РµРµ РєР°Рє СЃС‚РѕСЂРѕРЅСЋСЋ Рё РёС‰РµРј РґРѕРіРѕРІРѕСЂ СЃ РЅРµР№ (С‚РѕР»СЊРєРѕ РЅР°Р»РёРє)
-                Reason other = reasonRepository.getById(5L);
-                Organization podryadchiki = organizationRepository.getById(2L);
-                Optional<Contract> contractOptional = contractRepository.findByHotelAndOrganizationAndReasonAndYear(guest.getBed().getRoom().getFlat().getHotel(), podryadchiki, other, 2025); // TODO get current year
-                if (contractOptional.isPresent()) {
-                    Contract contract = contractOptional.get();
-                    Float cost = Float.valueOf(df.format(contract.getCost()).replace(',', '.'));
-                    if (contract.getCost() % 1 == 0)
-                        monthReportDTO.setCostFromContract(String.valueOf(contract.getCost().intValue()));
-                    else
-                        monthReportDTO.setCostFromContract(contract.getCost().toString().replace('.', ','));
-                    monthReportDTO.setCost(String.valueOf(Float.valueOf(String.format("%.2f", daysCount * cost).replace(',', '.'))));
-                    costSummary += daysCount * cost;
-                }
             }
+
             if (guest.getEmployee() != null) {
                 monthReportDTO.setTabnum(guest.getEmployee().getTabnum().toString());
             } else {
@@ -742,8 +753,8 @@ public class ReportService {
         Date minDate = dateTimeFormatter.parse(dateStart + " 23:59");
         Date maxDate = dateTimeFormatter.parse(dateFinish + " 23:59");
         int count = 1;
-        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelFilial(maxDate, minDate, filial)) { // С‚СѓС‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„РёР»СЊС‚СЂ РіРѕСЃС‚СЏ РїРѕ Р·Р°РґРЅРЅРѕРјСѓ С„РёР»РёР°Р»Сѓ
-            if (guest.getEmployee() == null) continue; // С‚РѕР»СЊРєРѕ СЂР°Р±РѕС‚РЅРёРєРѕРІ
+        for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelFilial(maxDate, minDate, filial)) { // тут должен быть фильтр гостя по заднному филиалу
+            if (guest.getEmployee() == null) continue; // только работников
             MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
             if (mvz != null) {
                 MVZReportDTO mvzReportDTO = new MVZReportDTO();
@@ -755,19 +766,19 @@ public class ReportService {
                 Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
                 Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
                 Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
-                if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Р’СЃРµ РґРЅРё Р·Р°РґР°РЅРЅРѕРіРѕ РїРµСЂРёРѕРґР°
+                if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
                     daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
                     mvzReportDTO.setDateStart(minDate);
                     mvzReportDTO.setDateFinish(maxDate);
-                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Р’СЃРµ РґРЅРё РІРЅСѓС‚СЂРё РїРµСЂРёРѕРґР°
+                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
                     daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
                     mvzReportDTO.setDateStart(guest.getDateStart());
                     mvzReportDTO.setDateFinish(guest.getDateFinish());
-                } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ РЅР°С‡Р°Р»Р° РїРµСЂРёРѕРґР° РїРѕ РґР°С‚Сѓ РІС‹РµР·РґР°
+                } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
                     daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
                     mvzReportDTO.setDateStart(minDate);
                     mvzReportDTO.setDateFinish(guest.getDateFinish());
-                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РІС‹СЃРµР»РµРЅРёСЏ РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ Р·Р°СЃРµР»РµРЅРёСЏ РїРѕ РєРѕРЅС†Р° РїРµСЂРёРѕРґР°
+                } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
                     daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
                     mvzReportDTO.setDateStart(guest.getDateStart());
                     mvzReportDTO.setDateFinish(maxDate);
@@ -814,7 +825,7 @@ public class ReportService {
         int count = 1;
         for (Filial filial : filialRepository.findByNameIsContainingIgnoreCase(lpu)) {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotelFilial(maxDate, minDate, filial)) {
-                if (guest.getEmployee() == null) continue; // С‚РѕР»СЊРєРѕ СЂР°Р±РѕС‚РЅРёРєРѕРІ
+                if (guest.getEmployee() == null) continue; // только работников
                 MVZ mvz = mvzRepository.findById(guest.getEmployee().getMvzId());
                 if (mvz != null) {
                     MVZReportDTO mvzReportDTO = new MVZReportDTO();
@@ -826,19 +837,19 @@ public class ReportService {
                     Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
                     Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
                     Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
-                    if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Р’СЃРµ РґРЅРё Р·Р°РґР°РЅРЅРѕРіРѕ РїРµСЂРёРѕРґР°
+                    if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
                         daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
                         mvzReportDTO.setDateStart(minDate);
                         mvzReportDTO.setDateFinish(maxDate);
-                    } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Р’СЃРµ РґРЅРё РІРЅСѓС‚СЂРё РїРµСЂРёРѕРґР°
+                    } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
                         daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
                         mvzReportDTO.setDateStart(guest.getDateStart());
                         mvzReportDTO.setDateFinish(guest.getDateFinish());
-                    } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ РЅР°С‡Р°Р»Р° РїРµСЂРёРѕРґР° РїРѕ РґР°С‚Сѓ РІС‹РµР·РґР°
+                    } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
                         daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
                         mvzReportDTO.setDateStart(minDate);
                         mvzReportDTO.setDateFinish(guest.getDateFinish());
-                    } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РІС‹СЃРµР»РµРЅРёСЏ РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ Р·Р°СЃРµР»РµРЅРёСЏ РїРѕ РєРѕРЅС†Р° РїРµСЂРёРѕРґР°
+                    } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
                         daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
                         mvzReportDTO.setDateStart(guest.getDateStart());
                         mvzReportDTO.setDateFinish(maxDate);
@@ -1080,17 +1091,17 @@ public class ReportService {
                     Flat guestFlat = guestRoom.getFlat();
                     List<RoomLocks> roomLocksList = roomLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndRoom(date, date, guestRoom);
                     List<FlatLocks> flatLocksList = flatLocksRepository.findAllByDateStartBeforeAndDateFinishAfterAndFlat(date, date, guestFlat);
-                    if (!flatLocksList.isEmpty()) { // РџРѕСЃС‡РёС‚Р°С‚СЊ РєРѕР»-РІРѕ РјРµСЃС‚ РІРѕ РІСЃРµР№ СЃРµРєС†РёРё Рё СѓРєР°Р·Р°С‚СЊ С‡С‚Рѕ РѕРЅРё Р·Р°РЅСЏС‚С‹
-                        if (flatLocksList.get(0).getStatus().getId() == 4L || flatLocksList.get(0).getStatus().getId() == 2L) { // СѓРєР°Р·С‹РІР°С‚СЊ С‡С‚Рѕ СЃРµРєС†РёРё Р·Р°РЅСЏС‚С‹ С‚РѕР»СЊРєРѕ РµСЃР»Рё РѕРЅРё РІС‹РєСѓРїР°Р»РµРЅС‹ РѕСЂРіР°РЅРёР·Р°С†РёРµР№ (РР” 4)
+                    if (!flatLocksList.isEmpty()) { // Посчитать кол-во мест во всей секции и указать что они заняты
+                        if (flatLocksList.get(0).getStatus().getId() == 4L || flatLocksList.get(0).getStatus().getId() == 2L) { // указывать что секции заняты только если они выкупалены организацией (ИД 4)
                             countBusyBeds += bedRepository.countByRoomFlatAndIsExtra(guestFlat, false);
                             flatsExcludeList.add(guestFlat.getId());
                         }
-                    } else if (!roomLocksList.isEmpty()) { // РџРѕСЃС‡РёС‚Р°С‚СЊ РєРѕР»-РІРѕ РјРµСЃС‚ РІ РєРѕРјРЅР°С‚Рµ Рё СѓРєР°Р·Р°С‚СЊ С‡С‚Рѕ РѕРЅРё Р·Р°РЅСЏС‚С‹
-                        if (roomLocksList.get(0).getStatus().getId() == 3L || roomLocksList.get(0).getStatus().getId() == 2L) { // СѓРєР°Р·С‹РІР°С‚СЊ С‡С‚Рѕ РєРѕРјРЅР°С‚С‹ Р·Р°РЅСЏС‚С‹ С‚РѕР»СЊРєРѕ РµСЃР»Рё РѕРЅРё РІС‹РєСѓРїР°Р»РµРЅС‹ РѕСЂРіР°РЅРёР·Р°С†РёРµР№ (РР” 3)
+                    } else if (!roomLocksList.isEmpty()) { // Посчитать кол-во мест в комнате и указать что они заняты
+                        if (roomLocksList.get(0).getStatus().getId() == 3L || roomLocksList.get(0).getStatus().getId() == 2L) { // указывать что комнаты заняты только если они выкупалены организацией (ИД 3)
                             countBusyBeds += bedRepository.countByRoomAndIsExtra(guestRoom, false);
                             roomExcludeList.add(guestRoom.getId());
                         }
-                    } else countBusyBeds += 1;  // РџСЂРѕСЃС‚Рѕ СѓРєР°Р·С‹РІР°РµРј С‡С‚Рѕ РіРѕСЃС‚СЊ Р·Р°РЅРёРјР°РµС‚ РѕРґРЅРѕ РјРµСЃС‚Рѕ
+                    } else countBusyBeds += 1;  // Просто указываем что гость занимает одно место
                 }
             }
             if (record.getAll() > 0) {
@@ -1252,13 +1263,13 @@ public class ReportService {
                         Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(guest.getDateFinish()));
                         Date cuttedPeriodStartDate = dateFormatter.parse(dateTimeFormatter.format(minDate.getTime()));
                         Date cuttedPeriodFinishDate = dateFormatter.parse(dateTimeFormatter.format(maxDate.getTime()));
-                        if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Р’СЃРµ РґРЅРё Р·Р°РґР°РЅРЅРѕРіРѕ РїРµСЂРёРѕРґР°
+                        if (guest.getDateStart().before(minDate) && guest.getDateFinish().after(maxDate)) {  // Все дни заданного периода
                             daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
-                        } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Р’СЃРµ РґРЅРё РІРЅСѓС‚СЂРё РїРµСЂРёРѕРґР°
+                        } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().before(maxDate)) {  // Все дни внутри периода
                             daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS);
-                        } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ РЅР°С‡Р°Р»Р° РїРµСЂРёРѕРґР° РїРѕ РґР°С‚Сѓ РІС‹РµР·РґР°
+                        } else if (guest.getDateStart().before(minDate) && guest.getDateFinish().before(maxDate)) { // Если Дата начала не входит в период то сичтает с начала периода по дату выезда
                             daysCount = TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedPeriodStartDate.getTime(), TimeUnit.MILLISECONDS);
-                        } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Р•СЃР»Рё Р”Р°С‚Р° РІС‹СЃРµР»РµРЅРёСЏ РЅРµ РІС…РѕРґРёС‚ РІ РїРµСЂРёРѕРґ С‚Рѕ СЃРёС‡С‚Р°РµС‚ СЃ Р·Р°СЃРµР»РµРЅРёСЏ РїРѕ РєРѕРЅС†Р° РїРµСЂРёРѕРґР°
+                        } else if (guest.getDateStart().after(minDate) && guest.getDateFinish().after(maxDate)) { // Если Дата выселения не входит в период то сичтает с заселения по конца периода
                             daysCount = TimeUnit.DAYS.convert(cuttedPeriodFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1;
                         }
                         if (daysCount == 0) daysCount = 1L;
@@ -1360,9 +1371,17 @@ public class ReportService {
         }
         String username = ru.sgp.utils.SecurityManager.getCurrentUser();
         User user = userRepository.findByUsername(username);
-        Employee respEmp = user.getEmployee();
+        Employee respEmp = null;
+        if (user != null)
+            respEmp = user.getEmployee();
+        else {
+            respEmp = new Employee();
+            respEmp.setLastname("null");
+            respEmp.setSecondName("null");
+            respEmp.setFirstname("null");
+        }
 
-        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґРѕР»Р¶РЅРѕСЃС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° РґРѕР»Р¶РЅРѕСЃС‚РµР№
+        // Устанавливаем должность из справочника должностей
         String comendantPost = "";
         if (respEmp.getIdPoststaff() != null) {
             Optional<Post> post = postRepository.findById(respEmp.getIdPoststaff().longValue());
@@ -1373,7 +1392,7 @@ public class ReportService {
         }
         // -----
 
-        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґРѕР»Р¶РЅРѕСЃС‚СЊ РёР· Р°Р»СЊС‚ РґРѕР»Р¶РЅРѕСЃС‚РµР№
+        // Устанавливаем должность из альт должностей
         if (user.getCustomPost() != null) {
             if (user.getCustomPost().trim().length() > 0) {
                 parameters.put("comendantPost", user.getCustomPost());
@@ -1402,8 +1421,8 @@ public class ReportService {
             Date cuttedGuestFinishDate = dateFormatter.parse(dateTimeFormatter.format(dateFinish));
             String daysCount = String.valueOf(TimeUnit.DAYS.convert(cuttedGuestFinishDate.getTime() - cuttedGuestStartDate.getTime(), TimeUnit.MILLISECONDS) + 1);
             if (filial.getId() == 930L) {
-                Long hoursCount = TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS);
-                parameters.put("daysCount", String.valueOf((int) ((double) hoursCount / 6) * 0.25));
+                Double hoursCount = (double) TimeUnit.MINUTES.convert(dateFinish.getTime() - dateStart.getTime(), TimeUnit.MILLISECONDS) / 60;
+                parameters.put("daysCount", String.valueOf((int) (hoursCount / 6) * 0.25));
             } else
                 parameters.put("daysCount", daysCount.equals("0") ? "1" : daysCount);
         }
@@ -1416,7 +1435,7 @@ public class ReportService {
         return export(jasperPrint, format);
     }
 
-    // РћС‚С‡РµС‚С‹ РґР»СЏ Р•СЂРјР°РєР°
+    // Отчеты для Ермака
     @Transactional
     public byte[] getReestrRabotErmakReport(Long hotelId, Long responsibilityId, String dateStart, String dateFinish, String ukgBoss, String workType, Boolean isOrganization, List<Long> reasonList) throws JRException, ParseException {
         Responsibilities responsibility = responsibilitiesRepository.getById(responsibilityId);
@@ -1429,18 +1448,18 @@ public class ReportService {
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlatHotel(maxDate, minDate, hotel)) {
                 if (guest.getContract() == null) continue;
                 if (reasonList.stream().noneMatch(r -> Objects.equals(r, guest.getContract().getReason().getId())))
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё РЅРµС‚ С‚Р°РєРѕРіРѕ РѕСЃРЅРѕРІР°РЅРёСЏ
+                    continue; // Пропускаем если нет такого основания
                 if (guest.getEmployee() == null && !isOrganization)
-                    continue;  // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє РѕСЂРіР°РЅРёР·Р°С†РёРё РІ СЂРµР¶РёРјРµ СЂР°Р±РѕС‚РЅРёРєРѕРІ Р“РўРЎ
+                    continue;  // Пропускаем если работник организации в режиме работников ГТС
                 if (guest.getEmployee() != null && isOrganization)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє РІ СЂРµР¶РёРјРµ РѕСЂРіР°РЅРёР·Р°С†РёР№
+                    continue; // Пропускаем если работник в режиме организаций
                 if (guest.getOrganization() == null && isOrganization)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё РєР°РєРѕРіРѕ-С‚Рѕ С…СѓСЏ РѕСЂРіР°РЅРёР·Р°С†РёСЏ РЅРµ СѓРєР°Р·Р°РЅР° Рё РЅРµ СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ
+                    continue; // Пропускаем если какого-то хуя организация не указана и не работник ГТС
                 if (guest.getOrganization() != null && isOrganization && guest.getOrganization().getId() == 11L)
-                    continue; // РџСЂРѕРїСѓСЃРєР°РµРј СЌС‚Рѕ СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ Сѓ РєРѕС‚РѕСЂРѕРіРѕ РЅРµ Р·Р°РїРѕР»РЅРµРЅРѕ РїРѕР»Рµ isEmployee, РЅРѕ РѕСЂРіР°РЅРёР·Р°С†РёСЏ СЃС‚РѕРёС‚ Р“РўРЎ
+                    continue; // Пропускаем это работник ГТС у которого не заполнено поле isEmployee, но организация стоит ГТС
                 if (guest.getEmployee() != null)
                     if (Objects.equals(guest.getEmployee().getIdFilial(), filial.getCode()))
-                        continue; // РџСЂРѕРїСѓСЃРєР°РµРј РµСЃР»Рё СЂР°Р±РѕС‚РЅРёРє Р“РўРЎ РёР· С‚РѕРіРѕ Р¶Рµ С„РёР»РёР°Р»Р° С‡С‚Рѕ Рё С„РёР»РёР°Р» РѕС‚РїСЂР°РІРёС‚РµР»СЊ
+                        continue; // Пропускаем если работник ГТС из того же филиала что и филиал отправитель
                 Filial guestFilial = !isOrganization ? filialRepository.findByCode(guest.getEmployee().getIdFilial()) : null;
                 boolean isRecordNew;
                 if (!isOrganization)
@@ -1642,49 +1661,49 @@ public class ReportService {
             String reasonListSunday = "";
             Integer summary = 0;
             for (Reservation reservation : reservationRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlat(sunday, monday, flat)) {
-                if (monday.getTime() >= reservation.getDateStart().getTime() && monday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РџРќ
+                if (monday.getTime() >= reservation.getDateStart().getTime() && monday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ПН
                     summary += 1;
                     guestCountMonday += 1;
                     guestListMonday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListMonday += reservation.getNote() + ";  ";
                 }
-                if (tuesday.getTime() >= reservation.getDateStart().getTime() && tuesday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р’Рў
+                if (tuesday.getTime() >= reservation.getDateStart().getTime() && tuesday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ВТ
                     summary += 1;
                     guestCountTuesday += 1;
                     guestListTuesday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListTuesday += reservation.getNote() + ";  ";
                 }
-                if (tuesday.getTime() >= reservation.getDateStart().getTime() && tuesday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РЎР 
+                if (tuesday.getTime() >= reservation.getDateStart().getTime() && tuesday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку СР
                     summary += 1;
                     guestCountWednesday += 1;
                     guestListWednesday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListWednesday += reservation.getNote() + ";  ";
                 }
-                if (thursday.getTime() >= reservation.getDateStart().getTime() && thursday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р§Рў
+                if (thursday.getTime() >= reservation.getDateStart().getTime() && thursday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ЧТ
                     summary += 1;
                     guestCountThursday += 1;
                     guestListThursday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListThursday += reservation.getNote() + ";  ";
                 }
-                if (friday.getTime() >= reservation.getDateStart().getTime() && friday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РџРў
+                if (friday.getTime() >= reservation.getDateStart().getTime() && friday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ПТ
                     summary += 1;
                     guestCountFriday += 1;
                     guestListFriday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListFriday += reservation.getNote() + ";  ";
                 }
-                if (saturday.getTime() >= reservation.getDateStart().getTime() && saturday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РЎР‘
+                if (saturday.getTime() >= reservation.getDateStart().getTime() && saturday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку СБ
                     summary += 1;
                     guestCountSaturday += 1;
                     guestListSaturday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
                     if (reservation.getNote() != null && !reservation.getNote().isEmpty())
                         reasonListSaturday += reservation.getNote() + ";  ";
                 }
-                if (sunday.getTime() >= reservation.getDateStart().getTime() && sunday.getTime() <= reservation.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р’РЎ
+                if (sunday.getTime() >= reservation.getDateStart().getTime() && sunday.getTime() <= reservation.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ВС
                     summary += 1;
                     guestCountSunday += 1;
                     guestListSunday += reservation.getLastname() + " " + reservation.getFirstname() + " " + reservation.getSecondName() + "; ";
@@ -1693,49 +1712,49 @@ public class ReportService {
                 }
             }
             for (Guest guest : guestRepository.findAllByDateStartBeforeAndDateFinishAfterAndBedRoomFlat(sunday, monday, flat)) {
-                if (monday.getTime() >= guest.getDateStart().getTime() && monday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РџРќ
+                if (monday.getTime() >= guest.getDateStart().getTime() && monday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ПН
                     summary += 1;
                     guestCountMonday += 1;
                     guestListMonday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListMonday += guest.getNote() + ";  ";
                 }
-                if (tuesday.getTime() >= guest.getDateStart().getTime() && tuesday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р’Рў
+                if (tuesday.getTime() >= guest.getDateStart().getTime() && tuesday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ВТ
                     summary += 1;
                     guestCountTuesday += 1;
                     guestListTuesday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListTuesday += guest.getNote() + ";  ";
                 }
-                if (tuesday.getTime() >= guest.getDateStart().getTime() && tuesday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РЎР 
+                if (tuesday.getTime() >= guest.getDateStart().getTime() && tuesday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку СР
                     summary += 1;
                     guestCountWednesday += 1;
                     guestListWednesday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListWednesday += guest.getNote() + ";  ";
                 }
-                if (thursday.getTime() >= guest.getDateStart().getTime() && thursday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р§Рў
+                if (thursday.getTime() >= guest.getDateStart().getTime() && thursday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ЧТ
                     summary += 1;
                     guestCountThursday += 1;
                     guestListThursday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListThursday += guest.getNote() + ";  ";
                 }
-                if (friday.getTime() >= guest.getDateStart().getTime() && friday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РџРў
+                if (friday.getTime() >= guest.getDateStart().getTime() && friday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ПТ
                     summary += 1;
                     guestCountFriday += 1;
                     guestListFriday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListFriday += guest.getNote() + ";  ";
                 }
-                if (saturday.getTime() >= guest.getDateStart().getTime() && saturday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ РЎР‘
+                if (saturday.getTime() >= guest.getDateStart().getTime() && saturday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку СБ
                     summary += 1;
                     guestCountSaturday += 1;
                     guestListSaturday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
                     if (guest.getNote() != null && !guest.getNote().isEmpty())
                         reasonListSaturday += guest.getNote() + ";  ";
                 }
-                if (sunday.getTime() >= guest.getDateStart().getTime() && sunday.getTime() <= guest.getDateFinish().getTime()) { // Р”РѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ Р±СЂРѕРЅРµ РІ РєРѕР»РѕРЅРєСѓ Р’РЎ
+                if (sunday.getTime() >= guest.getDateStart().getTime() && sunday.getTime() <= guest.getDateFinish().getTime()) { // Добавляем запись о броне в колонку ВС
                     summary += 1;
                     guestCountSunday += 1;
                     guestListSunday += guest.getLastname() + " " + guest.getFirstname() + " " + guest.getSecondName() + "; ";
@@ -1992,7 +2011,7 @@ public class ReportService {
         for (Reservation reservation : reservationRepository.findAllByDateStartAfterAndDateStartBeforeAndBedRoomFlatHotel(year, nextYear, hotel)) {
             YearReservationReportDTO record = null;
             int daysCount = (int) TimeUnit.DAYS.convert(reservation.getDateFinish().getTime() - reservation.getDateStart().getTime(), TimeUnit.MILLISECONDS);
-            if (reportData.stream().anyMatch(r -> Objects.equals(r.getFilialNumber(), reservation.getFromFilial().getCode()))) { // Р•СЃР»Рё РЅРµС‚ С‚Р°РєРѕРіРѕ С„РёР»РёР»Р° СЃРѕР·РґР°РµРј РёРЅР°С‡Рµ СЂР°Р±РѕС‚Р°РµРј СЃ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРј
+            if (reportData.stream().anyMatch(r -> Objects.equals(r.getFilialNumber(), reservation.getFromFilial().getCode()))) { // Если нет такого филила создаем иначе работаем с существующим
                 record = reportData.stream().filter(r -> Objects.equals(r.getFilialNumber(), reservation.getFromFilial().getCode())).collect(Collectors.toList()).get(0);
                 record.setCount(record.getCount() + daysCount);
                 record.setJanuary(record.getJanuary() + calculateDays(januaryStart.getTime(), januaryEnd.getTime(), reservation.getDateStart().getTime(), reservation.getDateFinish().getTime()));

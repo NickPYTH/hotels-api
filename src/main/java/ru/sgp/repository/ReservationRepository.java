@@ -33,8 +33,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Boolean existsByDateStartLessThanAndDateFinishGreaterThanAndBed(Date dateFinish, Date dateStart, Bed bed);
 
-    List<Reservation> findAllByBed(Bed bed);
-
     List<Reservation> findAllByBedRoomFlatHotelAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Hotel hotel, Date dateFinish, Date dateStart);
 
     List<Reservation> findAllByDateStartAfterAndDateStartBeforeAndBedRoomFlatHotel(Date year, Date nextYear, Hotel hotel);
@@ -42,4 +40,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByTabnumAndDateStartLessThanAndDateFinishGreaterThan(Integer tabNumber, Date dateFinish, Date dateStart);
 
     List<Reservation> findAllByDateStartGreaterThanEqual(Date parse);
+
+    Optional<Reservation> findByIdAndTabnum(Long id, Integer tabnum);
+
+    List<Reservation> findAllByDateFinishGreaterThanEqual(Date parse);
 }

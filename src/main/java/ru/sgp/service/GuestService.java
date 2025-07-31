@@ -1,5 +1,6 @@
 package ru.sgp.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -10,7 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
+import ru.sgp.dto.ReservationDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.cancelReservation.CancelReservationRequest;
+import ru.sgp.dto.integration.cancelReservation.CancelReservationResponse;
+import ru.sgp.dto.integration.cancelReservation.TabAndReservation;
 import ru.sgp.dto.integration.checkEmployee.CheckEmployeeRequest;
 import ru.sgp.dto.integration.checkEmployee.CheckEmployeeResponse;
 import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
@@ -68,16 +73,17 @@ public class GuestService {
     private BookReportRepository bookReportRepository;
     @Autowired
     private RecordBookReportRepository recordBookReportRepository;
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     @Autowired
     private PostRepository postRepository;
     @Autowired
     private EventKindRepository eventKindRepository;
+    @Autowired
+    private HistoryService historyService;
 
 
     public List<GuestDTO> update(GuestDTO guestDTO) throws Exception {
         List<GuestDTO> response = new ArrayList<>();
-        ModelMapper modelMapper = new ModelMapper();
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date dateStart = dateTimeFormatter.parse(guestDTO.getDateStart());
         Date dateFinish = dateTimeFormatter.parse(guestDTO.getDateFinish());
 
@@ -586,18 +592,26 @@ public class GuestService {
     }
 
     @Transactional
-    public CheckSpacesResponse checkSpaces(CheckSpacesDTO data, Boolean needBook) throws ParseException {
+    public CheckSpacesResponse checkSpaces(CheckSpacesDTO data, Boolean needBook) throws ParseException, JsonProcessingException {
         long startTime = System.nanoTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         CheckSpacesResponse response = new CheckSpacesResponse();
         response.setGuests(new ArrayList<>());
 
         // 1. Загружаем ВСЕ данные один раз (брони, гостей, кровати)
-        List<Reservation> allReservations = reservationRepository.findAllByDateStartGreaterThanEqual(dateFormat.parse("31-12-2025"));
+        List<Reservation> allReservations = reservationRepository.findAllByDateFinishGreaterThanEqual(dateFormat.parse("31-12-2025"));
         List<Reservation> needToBook = new ArrayList<>();
-        List<Guest> allGuests = guestRepository.findAllByDateStartGreaterThanEqual(dateFormat.parse("31-12-2025"));
-        List<Bed> ermakBeds = bedRepository.findAllByRoomFlatHotelId(327L);
-        List<Bed> proizvodBeds = bedRepository.findAllByRoomFlatHotelId(182L);
+        List<Guest> allGuests = guestRepository.findAllByDateFinishGreaterThanEqual(dateFormat.parse("31-12-2025"));
+        //Берем все места в ермаке кроме Бильярда, Акт зала, 305, 201, 205 и кроме Extra
+        List<Bed> ermakBeds = bedRepository.findAllByRoomFlatHotelId(327L).stream().filter(bed -> bed.getRoom().getFlat().getId() != 5070 // акт
+                && bed.getRoom().getFlat().getId() != 5071 // бильярд
+                && bed.getRoom().getFlat().getId() != 5061 // 305
+                && bed.getRoom().getFlat().getId() != 5044 // 201
+                && bed.getRoom().getFlat().getId() != 5048 // 205
+                && !bed.getName().equals("Extra")
+        ).collect(Collectors.toList()
+        );
+        List<Bed> proizvodBeds = bedRepository.findAllByRoomFlatHotelId(182L).stream().filter(bed -> !bed.getName().equals("Extra")).collect(Collectors.toList());
 
         // 2. Разделяем гостей на ИТР и не-ИТР
         Map<Boolean, List<TabWithItr>> employeesByItr = data.getGuests().stream()
@@ -612,7 +626,8 @@ public class GuestService {
                 allGuests,
                 "ermak",
                 response,
-                dateFormat
+                dateFormat,
+                proizvodBeds
         );
 
         // 4. Проверяем заселение для не-ИТР (Производственная)
@@ -624,37 +639,64 @@ public class GuestService {
                 allGuests,
                 "proizvod",
                 response,
-                dateFormat
+                dateFormat,
+                proizvodBeds
         );
         Double duration = (System.nanoTime() - startTime) / 1E9;
 
         // Логируем запрос в отдельный протокол
         BookReport bookReport = new BookReport();
         bookReport.setDate(new Date());
-        bookReport.setUsername(SecurityManager.getCurrentUser());
+        if (data.getAuthor() != null) bookReport.setUsername(data.getAuthor());
+        else bookReport.setUsername(SecurityManager.getCurrentUser());
         bookReport.setDuration(duration.floatValue());
         bookReport.setWithBook(needBook);
         bookReportRepository.save(bookReport);
         boolean isError = false;
-        for (CheckSpacesReservation reservation : response.getGuests()) {
+        for (Reservation reservation : needToBook) {
             RecordBookReport recordBookReport = new RecordBookReport();
             recordBookReport.setBookReport(bookReport);
-            recordBookReport.setTabnumber(reservation.getTabNumber());
+            recordBookReport.setTabnumber(reservation.getTabnum());
             recordBookReport.setFio("");
-            recordBookReport.setDateStart(dateFormat.parse(reservation.getDateStart()));
-            recordBookReport.setDateFinish(dateFormat.parse(reservation.getDateFinish()));
-            recordBookReport.setStatus(reservation.getStatus());
+            recordBookReport.setDateStart(reservation.getDateStart());
+            recordBookReport.setDateFinish(reservation.getDateFinish());
+            recordBookReport.setStatus(reservation.getBed() == null ? "error" : "ok");
             recordBookReportRepository.save(recordBookReport);
-            if (!reservation.getStatus().equals("ok")) isError = true;
+            if (reservation.getBed() == null) isError = true;
+            reservation.setBookReportId(bookReport.getId());
         }
         bookReport.setStatus(isError ? "error" : "ok");
         // -----
 
         // Если передан параметр о бронировании
-        if (!isError && needBook) {
+        if (needBook) {
+            CheckSpacesResponse bookedResponse = new CheckSpacesResponse();
+            List<CheckSpacesReservation> bookedGuest = new ArrayList<>();
             for (Reservation reservation : needToBook) {
-                reservationRepository.save(reservation);
+                if (reservation.getBed() == null) {
+                    CheckSpacesReservation book = new CheckSpacesReservation();
+                    book.setStatus("error");
+                    book.setTabNumber(reservation.getTabnum());
+                    book.setDateStart(dateFormat.format(reservation.getDateStart()));
+                    book.setDateFinish(dateFormat.format(reservation.getDateFinish()));
+                    book.setBookReportId(reservation.getBookReportId());
+                    bookedGuest.add(book);
+                } else {
+                    reservationRepository.save(reservation);
+                    historyService.updateReservation(null, new ReservationDTO(), MyMapper.ReservationToReservationDTO(reservation));
+                    CheckSpacesReservation book = new CheckSpacesReservation();
+                    book.setReservationId(reservation.getId());
+                    book.setHotel(reservation.getBed().getRoom().getFlat().getHotel().getId() == 327L ? "ermak" : "proizvod");
+                    book.setStatus("ok");
+                    book.setTabNumber(reservation.getTabnum());
+                    book.setDateStart(dateFormat.format(reservation.getDateStart()));
+                    book.setDateFinish(dateFormat.format(reservation.getDateFinish()));
+                    book.setBookReportId(reservation.getBookReportId());
+                    bookedGuest.add(book);
+                }
             }
+            bookedResponse.setGuests(bookedGuest);
+            return bookedResponse;
         }
         // -----
 
@@ -670,7 +712,8 @@ public class GuestService {
             List<Guest> allGuests,
             String hotelName,
             CheckSpacesResponse response,
-            SimpleDateFormat dateFormat
+            SimpleDateFormat dateFormat,
+            List<Bed> proizvodBeds // Дублирую параметр только для того чтобы селить не поместившихся ИТР на производ-ую
     ) throws ParseException {
         // Сортируем сотрудников: сначала руководители, потом мужчины
         employees.sort(Comparator
@@ -693,35 +736,47 @@ public class GuestService {
                         allGuests
                 );
 
-                // Tmp
-                if (isSuccess != null) {
-                    Reservation tmp = new Reservation();
-                    if (hotelName.equals("ermak")) {
-                        Contract contract = contractRepository.getById(1873L);
-                        tmp.setContract(contract);
-                    } else {
-                        Contract contract = contractRepository.getById(1901L);
-                        tmp.setContract(contract);
-                    }
-                    tmp.setTabnum(employee.getTabNumber());
-                    Employee emp = employeeRepository.findByTabnumAndEndDate(employee.getTabNumber(), null);
-                    if (emp != null) {
-                        tmp.setFirstname(emp.getFirstname());
-                        tmp.setLastname(emp.getLastname());
-                        tmp.setSecondName(emp.getSecondName());
-                        tmp.setFromFilial(filialRepository.findByCode(emp.getIdFilial()));
-                    }
-                    EventKind eventKind = eventKindRepository.getById(2L); // Обучение
-                    tmp.setEventKind(eventKind);
-                    tmp.setMale(employee.getMale() == 1);
-                    tmp.setBed(isSuccess);
-                    tmp.setDateStart(dateStart);
-                    tmp.setDateFinish(dateFinish);
-                    tmp.setMale(employee.getMale() == 0);
-                    tmp.setNote(employee.getGroupNumber() + " || " + employee.getEventName());
-                    allReservations.add(tmp);
-                    needToBook.add(tmp);
+                // Если расселяем ИТР и не хватило места проубем его поселить на производстенную
+                if (employee.getIsItr() && isSuccess == null) {
+                    isSuccess = tryCheckInMemory(
+                            dateStart,
+                            dateFinish,
+                            employee,
+                            proizvodBeds,
+                            allReservations,
+                            allGuests
+                    );
                 }
+
+                // Если место нашлось то добавляем в список для бронирования с заполнеными параметрами
+                // Иначе тоже добавляем то не заполняем место договор и тд только работника для дальнейшей идентификации
+                Reservation tmp = new Reservation();
+                if (hotelName.equals("ermak")) {
+                    Contract contract = contractRepository.getById(1873L);
+                    tmp.setContract(contract);
+                } else {
+                    Contract contract = contractRepository.getById(1901L);
+                    tmp.setContract(contract);
+                }
+                tmp.setTabnum(employee.getTabNumber());
+                Employee emp = employeeRepository.findByTabnumAndEndDate(employee.getTabNumber(), null);
+                if (emp != null) {
+                    tmp.setFirstname(emp.getFirstname());
+                    tmp.setLastname(emp.getLastname());
+                    tmp.setSecondName(emp.getSecondName());
+                    tmp.setFromFilial(filialRepository.findByCode(emp.getIdFilial()));
+                }
+                EventKind eventKind = eventKindRepository.getById(2L); // Обучение
+                tmp.setEventKind(eventKind);
+                tmp.setMale(employee.getMale() == 1);
+                if (isSuccess != null) tmp.setBed(isSuccess);
+                tmp.setDateStart(dateStart);
+                tmp.setDateFinish(dateFinish);
+                tmp.setMale(employee.getMale() == 0);
+                tmp.setNote(employee.getGroupNumber() + " || " + employee.getEventName());
+                allReservations.add(tmp);
+                needToBook.add(tmp);
+
 
                 // Записываем результат
                 response.getGuests().add(createReservationRecord(
@@ -746,11 +801,22 @@ public class GuestService {
             List<Guest> allGuests
     ) {
         for (Bed bed : beds) {
+            if (bed == null) continue;
             // 1. Проверяем, свободна ли кровать
             boolean isBedFree = isBedFreeInMemory(bed, dateStart, dateFinish, allReservations, allGuests);
             if (!isBedFree) continue;
 
-            // 2. Если сотрудник — руководитель, проверяем всю секцию
+            // 2. Проверяем соседей-руководителей
+            boolean hasLeaderNeighbor = hasLeaderInRoomInMemory(
+                    bed.getRoom(),
+                    dateStart,
+                    dateFinish,
+                    allReservations,
+                    allGuests
+            );
+            if (hasLeaderNeighbor) continue;
+
+            // 3. Если сотрудник — руководитель, проверяем всю секцию на наличие записей
             if (isLeadershipPosition(employee.getTabNumber())) {
                 boolean hasNeighbors = hasAnyReservationsInFlatInMemory(
                         bed.getRoom().getFlat(),
@@ -761,8 +827,9 @@ public class GuestService {
                 );
                 if (hasNeighbors) continue;
             }
-            // 3. Если сотрудник — женщина, проверяем соседей-мужчин
-            else if (employee.getMale() == 0) {
+
+            // 4. Если сотрудник — женщина, проверяем соседей-мужчин
+            if (employee.getMale() == 0) {
                 boolean hasMaleNeighbor = hasMaleInRoomInMemory(
                         bed.getRoom(),
                         dateStart,
@@ -791,10 +858,9 @@ public class GuestService {
         boolean hasReservation = allReservations.stream()
                 .filter(r -> r.getBed() != null && r.getBed().equals(bed))
                 .anyMatch(r ->
-                        r.getDateStart() != null &&
-                                r.getDateFinish() != null &&
-                                r.getDateStart().before(dateFinish) &&
-                                r.getDateFinish().after(dateStart)
+                        r.getDateStart() != null && r.getDateFinish() != null &&
+                                r.getDateStart().getTime() <= dateFinish.getTime() &&
+                                r.getDateFinish().getTime() >= dateStart.getTime()
                 );
 
         // Проверка гостей
@@ -803,8 +869,8 @@ public class GuestService {
                 .anyMatch(g ->
                         g.getDateStart() != null &&
                                 g.getDateFinish() != null &&
-                                g.getDateStart().before(dateFinish) &&
-                                g.getDateFinish().after(dateStart)
+                                g.getDateStart().getTime() <= dateFinish.getTime() &&
+                                g.getDateFinish().getTime() >= dateStart.getTime()
                 );
 
         return !hasReservation && !hasGuest;
@@ -819,6 +885,7 @@ public class GuestService {
             List<Guest> allGuests
     ) {
         return allReservations.stream().anyMatch(r ->
+                r.getBed() != null &&
                 r.getBed().getRoom().getFlat().equals(flat) &&
                         r.getDateStart() != null &&
                         r.getDateFinish() != null &&
@@ -833,6 +900,37 @@ public class GuestService {
         );
     }
 
+    // Проверяет, есть ли руководитель в комнате
+    private boolean hasLeaderInRoomInMemory(
+            Room room,
+            Date dateStart,
+            Date dateFinish,
+            List<Reservation> allReservations,
+            List<Guest> allGuests
+    ) {
+        for (Reservation reservation : allReservations.stream().filter(r ->
+                r.getBed() != null &&
+                r.getBed().getRoom().getFlat().equals(room.getFlat()) &&
+                        r.getDateStart() != null &&
+                        r.getDateFinish() != null &&
+                        r.getDateStart().before(dateFinish) &&
+                        r.getDateFinish().after(dateStart)
+        ).collect(Collectors.toList())) {
+            if (isLeadershipPosition(reservation.getTabnum())) return true;
+        }
+        for (Guest guest : allGuests.stream().filter(r ->
+                r.getBed().getRoom().getFlat().equals(room.getFlat()) &&
+                        r.getDateStart() != null &&
+                        r.getDateFinish() != null &&
+                        r.getDateStart().before(dateFinish) &&
+                        r.getDateFinish().after(dateStart)
+        ).collect(Collectors.toList())) {
+            if (guest.getEmployee() != null)
+                if (isLeadershipPosition(guest.getEmployee().getTabnum())) return true;
+        }
+        return false;
+    }
+
     // Проверяет, есть ли мужчины в комнате
     private boolean hasMaleInRoomInMemory(
             Room room,
@@ -842,6 +940,7 @@ public class GuestService {
             List<Guest> allGuests
     ) {
         return allReservations.stream().anyMatch(r ->
+                r.getBed() != null &&
                 r.getBed().getRoom().equals(room) &&
                         r.getDateStart() != null &&
                         r.getDateFinish() != null &&
@@ -907,20 +1006,46 @@ public class GuestService {
         List<CheckEmployeeResponse> response = new ArrayList<>();
         for (Reservation reservation : reservationRepository.findAllByTabnumAndDateStartLessThanAndDateFinishGreaterThan(body.getTabNumber(), dateFormatter.parse(body.getDateFinish()), dateFormatter.parse(body.getDateStart()))) {
             CheckEmployeeResponse record = new CheckEmployeeResponse();
-            record.setBed(MyMapper.BedToBedDTO(reservation.getBed()));
+            record.setHotel(reservation.getBed().getRoom().getFlat().getHotel().getId() == 327L ? "ermak" : "proizvod");
+            record.setReservationId(reservation.getId());
             record.setDateStart(dateFormatter.format(reservation.getDateStart()));
             record.setDateFinish(dateFormatter.format(reservation.getDateFinish()));
+            record.setTabNumber(body.getTabNumber());
             response.add(record);
         }
         return response;
     }
 
     @Transactional
-    public List<Long> reservationCancel(List<Long> reservationIds) {
-        for (Long id : reservationIds) {
-            Reservation reservation = reservationRepository.getById(id);
-            reservationRepository.delete(reservation);
+    public List<CancelReservationResponse> reservationCancel(CancelReservationRequest request) {
+        List<CancelReservationResponse> response = new ArrayList<>();
+        // Логируем запрос в отдельный протокол
+        BookReport bookReport = new BookReport();
+        bookReport.setDate(new Date());
+        if (request.getAuthor() != null) bookReport.setUsername(request.getAuthor() + " remove");
+        else bookReport.setUsername(SecurityManager.getCurrentUser() + " remove");
+        bookReport.setStatus("ok");
+        bookReportRepository.save(bookReport);
+
+        for (TabAndReservation reservation : request.getReservations()) {
+            CancelReservationResponse record = new CancelReservationResponse();
+            record.setReservationId(reservation.getReservationId());
+            record.setTabNumber(reservation.getTabNumber());
+            Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTabnum(reservation.getReservationId(), reservation.getTabNumber());
+            if (reservationOpt.isPresent()) {
+                record.setStatus("ok");
+                reservationRepository.delete(reservationOpt.get());
+            } else record.setStatus("error");
+
+            RecordBookReport recordBookReport = new RecordBookReport();
+            recordBookReport.setBookReport(bookReport);
+            recordBookReport.setTabnumber(reservation.getTabNumber());
+            recordBookReport.setFio("");
+            recordBookReport.setStatus(record.getStatus());
+            recordBookReportRepository.save(recordBookReport);
+
+            response.add(record);
         }
-        return reservationIds;
+        return response;
     }
 }

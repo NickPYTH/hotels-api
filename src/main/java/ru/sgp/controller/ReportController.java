@@ -163,8 +163,8 @@ public class ReportController {
     public ResponseEntity<byte[]> getMonthReportByFilial(@RequestParam Long empFilialId, @RequestParam Long responsibilityId, @RequestParam Long reasonId, @RequestParam String dateStart, @RequestParam String dateFinish, @RequestParam String billing) throws JRException, ParseException {
         long startTime = System.nanoTime();
         Log record = new Log();
-        byte[] reportData = reportService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
         try {
+            byte[] reportData = reportService.getMonthReportByFilial(empFilialId, responsibilityId, reasonId, dateStart, dateFinish, billing);
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/report/getMonthReportByFilial", duration, "");
             record.setStatus("OK");
@@ -856,7 +856,7 @@ public class ReportController {
             record.setDate(new Date());
             logsRepository.save(record);
             HttpHeaders headers = new HttpHeaders();
-            String reportName = reportNamesRepository.findByEnName("YEAR_RESERVATION").getRuName();
+            String reportName = reportNamesRepository.findByEnName("BOOK_REPORT").getRuName() + "_" + bookReportId;
             headers.add(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(reportName));
             return ResponseEntity.ok().headers(headers).contentType(getMediaType("xlsx")).body(reportData);
         } catch (Exception e) {

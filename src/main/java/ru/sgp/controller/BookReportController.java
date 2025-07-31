@@ -35,8 +35,9 @@ public class BookReportController {
     public ResponseEntity<List<BookReportDTO>> getAll() {
         long startTime = System.nanoTime();
         Log record = new Log();
+        List<BookReportDTO> response = bookReportService.getAll();
         try {
-            List<BookReportDTO> response = bookReportService.getAll();
+
             Double duration = (System.nanoTime() - startTime) / 1E9;
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/bookReport/getAll", duration, "");
             record.setStatus("OK");

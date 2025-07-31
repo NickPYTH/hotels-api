@@ -7,7 +7,10 @@ import java.util.List;
 
 @Data
 public class CheckEmployeeResponse {
-    private BedDTO bed;
+    private Integer tabNumber;
+    private String hotel;
     private String dateStart;
     private String dateFinish;
+    private Long reservationId;
+
 }

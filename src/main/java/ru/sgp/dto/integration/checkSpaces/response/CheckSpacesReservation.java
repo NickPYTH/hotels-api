@@ -7,6 +7,8 @@ import java.util.List;
 @Data
 public class CheckSpacesReservation {
     private Integer tabNumber;
+    private Long reservationId;
+    private Long bookReportId;
     private String range;
     private String dateStart;
     private String dateFinish;

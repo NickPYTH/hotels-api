@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sgp.dto.GuestDTO;
 import ru.sgp.dto.integration.AddGuestsForEventDTO;
+import ru.sgp.dto.integration.cancelReservation.CancelReservationRequest;
+import ru.sgp.dto.integration.cancelReservation.CancelReservationResponse;
 import ru.sgp.dto.integration.checkEmployee.CheckEmployeeRequest;
 import ru.sgp.dto.integration.checkEmployee.CheckEmployeeResponse;
 import ru.sgp.dto.integration.checkSpaces.CheckSpacesDTO;
@@ -355,8 +357,8 @@ public class GuestController {
         long startTime = System.nanoTime();
         Log record = new Log();
         try {
-            CheckSpacesResponse response = guestService.checkSpaces(body, false);
             Double duration = (System.nanoTime() - startTime) / 1E9;
+            CheckSpacesResponse response = guestService.checkSpaces(body, false);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/checkSpaces", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -383,9 +385,9 @@ public class GuestController {
     public ResponseEntity<CheckSpacesResponse> bookGroup(@RequestBody CheckSpacesDTO body) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        CheckSpacesResponse response = guestService.checkSpaces(body, true);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
+            CheckSpacesResponse response = guestService.checkSpaces(body, true);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/bookGroup", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());
@@ -409,12 +411,12 @@ public class GuestController {
     }
 
     @DeleteMapping(path = "/integration/bookCancel")
-    public ResponseEntity<List<Long>> reservationCancel(@RequestBody List<Long> reservationIds) throws Exception {
+    public ResponseEntity<List<CancelReservationResponse>> reservationCancel(@RequestBody CancelReservationRequest request) throws Exception {
         long startTime = System.nanoTime();
         Log record = new Log();
-        List<Long> response = guestService.reservationCancel(reservationIds);
         try {
             Double duration = (System.nanoTime() - startTime) / 1E9;
+            List<CancelReservationResponse> response = guestService.reservationCancel(request);
             logger.info(loggerString, dateTimeFormatter.format(new Date()), "OK", SecurityManager.getCurrentUser(), "/guests/integration/bookCancel", duration, "");
             record.setStatus("OK");
             record.setUser(SecurityManager.getCurrentUser());

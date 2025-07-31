@@ -36,15 +36,15 @@ public class BookReportService {
                 bookReportDTO.setWithBook(bookReport.getWithBook());
                 bookReportDTO.setDate(dateTimeFormatter.format(bookReport.getDate()));
                 bookReportDTO.setUsername(bookReport.getUsername());
-                bookReportDTO.setDuration(bookReport.getDuration().toString());
+                if (bookReport.getDuration() != null) bookReportDTO.setDuration(bookReport.getDuration().toString());
                 bookReportDTO.setBookStatus(bookReport.getStatus());
-                bookReportDTO.setTabnumber(recordBookReport.getTabnumber().toString());
-                Employee employee = employeeRepository.findByTabnumAndEndDate(recordBookReport.getTabnumber(), null);
-                if (employee != null)
-                    bookReportDTO.setFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
-                else bookReportDTO.setFio(recordBookReport.getFio());
-                bookReportDTO.setDateStart(dateFormatter.format(recordBookReport.getDateStart()));
-                bookReportDTO.setDateFinish(dateFormatter.format(recordBookReport.getDateFinish()));
+                if (recordBookReport.getTabnumber() != null) bookReportDTO.setTabnumber(recordBookReport.getTabnumber().toString());
+                //Employee employee = employeeRepository.findByTabnumAndEndDate(recordBookReport.getTabnumber(), null);
+                //if (employee != null)
+                //    bookReportDTO.setFio(employee.getLastname() + " " + employee.getFirstname() + " " + employee.getSecondName());
+                bookReportDTO.setFio(recordBookReport.getFio());
+                if (recordBookReport.getDateStart() != null) bookReportDTO.setDateStart(dateFormatter.format(recordBookReport.getDateStart()));
+                if (recordBookReport.getDateFinish() != null) bookReportDTO.setDateFinish(dateFormatter.format(recordBookReport.getDateFinish()));
                 bookReportDTO.setStatus(recordBookReport.getStatus());
                 response.add(bookReportDTO);
             }

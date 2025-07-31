@@ -38,7 +38,7 @@ public class HistoryService {
     public void updateReservation(Log request, ReservationDTO reservationBefore, ReservationDTO reservationAfter) throws JsonProcessingException {
         History history = new History();
         ObjectMapper mapper = new ObjectMapper();
-        history.setRequest(request);
+        if (request != null) history.setRequest(request);
         history.setEntityType("reservation");
         history.setEntityId(reservationAfter.getId());
         history.setStateBefore(mapper.writeValueAsString(reservationBefore));

@@ -6,5 +6,6 @@ import java.util.List;
 
 @Data
 public class CheckSpacesDTO {
+    private String author;
     private List<TabWithItr> guests;
 }

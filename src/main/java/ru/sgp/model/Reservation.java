@@ -73,4 +73,8 @@ public class Reservation {
     @Column(name = "family_member_of_employee")
     private Integer familyMemberOfEmployee;
 
+    // Для массового бронирования
+    @Column(name = "book_report_id")
+    private Long bookReportId;
+
 }

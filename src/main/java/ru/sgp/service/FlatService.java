@@ -186,6 +186,11 @@ public class FlatService {
                 guestDTO.setEvent(modelMapper.map(reservation.getEventKind(), EventKindDTO.class));
                 guestDTO.setFromFilial(modelMapper.map(reservation.getFromFilial(), FilialDTO.class));
                 guestDTO.setBed(MyMapper.BedToBedDTO(reservation.getBed()));
+                if (reservation.getTabnum() != null) {
+                    Employee emp = employeeRepository.findByTabnumAndEndDate(reservation.getTabnum(), null);
+                    Optional<Post> post = postRepository.findById(emp.getIdPoststaff().longValue());
+                    if (post.isPresent()) guestDTO.setPost(post.get().getName());
+                }
                 guestDTO.setDateStart(dateTimeFormatter.format(reservation.getDateStart()));
                 guestDTO.setDateFinish(dateTimeFormatter.format(reservation.getDateFinish()));
                 guestDTO.setNote(reservation.getNote());
@@ -536,6 +541,11 @@ public class FlatService {
                             chessGuest.setDateFinish(reservation.getDateFinish().getTime() / 1000);
                             chessGuest.setMale(reservation.getMale());
                             chessGuest.setNote(reservation.getNote());
+                            if (reservation.getTabnum() != null) {
+                                Employee emp = employeeRepository.findByTabnumAndEndDate(reservation.getTabnum(), null);
+                                Optional<Post> post = postRepository.findById(emp.getIdPoststaff().longValue());
+                                if (post.isPresent()) chessGuest.setPost(post.get().getName());
+                            }
                             chessGuests.add(chessGuest);
                         }
                         chessDate.setGuests(chessGuests);

@@ -70,7 +70,7 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     List<Guest> findAllByBedRoomFlatHotelAndDateStartLessThanEqualAndDateFinishGreaterThanEqual(Hotel hotel, Date dateFinish, Date dateStart);
 
-    List<Guest> findAllByDateStartGreaterThanEqual(Date dateStart);
+    List<Guest> findAllByDateFinishGreaterThanEqual(Date dateStart);
 
     List<Guest> findAllByDateStartLessThanAndDateFinishGreaterThanAndBedAndIdIsNot(Date dateFinish, Date dateStart, Bed bed, Long id);
 }

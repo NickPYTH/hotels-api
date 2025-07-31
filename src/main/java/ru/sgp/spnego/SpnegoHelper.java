@@ -20,8 +20,8 @@ public class SpnegoHelper {
         try {
             DirContextSource contextSource = new DirContextSource();
             contextSource.setUrl("ldap://sco1-dc-01");
-            contextSource.setUserDn("ntd@SGP.RU");
-            contextSource.setPassword("nastazia");
+            contextSource.setUserDn("srv_app_service@SGP.RU");
+            contextSource.setPassword("LEcF[keR1*Z8fKC56ISbn5xV");
 
             LdapTemplate template = new LdapTemplate(contextSource);
             template.setIgnorePartialResultException(true);
